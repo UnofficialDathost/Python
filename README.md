@@ -1,11 +1,11 @@
 ## Install
-Install git and run `pip install git+https://github.com/WardPearce/aiodathost.git`
+Install git and run `pip install git+https://github.com/DistrictNineHost/aiodathost.git`
 
 [Dathost's API documentation](https://dathost.net/api)
 
 ## Example
 ```python
-from aiodathost import dathost
+from aiodathost.aiodathost import dathost
 
 dathost = dathost(username="contact@districtnine.host", password="********")
 
