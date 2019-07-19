@@ -5,7 +5,7 @@ Install git and run `pip install git+https://github.com/DistrictNineHost/aiodath
 
 ### Useful notes:
 - The path is counted from the root node as seen in the file manager in the control panel, i.e. to write csgo/cfg/server.cfg the path would be cfg/server.cfg, if the path ends with / a directory will be created and the file parameter will be ignored.
-- There is a upload limit of 100MB on dathost.net, our api using upload.dathost.net to upload files up to 500MB.
+- There is a upload limit of 100MB on dathost.net, our wrapper uses upload.dathost.net to upload files up to 500MB.
 - Pathways should always end in a '/'.
 - Sync function should be called before downloading files.
 - Our API wrapper will return false if it fails, so check for that.
