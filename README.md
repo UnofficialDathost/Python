@@ -3,6 +3,18 @@ Install git and run `pip install git+https://github.com/DistrictNineHost/aiodath
 
 [Dathost's API documentation](https://dathost.net/api)
 
+### Useful notes:
+- The path is counted from the root node as seen in the file manager in the control panel, i.e. to write csgo/cfg/server.cfg the path would be cfg/server.cfg, if the path ends with / a directory will be created and the file parameter will be ignored.
+- There is a upload limit of 100MB on dathost.net, our api using upload.dathost.net to upload files up to 500MB.
+- Pathways should always end in a '/'.
+- Sync function should be called before downloading files.
+- Our API wrapper will return false if it fails, so check for that.
+- Check Dathost's documentation for data returns, if it doesn't return any data our wrapper will just return True.
+
+## ToDo
+- Create | /api/0.1/game-servers
+- Get | /api/0.1/custom-domains
+
 ## Example
 ```python
 from aiodathost.aiodathost import dathost
@@ -10,46 +22,64 @@ from aiodathost.aiodathost import dathost
 dathost = dathost(username="contact@districtnine.host", password="********")
 
 async def example():
-    # Starting server.
-    await dathost.start("server-id")
+    # Starts given server id.
+    await dathost.start(server_id)
 
-    # Stopping server.
-    await dathost.stop("server-id")
+    # Stops given server.
+    await dathost.stop(server_id)
 
-    # Sends a line to the server console.
-    await dathost.send_console("server-id", "say hello world")
+    # Sends a line to the console.
+    await dathost.send_console(server_id, console_line)
 
-    # Deletes server.
-    await dathost.delete("server-id")
+    # Deletes given server.
+    await dathost.delete(server_id)
 
-    # Deletes file from server.
-    # The path is counted from the root node as seen in the file manager in the control panel, i.e. to delete csgo/cfg/server.cfg the path 
-    # would be cfg/server.cfg.
-    await dathost.delete_file("server-id", "path-to-file")
+    # Deletes file from given server.
+    # Pathway should always end in a /.
+    await dathost.delete_file(server_id, pathway, file_name)
 
-    # Syncs files from cache.
-    await dathost.sync("server-id")
+    # Syncs files between given server.
+    await dathost.sync(server_id)
 
-    # FTP password regenerate.
-    await dathost.ftp_regenerate("server-id")
+    # Uploads file to game server.
+    await dathost.upload(server_id, pathway, local_pathway, file_name)
 
-    # Server details.
-    await dathost.game_details("server-id")
+    # Unzips file on game server.
+    await dathost.unzip(server_id, pathway, file_name)
 
-    # Download file.
-    # The path is counted from the root node as seen in the file manager in the control panel, i.e. to delete csgo/cfg/server.cfg the path 
-    # would be cfg/server.cfg.
-    await dathost.download("server-id", "path-to-file")
+    # Generate a new random ftp password.
+    await dathost.ftp_regenerate(server_id)
 
-    # Returns account info.
-    await dathost.account()
+    # Returns details on a game server.
+    details = await dathost.game_details(server_id)
+    print(details)
 
-    # Returns details on every game server.
-    await dathost.details()
+    # Returns files on a game server.
+    # Pathway should always end in a /.
+    files = await dathost.files(server_id, path = "", hide_default_files = False, with_filesizes = False)
+    print(files)
+
+    # Downloads a file from the game server.
+    # Use aiofiles to save it.
+    downloaded_file = await dathost.download(server_id, pathway, file_name)
+
+    # Gets x amount of lines from the console from the game server.
+    console = await dathost.get_console(server_id, max_lines = 1)
+    print(console)
+
+    # Returns account infomation.
+    account_details = await dathost.account()
+    print(account_details)
+
+    # Returns full list of details about all the game servers.
+    all_servers_details = await dathost.details()
+    print(all_servers_details)
 
     # Returns metricis saved by dathost about a game server.
-    await dathost.metrics("server-id")
+    metrics = await dathost.metrics(server_id)
+    print(metrics)
 
     # Clones a game server and returns infomation on it.
-    await dathost.clone("server-id")
+    cloning = await dathost.clone(server_id)
+    print(cloning)
 ```

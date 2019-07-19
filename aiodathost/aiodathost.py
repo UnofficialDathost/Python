@@ -78,6 +78,32 @@ class dathost:
 
         return data
 
+    async def upload(self, server_id, pathway, local_pathway, file_name):
+        """ Uploads file to game server. """
+
+        files = {'file': open(local_pathway, 'rb')}
+
+        session_object = aiohttp.ClientSession(auth=self.auth)
+        async with session_object as session:
+            async with session.post('https://upload.dathost.net/api/0.1/game-servers/{}/files/{}{}'.format(server_id, pathway, file_name), data=files) as r:
+                data = r.status == 200
+
+        session_object.close
+
+        return data
+
+    async def unzip(self, server_id, pathway, file_name):
+        """ Unzips file on game server. """
+
+        session_object = aiohttp.ClientSession(auth=self.auth)
+        async with session_object as session:
+            async with session.post('https://dathost.net/api/0.1/game-servers/{}/unzip/{}{}'.format(server_id, pathway, file_name)) as r:
+                data = r.status == 200
+
+        session_object.close
+
+        return data
+
     async def ftp_regenerate(self, server_id):
         """ Generate a new random ftp password. """
 
@@ -105,12 +131,46 @@ class dathost:
 
         return data
 
+    async def files(self, server_id, path = "", hide_default_files = False, with_filesizes = False):
+        """ Returns files on a game server. """
+
+        params = {'hide_default_files': hide_default_files, 'path': path, 'with_filesizes': with_filesizes}
+
+        session_object = aiohttp.ClientSession(auth=self.auth)
+        async with session_object as session:
+            async with session.get('https://dathost.net/api/0.1/game-servers/{}/files'.format(server_id), params=params) as r:
+                if r.status == 200:
+                    data = await r.json()
+                else:
+                    data = False
+
+        session_object.close
+
+        return data
+
     async def download(self, server_id, pathway, file_name):
         """ Downloads a file from the game server. """
 
         session_object = aiohttp.ClientSession(auth=self.auth)
         async with session_object as session:
             async with session.get('https://dathost.net/api/0.1/game-servers/{}/files/{}{}'.format(server_id, pathway, file_name)) as r:
+                if r.status == 200:
+                    data = await r.read()
+                else:
+                    data = False
+
+        session_object.close
+
+        return data
+
+    async def get_console(self, server_id, max_lines = 1):
+        """ Gets x amount of lines from the console from the game server. """
+
+        params = {'max_lines': max_lines}
+
+        session_object = aiohttp.ClientSession(auth=self.auth)
+        async with session_object as session:
+            async with session.get('https://dathost.net/api/0.1/game-servers/{}/console'.format(server_id), params=params) as r:
                 if r.status == 200:
                     data = await r.read()
                 else:
