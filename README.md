@@ -5,7 +5,7 @@ Install git and run `pip install git+https://github.com/WardPearce/aiodathost.gi
 
 ## Example
 ```python
-import dathost from aiodathost
+from aiodathost import dathost
 
 dathost = dathost(username="contact@districtnine.host", password="********")
 
