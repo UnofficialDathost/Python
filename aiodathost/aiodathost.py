@@ -16,6 +16,21 @@ class dathost:
 
         return data
 
+    async def create(self, server_details):
+        """ 
+        Spawns new dathost server. 
+        https://dathost.net/api#!/default/post_game_servers
+        """
+
+        session_object = aiohttp.ClientSession(auth=self.auth)
+        async with session_object as session:
+            async with session.post('https://dathost.net/api/0.1/game-servers', params=server_details) as r:
+                data = r.status == 200
+
+        session_object.close
+
+        return data
+
     async def stop(self, server_id):
         """ Stops given server. """
 
@@ -122,6 +137,21 @@ class dathost:
         session_object = aiohttp.ClientSession(auth=self.auth)
         async with session_object as session:
             async with session.get('https://dathost.net/api/0.1/game-servers/{}'.format(server_id)) as r:
+                if r.status == 200:
+                    data = await r.json()
+                else:
+                    data = False
+
+        session_object.close
+
+        return data
+
+    async def domains(self):
+        """ Returns list of domains on dathost. """
+
+        session_object = aiohttp.ClientSession(auth=self.auth)
+        async with session_object as session:
+            async with session.get('https://dathost.net/api/0.1/custom-domains') as r:
                 if r.status == 200:
                     data = await r.json()
                 else:

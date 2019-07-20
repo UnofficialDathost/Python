@@ -11,10 +11,6 @@ Install git and run `pip install git+https://github.com/DistrictNineHost/aiodath
 - Our API wrapper will return false if it fails, so check for that.
 - Check Dathost's documentation for data returns, if it doesn't return any data our wrapper will just return True.
 
-## ToDo
-- Create | /api/0.1/game-servers
-- Get | /api/0.1/custom-domains
-
 ## Example
 ```python
 from aiodathost.aiodathost import dathost
@@ -24,6 +20,15 @@ dathost = dathost(username="contact@districtnine.host", password="********")
 async def example():
     # Starts given server id.
     await dathost.start(server_id)
+
+    # Spawns new dathost server.
+    # https://dathost.net/api#!/default/post_game_servers
+    # e.g. server_details={"csgo_settings.password": "**********", etc}
+    await dathost.create(server_details)
+
+    #  Returns list of domains on dathost.
+    domains = await dathost.domains()
+    print(domains)
 
     # Stops given server.
     await dathost.stop(server_id)
