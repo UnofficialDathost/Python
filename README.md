@@ -23,7 +23,7 @@ async def example():
 
     # Spawns new dathost server.
     # https://dathost.net/api#!/default/post_game_servers
-    # e.g. server_details={"csgo_settings.password": "**********", etc}
+    # e.g. server_details={"game": "csgo", etc}
     await dathost.create(server_details)
 
     #  Returns list of domains on dathost.
