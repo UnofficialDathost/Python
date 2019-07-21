@@ -10,6 +10,7 @@ Install git and run `pip install git+https://github.com/DistrictNineHost/aiodath
 - Sync function should be called before downloading files.
 - Our API wrapper will return false if it fails, so check for that.
 - Check Dathost's documentation for data returns, if it doesn't return any data our wrapper will just return True.
+- Use await dathost.session.close() to close the session, example [here](/aiodathost/aiodathost.py#L199)
 
 ## Example
 ```python
@@ -87,4 +88,8 @@ async def example():
     # Clones a game server and returns infomation on it.
     cloning = await dathost.clone(server_id)
     print(cloning)
+
+    # Make sure to close the session.
+    # This should only be done once.
+    await dathost.session.close()
 ```

@@ -196,12 +196,15 @@ class dathost:
 
         return data
 
+# Testing
 if __name__ == "__main__":
-    dathost = dathost(username="wpearce6@gmail.com", password="sdABt8zhP8Ah3cv")
+    dathost = dathost(username="*****", password="****")
 
     async def testing():
         print(await dathost.details())
         print(await dathost.details())
+
+        await dathost.session.close()
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(testing())
