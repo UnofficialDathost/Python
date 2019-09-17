@@ -3,8 +3,8 @@ import asyncio
 
 class dathost:
     def __init__(self, username, password, route = 'https://dathost.net/api/0.1'):
-        self.auth = aiohttp.BasicAuth(login=username, password=password)
-        self.session = aiohttp.ClientSession(auth=self.auth)
+        auth = aiohttp.BasicAuth(login=username, password=password)
+        self.session = aiohttp.ClientSession(auth=auth)
         self.route = route
 
     async def start(self, server_id):
