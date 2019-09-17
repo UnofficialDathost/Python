@@ -16,11 +16,14 @@ Install git and run `pip install git+https://github.com/DistrictNineHost/aiodath
 ```python
 from aiodathost.aiodathost import dathost
 
-dathost = dathost(username="contact@districtnine.host", password="********")
+dathost = dathost(username="contact@districtnine.host", password="********", route="https://dathost.net/api/0.1")
 
 async def example():
     # Starts given server id.
     await dathost.start(server_id)
+
+    # Resets given server id.
+    await dathost.reset(server_id)
 
     # Spawns new dathost server.
     # https://dathost.net/api#!/default/post_game_servers
@@ -48,7 +51,7 @@ async def example():
     await dathost.sync(server_id)
 
     # Uploads file to game server.
-    await dathost.upload(server_id, pathway, local_pathway, file_name)
+    await dathost.upload(server_id, pathway, local_pathway, file_name, upload_route="https://upload.dathost.net/api/0.1")
 
     # Unzips file on game server.
     await dathost.unzip(server_id, pathway, file_name)

@@ -2,14 +2,23 @@ import aiohttp
 import asyncio
 
 class dathost:
-    def __init__(self, username, password):
+    def __init__(self, username, password, route = 'https://dathost.net/api/0.1'):
         self.auth = aiohttp.BasicAuth(login=username, password=password)
         self.session = aiohttp.ClientSession(auth=self.auth)
+        self.route = route
 
     async def start(self, server_id):
         """ Starts given server id. """
 
-        async with self.session.post('https://dathost.net/api/0.1/game-servers/{}/start'.format(server_id)) as r:
+        async with self.session.post('{}/game-servers/{}/start'.format(self.route, server_id)) as r:
+            data = r.status == 200
+
+        return data
+
+    async def reset(self, server_id):
+        """ Resets given server id. """
+
+        async with self.session.post('{}/game-servers/{}/reset'.format(self.route, server_id)) as r:
             data = r.status == 200
 
         return data
@@ -20,7 +29,7 @@ class dathost:
         https://dathost.net/api#!/default/post_game_servers
         """
 
-        async with self.session.post('https://dathost.net/api/0.1/game-servers', params=server_details) as r:
+        async with self.session.post('{}/game-servers'.format(self.route), params=server_details) as r:
             data = r.status == 200
 
         return data
@@ -28,7 +37,7 @@ class dathost:
     async def stop(self, server_id):
         """ Stops given server. """
 
-        async with self.session.post('https://dathost.net/api/0.1/game-servers/{}/stop'.format(server_id)) as r:
+        async with self.session.post('{}/game-servers/{}/stop'.format(self.route, server_id)) as r:
             data = r.status == 200
 
         return data
@@ -38,7 +47,7 @@ class dathost:
 
         params = {'line': console_line}
 
-        async with self.session.post('https://dathost.net/api/0.1/game-servers/{}/console'.format(server_id), params=params) as r:
+        async with self.session.post('{}/game-servers/{}/console'.format(self.route, server_id), params=params) as r:
             data = r.status == 200
 
         return data
@@ -46,7 +55,7 @@ class dathost:
     async def delete(self, server_id):
         """ Deletes given server. """
 
-        async with self.session.delete('https://dathost.net/api/0.1/game-servers/{}'.format(server_id)) as r:
+        async with self.session.delete('{}/game-servers/{}'.format(self.route, server_id)) as r:
             data = r.status == 200
 
         return  data
@@ -54,7 +63,7 @@ class dathost:
     async def delete_file(self, server_id, pathway, file_name):
         """ Deletes file from given server. """
 
-        async with self.session.delete('https://dathost.net/api/0.1/game-servers/{}/files/{}{}'.format(server_id, pathway, file_name)) as r:
+        async with self.session.delete('{}/game-servers/{}/files/{}{}'.format(self.route, server_id, pathway, file_name)) as r:
             data = r.status == 200
 
         return data
@@ -62,17 +71,19 @@ class dathost:
     async def sync(self, server_id):
         """ Syncs files between given server. """
 
-        async with self.session.post('https://dathost.net/api/0.1/game-servers/{}/sync-files'.format(server_id)) as r:
+        async with self.session.post('{}/game-servers/{}/sync-files'.format(self.route, server_id)) as r:
             data = r.status == 200
 
         return data
 
-    async def upload(self, server_id, pathway, local_pathway, file_name):
+    async def upload(self, server_id, pathway, local_pathway, file_name, upload_route = 'https://upload.dathost.net/api/0.1'):
         """ Uploads file to game server. """
 
         files = {'file': open(local_pathway, 'rb')}
 
-        async with self.session.post('https://upload.dathost.net/api/0.1/game-servers/{}/files/{}{}'.format(server_id, pathway, file_name), data=files) as r:
+        # Defaults upload.dathost.host for 500mb max uploads instead of 100mb.
+        # Uses upload_route instead of self.route.
+        async with self.session.post('{}/game-servers/{}/files/{}{}'.format(upload_route, server_id, pathway, file_name), data=files) as r:
             data = r.status == 200
 
         return data
@@ -80,7 +91,7 @@ class dathost:
     async def unzip(self, server_id, pathway, file_name):
         """ Unzips file on game server. """
 
-        async with self.session.post('https://dathost.net/api/0.1/game-servers/{}/unzip/{}{}'.format(server_id, pathway, file_name)) as r:
+        async with self.session.post('{}/game-servers/{}/unzip/{}{}'.format(self.route, server_id, pathway, file_name)) as r:
             data = r.status == 200
 
         return data
@@ -88,7 +99,7 @@ class dathost:
     async def ftp_regenerate(self, server_id):
         """ Generate a new random ftp password. """
 
-        async with self.session.post('https://dathost.net/api/0.1/game-servers/{}/regenerate-ftp-password'.format(server_id)) as r:
+        async with self.session.post('{}/game-servers/{}/regenerate-ftp-password'.format(self.route, server_id)) as r:
             data = r.status == 200
 
         return data
@@ -96,7 +107,7 @@ class dathost:
     async def game_details(self, server_id):
         """ Returns details on a game server. """
 
-        async with self.session.get('https://dathost.net/api/0.1/game-servers/{}'.format(server_id)) as r:
+        async with self.session.get('{}/game-servers/{}'.format(self.route, server_id)) as r:
             if r.status == 200:
                 data = await r.json()
             else:
@@ -107,7 +118,7 @@ class dathost:
     async def domains(self):
         """ Returns list of domains on dathost. """
 
-        async with self.session.get('https://dathost.net/api/0.1/custom-domains') as r:
+        async with self.session.get('{}/custom-domains'.format(self.route)) as r:
             if r.status == 200:
                 data = await r.json()
             else:
@@ -120,7 +131,7 @@ class dathost:
 
         params = {'hide_default_files': hide_default_files, 'path': path, 'with_filesizes': with_filesizes}
 
-        async with self.session.get('https://dathost.net/api/0.1/game-servers/{}/files'.format(server_id), params=params) as r:
+        async with self.session.get('{}/game-servers/{}/files'.format(self.route, server_id), params=params) as r:
             if r.status == 200:
                 data = await r.json()
             else:
@@ -131,7 +142,7 @@ class dathost:
     async def download(self, server_id, pathway, file_name):
         """ Downloads a file from the game server. """
 
-        async with self.session.get('https://dathost.net/api/0.1/game-servers/{}/files/{}{}'.format(server_id, pathway, file_name)) as r:
+        async with self.session.get('{}/game-servers/{}/files/{}{}'.format(self.route, server_id, pathway, file_name)) as r:
             if r.status == 200:
                 data = await r.read()
             else:
@@ -144,7 +155,7 @@ class dathost:
 
         params = {'max_lines': max_lines}
 
-        async with self.session.get('https://dathost.net/api/0.1/game-servers/{}/console'.format(server_id), params=params) as r:
+        async with self.session.get('{}/game-servers/{}/console'.format(self.route, server_id), params=params) as r:
             if r.status == 200:
                 data = await r.read()
             else:
@@ -155,7 +166,7 @@ class dathost:
     async def account(self):
         """ Returns account infomation. """
 
-        async with self.session.get('https://dathost.net/api/0.1/account') as r:
+        async with self.session.get('{}/account'.format(self.route)) as r:
             if r.status == 200:
                 data = await r.json()
             else:
@@ -166,7 +177,7 @@ class dathost:
     async def details(self):
         """ Returns full list of details about all the game servers. """
 
-        async with self.session.get('https://dathost.net/api/0.1/game-servers') as r:
+        async with self.session.get('{}/game-servers'.format(self.route)) as r:
             if r.status == 200:
                 data = await r.json()
             else:
@@ -177,7 +188,7 @@ class dathost:
     async def metrics(self, server_id):
         """ Returns metricis saved by dathost about a game server. """
 
-        async with self.session.get('https://dathost.net/api/0.1/game-servers/{}/metrics'.format(server_id)) as r:
+        async with self.session.get('{}/game-servers/{}/metrics'.format(self.route, server_id)) as r:
             if r.status == 200:
                 data = await r.json()
             else:
@@ -188,7 +199,7 @@ class dathost:
     async def clone(self, server_id):
         """ Clones a game server and returns infomation on it. """
 
-        async with self.session.post('https://dathost.net/api/0.1/game-servers/{}/duplicate'.format(server_id)) as r:
+        async with self.session.post('{}/game-servers/{}/duplicate'.format(self.route, server_id)) as r:
             if r.status == 200:
                 data = await r.json()
             else:
