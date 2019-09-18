@@ -20,62 +20,11 @@ from aiodathost.aiodathost import dathost
 dathost = dathost(username = "contact@districtnine.host", password = "********", route = "https://dathost.net/api/0.1")
 
 async def example():
-    # Starts given server id.
-    await dathost.start(server_id)
+    # Account Interactions
 
-    # Resets given server id.
-    await dathost.reset(server_id)
-
-    # Spawns new dathost server.
-    # https://dathost.net/api#!/default/post_game_servers
-    # e.g. server_details={"game": "csgo", etc}
-    await dathost.create(server_details)
-
-    #  Returns list of domains on dathost.
+    # Returns list of domains on dathost.
     domains = await dathost.domains()
     print(domains)
-
-    # Stops given server.
-    await dathost.stop(server_id)
-
-    # Sends a line to the console.
-    await dathost.send_console(server_id, console_line)
-
-    # Deletes given server.
-    await dathost.delete(server_id)
-
-    # Deletes file from given server.
-    # Pathway should always end in a /.
-    await dathost.delete_file(server_id, pathway, file_name)
-
-    # Syncs files between given server.
-    await dathost.sync(server_id)
-
-    # Uploads file to game server.
-    await dathost.upload(server_id, pathway, local_pathway, file_name, upload_route = "https://upload.dathost.net/api/0.1")
-
-    # Unzips file on game server.
-    await dathost.unzip(server_id, pathway, file_name)
-
-    # Generate a new random ftp password.
-    await dathost.ftp_regenerate(server_id)
-
-    # Returns details on a game server.
-    details = await dathost.game_details(server_id)
-    print(details)
-
-    # Returns files on a game server.
-    # Pathway should always end in a /.
-    files = await dathost.files(server_id, pathway = "", hide_default_files = False, with_filesizes = False)
-    print(files)
-
-    # Downloads a file from the game server.
-    # Use aiofiles to save it.
-    downloaded_file = await dathost.download(server_id, pathway, file_name)
-
-    # Gets x amount of lines from the console from the game server.
-    console = await dathost.get_console(server_id, max_lines = 1)
-    print(console)
 
     # Returns account infomation.
     account_details = await dathost.account()
@@ -85,13 +34,72 @@ async def example():
     all_servers_details = await dathost.details()
     print(all_servers_details)
 
+    # Game Server Interactions
+
+    # Starts given server id.
+    await dathost.server.start(server_id)
+
+    # Resets given server id.
+    await dathost.server.reset(server_id)
+
+    # Spawns new dathost server.
+    # https://dathost.net/api#!/default/post_game_servers
+    # e.g. server_details={"game": "csgo", etc}
+    await dathost.server.create(server_details)
+
+    # Stops given server.
+    await dathost.server.stop(server_id)
+
     # Returns metricis saved by dathost about a game server.
-    metrics = await dathost.metrics(server_id)
+    metrics = await dathost.server.metrics(server_id)
     print(metrics)
 
     # Clones a game server and returns infomation on it.
-    cloning = await dathost.clone(server_id)
+    cloning = await dathost.server.clone(server_id)
     print(cloning)
+
+    # Deletes given server.
+    await dathost.server.delete(server_id)
+
+    # Generate a new random ftp password.
+    await dathost.server.ftp_regenerate(server_id)
+
+    # Returns details on a game server.
+    details = await dathost.server.details(server_id)
+    print(details)
+
+    # Console Interactions
+
+    # Sends a line to the console.
+    await dathost.console.send(server_id, console_line)
+
+    # Gets x amount of lines from the console from the game server.
+    console = await dathost.console.pull(server_id, max_lines = 1)
+    print(console)
+
+    # File Interactions
+
+    # Deletes file from given server.
+    # Pathway should always end in a /.
+    await dathost.files.delete(server_id, pathway, file_name)
+
+    # Syncs files between given server.
+    await dathost.files.sync(server_id)
+
+    # Uploads file to game server.
+    await dathost.files.upload(server_id, pathway, local_pathway, file_name, upload_route = "https://upload.dathost.net/api/0.1")
+
+    # Unzips file on game server.
+    await dathost.files.unzip(server_id, pathway, file_name)
+
+    # Returns files on a game server.
+    # Pathway should always end in a /.
+    files = await dathost.files.list(server_id, pathway = "", hide_default_files = False, with_filesizes = False)
+    print(files)
+
+    # Downloads a file from the game server.
+    # Use aiofiles to save it.
+    downloaded_file = await dathost.files.download(server_id, pathway, file_name)
 
     # Make sure to close the session.
     # This should only be done once.
