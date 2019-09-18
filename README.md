@@ -11,12 +11,13 @@ Install git and run `pip install git+https://github.com/DistrictNineHost/aiodath
 - Our API wrapper will return false if it fails, so check for that.
 - Check Dathost's documentation for data returns, if it doesn't return any data our wrapper will just return True.
 - Use await dathost.session.close() to close the session, example [here](/aiodathost/aiodathost.py#L199)
+- Make sure to read the docstrings for help.
 
 ## Example
 ```python
 from aiodathost.aiodathost import dathost
 
-dathost = dathost(username="contact@districtnine.host", password="********", route="https://dathost.net/api/0.1")
+dathost = dathost(username = "contact@districtnine.host", password = "********", route = "https://dathost.net/api/0.1")
 
 async def example():
     # Starts given server id.
@@ -51,7 +52,7 @@ async def example():
     await dathost.sync(server_id)
 
     # Uploads file to game server.
-    await dathost.upload(server_id, pathway, local_pathway, file_name, upload_route="https://upload.dathost.net/api/0.1")
+    await dathost.upload(server_id, pathway, local_pathway, file_name, upload_route = "https://upload.dathost.net/api/0.1")
 
     # Unzips file on game server.
     await dathost.unzip(server_id, pathway, file_name)
@@ -65,7 +66,7 @@ async def example():
 
     # Returns files on a game server.
     # Pathway should always end in a /.
-    files = await dathost.files(server_id, path = "", hide_default_files = False, with_filesizes = False)
+    files = await dathost.files(server_id, pathway = "", hide_default_files = False, with_filesizes = False)
     print(files)
 
     # Downloads a file from the game server.
