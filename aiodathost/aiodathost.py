@@ -168,7 +168,8 @@ class dathost:
         return data
 
     async def domains(self):
-        """ Attempts to pull Dathost's domains.
+        """ 
+        Attempts to pull Dathost's domains.
         """
         async with self.session.get('{}/custom-domains'.format(self.route)) as r:
             if r.status == 200:
