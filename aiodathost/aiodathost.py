@@ -192,7 +192,7 @@ class dathost:
                 - with_filesizes,     REQUIRED - NO  | Will return filesizes if true.
         """
 
-        params = {'hide_default_files': hide_default_files, 'path': pathway, 'with_filesizes': with_filesizes}
+        params = {'hide_default_files': str(hide_default_files).lower(), 'path': pathway, 'with_filesizes': str(with_filesizes).lower()}
 
         data = await self._get(url='{}/game-servers/{}/files'.format(self.route, server_id), params=params)
 
@@ -257,10 +257,10 @@ class dathost:
 
 # Testing
 if __name__ == "__main__":
-    dathost = dathost(username="wpearce6@gmail.com", password="V.k5T)H#DX+z#k=~")
+    dathost = dathost(username="*******", password="********")
 
     async def testing():
-        print(await dathost.get_console(server_id="5ce7d16bff716a453a943807"))
+        print(await dathost.files(server_id="5ce7d16bff716a453a943807", with_filesizes=True))
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(testing())
