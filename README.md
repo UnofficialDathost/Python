@@ -10,7 +10,6 @@ Install git and run `pip install git+https://github.com/DistrictNineHost/aiodath
 - Sync function should be called before downloading files.
 - Our API wrapper will return false if it fails, so check for that.
 - Check Dathost's documentation for data returns, if it doesn't return any data our wrapper will just return True.
-- Use await dathost.session.close() to close the session, example [here](/aiodathost/aiodathost.py#L199)
 - Make sure to read the docstrings for help.
 
 ## Example
