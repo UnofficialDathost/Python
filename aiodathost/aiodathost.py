@@ -24,17 +24,39 @@ class dathost:
                 - password, REQUIRED - YES | Dathost account password.
                 - route,    REQUIRED - NO  | API Route used for all the functions aside from upload.
         """
-        auth = aiohttp.BasicAuth(login=username, password=password)
-        self.session = aiohttp.ClientSession(auth=auth)
+        self.auth = aiohttp.BasicAuth(login=username, password=password)
         self.route = route
+
+    async def _get(self, url, params = {}):
+        async with aiohttp.ClientSession(auth=self.auth) as session:
+            async with session.get(url, params=params) as r:
+                if r.status == 200:
+                    return_data = await r.json()
+                else:
+                    return_data = False
+
+        return return_data
+
+    async def _post(self, url, data = None, params = {}):
+        async with aiohttp.ClientSession(auth=self.auth) as session:
+            async with session.post(url, data=data, params=params) as r:
+                return_data = r.status == 200
+
+        return return_data
+
+    async def _delete(self, url,  params = {}):
+        async with aiohttp.ClientSession(auth=self.auth) as session:
+            async with session.delete(url, params=params) as r:
+                return_data = r.status == 200
+
+        return return_data
 
     async def start(self, server_id):
         """ Attempts to start the given server_id.
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.post('{}/game-servers/{}/start'.format(self.route, server_id)) as r:
-            data = r.status == 200
+        data = await self._post(url='{}/game-servers/{}/start'.format(self.route, server_id))
 
         return data
 
@@ -43,8 +65,7 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.post('{}/game-servers/{}/reset'.format(self.route, server_id)) as r:
-            data = r.status == 200
+        data = await self._post(url='{}/game-servers/{}/reset'.format(self.route, server_id))
 
         return data
 
@@ -54,8 +75,7 @@ class dathost:
                                 https://dathost.net/api#!/default/post_game_servers
         """
 
-        async with self.session.post('{}/game-servers'.format(self.route), params=server_details) as r:
-            data = r.status == 200
+        data = await self._post(url='{}/game-servers'.format(self.route), params=server_details)
 
         return data
 
@@ -64,8 +84,7 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.post('{}/game-servers/{}/stop'.format(self.route, server_id)) as r:
-            data = r.status == 200
+        data = await self._post(url='{}/game-servers/{}/stop'.format(self.route, server_id))
 
         return data
 
@@ -77,8 +96,7 @@ class dathost:
 
         params = {'line': console_line}
 
-        async with self.session.post('{}/game-servers/{}/console'.format(self.route, server_id), params=params) as r:
-            data = r.status == 200
+        data = await self._post(url='{}/game-servers/{}/console'.format(self.route, server_id), params=params)
 
         return data
 
@@ -87,8 +105,7 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.delete('{}/game-servers/{}'.format(self.route, server_id)) as r:
-            data = r.status == 200
+        data = self._delete('{}/game-servers/{}'.format(self.route, server_id))
 
         return  data
 
@@ -99,8 +116,7 @@ class dathost:
                 - file_name, REQUIRED - YES | Name of file to delete.
         """
 
-        async with self.session.delete('{}/game-servers/{}/files/{}{}'.format(self.route, server_id, pathway, file_name)) as r:
-            data = r.status == 200
+        data = await self._delete(url='{}/game-servers/{}/files/{}{}'.format(self.route, server_id, pathway, file_name))
 
         return data
 
@@ -109,8 +125,7 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.post('{}/game-servers/{}/sync-files'.format(self.route, server_id)) as r:
-            data = r.status == 200
+        data = await self._delete(url='{}/game-servers/{}/sync-files'.format(self.route, server_id))
 
         return data
 
@@ -127,8 +142,7 @@ class dathost:
 
         # Defaults upload.dathost.host for 500mb max uploads instead of 100mb.
         # Uses upload_route instead of self.route.
-        async with self.session.post('{}/game-servers/{}/files/{}{}'.format(upload_route, server_id, pathway, file_name), data=files) as r:
-            data = r.status == 200
+        data = await self._post(url='{}/game-servers/{}/files/{}{}'.format(upload_route, server_id, pathway, file_name), data=files)
 
         return data
 
@@ -139,8 +153,7 @@ class dathost:
                 - file_name, REQUIRED - YES | Name of file to unzip.
         """
 
-        async with self.session.post('{}/game-servers/{}/unzip/{}{}'.format(self.route, server_id, pathway, file_name)) as r:
-            data = r.status == 200
+        data = await self._post(url='{}/game-servers/{}/unzip/{}{}'.format(self.route, server_id, pathway, file_name))
 
         return data
 
@@ -149,8 +162,7 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.post('{}/game-servers/{}/regenerate-ftp-password'.format(self.route, server_id)) as r:
-            data = r.status == 200
+        data = await self._post(url='{}/game-servers/{}/regenerate-ftp-password'.format(self.route, server_id))
 
         return data
 
@@ -159,11 +171,7 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.get('{}/game-servers/{}'.format(self.route, server_id)) as r:
-            if r.status == 200:
-                data = await r.json()
-            else:
-                data = False
+        data = await self._get(url='{}/game-servers/{}'.format(self.route, server_id))
 
         return data
 
@@ -171,11 +179,8 @@ class dathost:
         """ 
         Attempts to pull Dathost's domains.
         """
-        async with self.session.get('{}/custom-domains'.format(self.route)) as r:
-            if r.status == 200:
-                data = await r.json()
-            else:
-                data = False
+
+        data = await self._get(url='{}/custom-domains'.format(self.route))
 
         return data
 
@@ -187,13 +192,9 @@ class dathost:
                 - with_filesizes,     REQUIRED - NO  | Will return filesizes if true.
         """
 
-        params = {'hide_default_files': hide_default_files, 'path': path, 'with_filesizes': with_filesizes}
+        params = {'hide_default_files': hide_default_files, 'path': pathway, 'with_filesizes': with_filesizes}
 
-        async with self.session.get('{}/game-servers/{}/files'.format(self.route, server_id), params=params) as r:
-            if r.status == 200:
-                data = await r.json()
-            else:
-                data = False
+        data = await self._get(url='{}/game-servers/{}/files'.format(self.route, server_id), params=params)
 
         return data
 
@@ -202,11 +203,7 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.get('{}/game-servers/{}/files/{}{}'.format(self.route, server_id, pathway, file_name)) as r:
-            if r.status == 200:
-                data = await r.read()
-            else:
-                data = False
+        data = await self._get(url='{}/game-servers/{}/files/{}{}'.format(self.route, server_id, pathway, file_name))
 
         return data
 
@@ -218,11 +215,7 @@ class dathost:
 
         params = {'max_lines': max_lines}
 
-        async with self.session.get('{}/game-servers/{}/console'.format(self.route, server_id), params=params) as r:
-            if r.status == 200:
-                data = await r.read()
-            else:
-                data = False
+        data = await self._get(url='{}/game-servers/{}/console'.format(self.route, server_id), params=params)
 
         return data
 
@@ -231,11 +224,7 @@ class dathost:
         Returns account infomation.
         """
 
-        async with self.session.get('{}/account'.format(self.route)) as r:
-            if r.status == 200:
-                data = await r.json()
-            else:
-                data = False
+        data = await self._get(url='{}/account'.format(self.route))
 
         return data
 
@@ -244,11 +233,7 @@ class dathost:
         Returns full list of details about all the game servers currently not deleted in this account.
         """
 
-        async with self.session.get('{}/game-servers'.format(self.route)) as r:
-            if r.status == 200:
-                data = await r.json()
-            else:
-                data = False
+        data = await self._get(url='{}/game-servers'.format(self.route))
 
         return data
 
@@ -257,11 +242,7 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.get('{}/game-servers/{}/metrics'.format(self.route, server_id)) as r:
-            if r.status == 200:
-                data = await r.json()
-            else:
-                data = False
+        data = await self._get(url='{}/game-servers/{}/metrics'.format(self.route, server_id))
 
         return data
 
@@ -270,23 +251,16 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        async with self.session.post('{}/game-servers/{}/duplicate'.format(self.route, server_id)) as r:
-            if r.status == 200:
-                data = await r.json()
-            else:
-                data = False
+        data = await self._post(url='{}/game-servers/{}/duplicate'.format(self.route, server_id))
 
         return data
 
 # Testing
 if __name__ == "__main__":
-    dathost = dathost(username="*****", password="****")
+    dathost = dathost(username="wpearce6@gmail.com", password="V.k5T)H#DX+z#k=~")
 
     async def testing():
-        print(await dathost.details())
-        print(await dathost.details())
-
-        await dathost.session.close()
+        print(await dathost.get_console(server_id="5ce7d16bff716a453a943807"))
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(testing())
