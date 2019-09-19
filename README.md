@@ -91,8 +91,4 @@ async def example():
     # Clones a game server and returns infomation on it.
     cloning = await dathost.clone(server_id)
     print(cloning)
-
-    # Make sure to close the session.
-    # This should only be done once.
-    await dathost.session.close()
 ```
