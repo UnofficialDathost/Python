@@ -18,13 +18,7 @@ from aiodathost.aiodathost import dathost
 
 dathost = dathost(username = "contact@districtnine.host", password = "********", route = "https://dathost.net/api/0.1")
 
-async def example(loop):
-    # Should be called once instead a aio function.
-    dathost.aiohttp_init(session=aiohttp.ClientSession(loop=loop, auth=dathost.get_auth()))
-
-    # Should be called once app closed.
-    dathost.aiohttp_close
-
+async def example():
     # Starts given server id.
     await dathost.start(server_id)
 
