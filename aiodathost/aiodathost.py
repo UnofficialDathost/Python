@@ -27,8 +27,17 @@ class dathost:
         self.auth = aiohttp.BasicAuth(login=username, password=password)
         self.route = route
 
+    def get_auth(self):
+        return self.auth
+
+    def aiohttp_init(self, session):
+        self.aiohttp_session = session
+
+    def aiohttp_close(self):
+        self.aiohttp_session.close()
+
     async def _get(self, url, params = {}):
-        async with aiohttp.ClientSession(auth=self.auth) as session:
+        async with self.aiohttp_session as session:
             async with session.get(url, params=params) as r:
                 if r.status == 200:
                     return_data = await r.json()
@@ -38,14 +47,14 @@ class dathost:
         return return_data
 
     async def _post(self, url, data = None, params = {}):
-        async with aiohttp.ClientSession(auth=self.auth) as session:
+        async with self.aiohttp_session as session:
             async with session.post(url, data=data, params=params) as r:
                 return_data = r.status == 200
 
         return return_data
 
     async def _delete(self, url,  params = {}):
-        async with aiohttp.ClientSession(auth=self.auth) as session:
+        async with self.aiohttp_session as session:
             async with session.delete(url, params=params) as r:
                 return_data = r.status == 200
 
@@ -257,11 +266,16 @@ class dathost:
 
 # Testing
 if __name__ == "__main__":
-    dathost = dathost(username="*******", password="********")
-
-    async def testing():
-        print(await dathost.files(server_id="5ce7d16bff716a453a943807", with_filesizes=True))
+    dathost = dathost(username="***************", password="*********")
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(testing())
+
+    async def example():
+        dathost.aiohttp_init(session=aiohttp.ClientSession(loop=loop, auth=dathost.get_auth()))
+        
+        print(await dathost.files(server_id="5ce7d16bff716a453a943807", with_filesizes=True))
+
+        dathost.aiohttp_close
+    
+    loop.run_until_complete(example())
     loop.close()
