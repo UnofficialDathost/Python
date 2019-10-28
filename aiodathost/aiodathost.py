@@ -24,30 +24,37 @@ class dathost:
                 - password, REQUIRED - YES | Dathost account password.
                 - route,    REQUIRED - NO  | API Route used for all the functions aside from upload.
         """
-        self.auth = aiohttp.BasicAuth(login=username, password=password)
+
+        self.username = username
+        self.password = password
         self.route = route
 
+    def get_auth(self):
+        return aiohttp.BasicAuth(login=self.username, password=self.password)
+
+    def aiohttp_init(self, session):
+        self.aiohttp_session = session
+
+        return session
+
     async def _get(self, url, params = {}):
-        async with aiohttp.ClientSession(auth=self.auth) as session:
-            async with session.get(url, params=params) as r:
-                if r.status == 200:
-                    return_data = await r.json()
-                else:
-                    return_data = False
+        async with self.aiohttp_session.get(url, params=params) as r:
+            if r.status == 200:
+                return_data = await r.json()
+            else:
+                return_data = False
 
         return return_data
 
     async def _post(self, url, data = None, params = {}):
-        async with aiohttp.ClientSession(auth=self.auth) as session:
-            async with session.post(url, data=data, params=params) as r:
-                return_data = r.status == 200
+        async with self.aiohttp_session.post(url, data=data, params=params) as r:
+            return_data = r.status == 200
 
         return return_data
 
     async def _delete(self, url,  params = {}):
-        async with aiohttp.ClientSession(auth=self.auth) as session:
-            async with session.delete(url, params=params) as r:
-                return_data = r.status == 200
+        async with self.aiohttp_session.delete(url, params=params) as r:
+            return_data = r.status == 200
 
         return return_data
 
@@ -257,10 +264,16 @@ class dathost:
 
 # Testing
 if __name__ == "__main__":
-    dathost = dathost(username="*******", password="********")
+    dathost = dathost(username="************", password="***********")
 
     async def testing():
+        aiohttp_sess = dathost.aiohttp_init(session=aiohttp.ClientSession(loop=loop, auth=dathost.get_auth()))
+
         print(await dathost.files(server_id="5ce7d16bff716a453a943807", with_filesizes=True))
+        print(await dathost.details())
+        print(await dathost.account())
+
+        await aiohttp_sess.close()
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(testing())
