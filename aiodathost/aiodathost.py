@@ -3,13 +3,7 @@ import asyncio
 
 class dathost:
     """
-    Asynchronous wrapper for Dathost's API created by DistrictNine.Host.
-
-    GITHUB: https://github.com/DistrictNineHost/aiodathost
-
-    WEBSITE: https://districtnine.host/
-
-    EMAIL: contact@districtnine.host
+    Asynchronous wrapper for Dathost's API.
 
     DATHOST:
 
