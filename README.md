@@ -1,5 +1,5 @@
 ## Install
-Install git and run `pip install git+https://github.com/DistrictNineHost/aiodathost.git`
+Install git and run `pip install git+https://github.com/WardPearce/aiodathost.git`
 
 [Dathost's API documentation](https://dathost.net/api)
 
