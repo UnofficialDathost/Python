@@ -31,10 +31,13 @@ class dathost:
 
         return session
 
-    async def _get(self, url, params = {}):
+    async def _get(self, url, params = {}, read=False):
         async with self.aiohttp_session.get(url, params=params) as r:
             if r.status == 200:
-                return_data = await r.json()
+                if read == True:
+                    return_data = await r.read()
+                else:
+                    return_data = await r.json()
             else:
                 return_data = False
 
@@ -204,7 +207,7 @@ class dathost:
                 - server_id, REQUIRED - YES | Dathost's ID used to uniquely identify a game server. 
         """
 
-        data = await self._get(url='{}/game-servers/{}/files/{}{}'.format(self.route, server_id, pathway, file_name))
+        data = await self._get(url='{}/game-servers/{}/files/{}{}'.format(self.route, server_id, pathway, file_name), read=True)
 
         return data
 
