@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='aiodathost',
-    version='2.0.1',
+    version='3.0.0',
     description='Asynchronous dathost API wrapper.',
     author='WardPearce',
     author_email='contact@districtnine.host',

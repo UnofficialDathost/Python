@@ -4,7 +4,7 @@ Install git and run `pip install git+https://github.com/WardPearce/aiodathost.gi
 [Dathost's API documentation](https://dathost.net/api)
 
 ### Useful notes:
-- CLOSE AIOHTTP SESSIONS!
+- Make sure to clean up, run ``await dathost_object.session.close()``
 - The path is counted from the root node as seen in the file manager in the control panel, i.e. to write csgo/cfg/server.cfg the path would be cfg/server.cfg, if the path ends with / a directory will be created and the file parameter will be ignored.
 - There is a upload limit of 100MB on dathost.net, our wrapper uses upload.dathost.net to upload files up to 500MB.
 - Pathways should always end in a '/'.
@@ -21,8 +21,6 @@ from aiodathost.aiodathost import dathost
 dathost = dathost(username = "contact@districtnine.host", password = "********", route = "https://dathost.net/api/0.1")
 
 async def example():
-    aiohttp_sess = dathost.aiohttp_init(session=aiohttp.ClientSession(loop=loop, auth=dathost.get_auth()))
-
     # Starts given server id.
     await dathost.start(server_id)
 
@@ -96,7 +94,7 @@ async def example():
     cloning = await dathost.clone(server_id)
     print(cloning)
 
-    await aiohttp_sess.close()
+    await dathost.session.close()
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(example())
