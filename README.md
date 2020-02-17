@@ -18,7 +18,7 @@ Install git and run `pip install git+https://github.com/WardPearce/aiodathost.gi
 import aiohttp
 from aiodathost.aiodathost import dathost
 
-dathost = dathost(username = "contact@districtnine.host", password = "********", route = "https://dathost.net/api/0.1")
+dathost = dathost(username = "contact@districtnine.host", password = "********")
 
 async def example():
     # Starts given server id.
@@ -53,7 +53,7 @@ async def example():
     await dathost.sync(server_id)
 
     # Uploads file to game server.
-    await dathost.upload(server_id, pathway, local_pathway, file_name, upload_route = "https://upload.dathost.net/api/0.1")
+    await dathost.upload(server_id, pathway, local_pathway, file_name)
 
     # Unzips file on game server.
     await dathost.unzip(server_id, pathway, file_name)
