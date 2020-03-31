@@ -6,7 +6,7 @@ def get_requirements():
 
 setup(
     name='aiodathost',
-    version='3.0.0',
+    version='3.0.1',
     description='Asynchronous dathost API wrapper.',
     author='WardPearce',
     author_email='contact@districtnine.host',

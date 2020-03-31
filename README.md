@@ -15,12 +15,11 @@ Install git and run `pip3 install git+https://github.com/WardPearce/aiodathost.g
 
 ## Example
 ```python
-import aiohttp
 from aiodathost.aiodathost import dathost
 
-dathost = dathost(username = "contact@districtnine.host", password = "********")
-
 async def example():
+    dathost = dathost(username="contact@districtnine.host", password="********", session=None)
+
     # Starts given server id.
     await dathost.start(server_id)
 

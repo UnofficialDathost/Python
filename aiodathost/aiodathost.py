@@ -4,20 +4,23 @@ import asyncio
 class dathost:
     """ Asynchronous wrapper for Dathost's API. """
 
-    def __init__(self, username, password, route = 'https://dathost.net/api/0.1'):
+    route = "https://dathost.net/api/0.1"
+
+    def __init__(self, username, password, session=None):
         """ Creates connection session with Dathost.
                 - username, REQUIRED - YES | Dathost account username/email.
                 - password, REQUIRED - YES | Dathost account password.
-                - route,    REQUIRED - NO  | API Route used for all the functions aside from upload.
         """
 
-        self.loop = asyncio.get_event_loop()
-        self.session = aiohttp.ClientSession(loop=self.loop, auth=aiohttp.BasicAuth(login=username, password=password))
+        self.auth = aiohttp.BasicAuth(login=username, password=password)
 
-        self.route = route
+        if session:
+            self.session = session
+        else:
+            self.session = aiohttp.ClientSession(loop=asyncio.get_event_loop())
 
     async def _get(self, url, params = {}, read=False):
-        async with self.session.get(url, params=params) as r:
+        async with self.session.get(url, params=params, auth=self.auth) as r:
             if r.status == 200:
                 if read == True:
                     return await r.read()
@@ -27,13 +30,13 @@ class dathost:
                 return False
  
     async def _post(self, url, data = None, params = {}):
-        async with self.session.post(url, data=data, params=params) as r:
+        async with self.session.post(url, data=data, params=params, auth=self.auth) as r:
             return_data = r.status == 200
 
         return return_data
 
     async def _delete(self, url,  params = {}):
-        async with self.session.delete(url, params=params) as r:
+        async with self.session.delete(url, params=params, auth=self.auth) as r:
             return r.status == 200
 
     async def start(self, server_id):
