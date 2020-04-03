@@ -10,6 +10,11 @@ Install git and run `pip3 install git+https://github.com/WardPearce/aiodathost.g
 - [Example](#example)
 
 ### API
+#### aiodathost.client()
+``aiodathost.client(username, password, session=None)``
+
+- If you aren't passing a ``aiohttp.ClientSession`` object created within the event loop ``aiodathost.client`` should be ran within the context of the loop.
+
 #### aiodathost.client(...).server(server_id=None)
     - get(self)
     - start(self)
