@@ -1,7 +1,8 @@
 ##### Version 4 is NOT backwards compatibility with version 3.
 
 ## Install
-Install git and run `pip3 install git+https://github.com/WardPearce/aiodathost.git`
+- Pypi: `pip3 install aiodathost`
+- Git: `pip3 install git+https://github.com/WardPearce/aiodathost.git`
 
 [Dathost's API documentation](https://dathost.net/api)
 
