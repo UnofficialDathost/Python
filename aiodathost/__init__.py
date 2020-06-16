@@ -1,6 +1,13 @@
 import aiohttp
 
 from .resources import SESSIONS
+from .routes import ROUTES
+from .wrapped_requests import AWR
+
+from .models.server import ServerModel
+from .models.account import AccountModel
+
+from .server import Server
 
 
 __version__ = "5.0.0"
@@ -30,10 +37,33 @@ class client:
             SESSIONS.AIOHTTP = aiohttp.ClientSession()
 
     async def account(self):
-        pass
+        """
+        Gets details about account.
+        """
+
+        data = await AWR(
+            ROUTES.account
+        ).get()
+
+        return AccountModel(data)
 
     async def domains(self):
-        pass
+        """
+        Lists all domains.
+        """
+
+        return await AWR(
+            ROUTES.domains
+        ).get()
 
     async def servers(self):
-        pass
+        """
+        Lists all non-deleted servers.
+        """
+
+        data = await AWR(
+            ROUTES.server_list
+        ).get()
+
+        for server in data:
+            yield ServerModel(server), Server(server["id"])

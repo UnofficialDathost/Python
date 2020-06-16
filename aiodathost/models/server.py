@@ -35,6 +35,52 @@ class CsgoModel:
         self.password = csgo_settings["password"]
         self.maps_source = csgo_settings["maps_source"]
         self.mapgroup = csgo_settings["mapgroup"]
+        self.mapgroup_start_map = csgo_settings["mapgroup_start_map"]
+        self.workshop_id = csgo_settings["workshop_id"]
+        self.workshop_start_map_id = csgo_settings["workshop_start_map_id"]
+        self.workshop_authkey = csgo_settings["workshop_authkey"]
+        self.autoload_configs = csgo_settings["autoload_configs"]
+        self.sourcemod_admins = csgo_settings["sourcemod_admins"]
+        self.sourcemod_plugins = csgo_settings["sourcemod_plugins"]
+        self.enable_gotv = csgo_settings["enable_gotv"]
+        self.enable_sourcemod = csgo_settings["enable_sourcemod"]
+        self.enable_csay_plugin = csgo_settings["enable_csay_plugin"]
+        self.game_mode = csgo_settings["game_mode"]
+        self.tickrate = csgo_settings["tickrate"]
+        self.pure_server = csgo_settings["pure_server"]
+        self.insecure = csgo_settings["insecure"]
+        self.disable_bots = csgo_settings["disable_bots"]
+
+
+class MumbleModel:
+    def __init__(self, data):
+        mumble_settings = data["mumble_settings"]
+
+        self.slots = mumble_settings["slots"]
+        self.password = mumble_settings["password"]
+        self.superuser_password = mumble_settings["superuser_password"]
+        self.welcome_text = mumble_settings["welcome_text"]
+
+
+class TF2Model:
+    def __init__(self, data):
+        tf2_settings = data["teamfortress2_settings"]
+
+        self.slots = tf2_settings["slots"]
+        self.rcon = tf2_settings["rcon"]
+        self.password = tf2_settings["password"]
+        self.sourcemod_admins = tf2_settings["sourcemod_admins"]
+        self.enable_gotv = tf2_settings["enable_gotv"]
+        self.enable_sourcemod = tf2_settings["enable_sourcemod"]
+        self.insecure = tf2_settings["insecure"]
+
+
+class TeamSpeak3Model:
+    def __init__(self, data):
+        ts3_settings = data["teamspeak3_settings"]
+
+        self.slots = ts3_settings["slots"]
+        self.admin_token = ts3_settings["ts_admin_token"]
 
 
 class ServerModel:
@@ -69,3 +115,6 @@ class ServerModel:
         self.added_voice_server = data["added_voice_server"]
         self.duplicate_source_server = data["duplicate_source_server"]
         self.csgo = CsgoModel(data)
+        self.mumble = MumbleModel(data)
+        self.tf2 = TF2Model(data)
+        self.teamspeak3 = TeamSpeak3Model(data)
