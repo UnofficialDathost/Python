@@ -9,6 +9,21 @@ class File:
         self.server_id = server_id
         self.pathway = pathway
 
+    async def unzip(self, destination: str):
+        """
+        Unzips given file.
+
+        destination: str
+            Pathway to move the zip file content to.
+        """
+
+        return await AWR(
+            ROUTES.file_unzip.format(
+                self.server_id,
+                self.pathway
+            )
+        ).post()
+
     async def delete(self):
         """
         Deletes the given pathway.

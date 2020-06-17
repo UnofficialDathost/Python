@@ -2,6 +2,7 @@ from ..wrapped_requests import AWR
 from ..routes import ROUTES
 
 from ..models.server import ServerModel
+from ..models.metrics import MetricsModel
 
 from .backup import Backup
 from .console import Console
@@ -36,6 +37,81 @@ class Server:
         """
 
         return Backup(self.server_id, backup_name)
+
+    async def reset(self):
+        """
+        Resets given server to default files.
+        """
+
+        return await AWR(
+            ROUTES.server_restart.format(
+                self.server_id,
+            )
+        ).post()
+
+    async def metrics(self):
+        """
+        Gets metrics about server.
+        """
+
+        data = await AWR(
+            ROUTES.server_metrics.format(
+                self.server_id
+            )
+        ).get()
+
+        return MetricsModel(data)
+
+    async def ftp_reset(self):
+        """
+        Sets a new random FTP password for the server.
+        """
+
+        return await AWR(
+            ROUTES.ftp_password_reset.format(
+                self.server_id
+            )
+        ).post()
+
+    async def start(self, allow_host_reassignment: bool = True):
+        """
+        Attempts to start given server.
+
+        allow_host_reassignment: bool
+            If true, the server may be moved to another host/port
+            if the current host is unreachable.
+        """
+
+        return await AWR(
+            ROUTES.server_start.format(
+                self.server_id
+            ),
+            data={
+                "allow_host_reassignment": allow_host_reassignment,
+            }
+        ).post()
+
+    async def stop(self):
+        """
+        Attempts to stop given server.
+        """
+
+        return await AWR(
+            ROUTES.server_stop.format(
+                self.server_id
+            )
+        ).post()
+
+    async def sync(self):
+        """
+        Ensures all files are synced.
+        """
+
+        return await AWR(
+            ROUTES.file_sync.format(
+                self.server_id
+            )
+        ).post()
 
     async def files(self, pathway: str = None,
                     hide_default_files: bool = False,
