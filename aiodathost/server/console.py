@@ -39,9 +39,9 @@ class Console:
 
         return await AWR(
             ROUTES.console_send.format(
-                self.server_id,
-                params={
-                    "line": line,
-                }
-            )
+                self.server_id
+            ),
+            params={
+                "line": line,
+            }
         ).post()

@@ -1,6 +1,6 @@
 import aiohttp
 
-from .resources import SESSIONS
+from .resources import SESSIONS, CONFIG
 from .routes import ROUTES
 from .wrapped_requests import AWR
 
@@ -14,7 +14,8 @@ __version__ = "5.0.0"
 
 
 class client:
-    def __init__(self, email, password, session: aiohttp.ClientSession = None):
+    def __init__(self, email, password,
+                 session: aiohttp.ClientSession = None, chunk_size: int = 25):
         """ Dathost API Interface.
             Parameters
             ----------
@@ -24,7 +25,11 @@ class client:
                 Dathost password.
             session: aiohttp.ClientSession
                 Optionally pass a aiohttp ClientSession.
+            chunk_size: int
+                How many bytes to load into memory at once.
         """
+
+        CONFIG.chunk_size = chunk_size
 
         SESSIONS.AUTH = aiohttp.BasicAuth(
             email,

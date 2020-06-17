@@ -1,4 +1,4 @@
-from .resources import SESSIONS
+from .resources import SESSIONS, CONFIG
 from .exceptions import InvalidAuthorization, UndefinedError, \
     BadRequest, RequestTimeout, InternalError, NotFound
 
@@ -43,6 +43,26 @@ class AWR:
                     return await resp.json()
                 else:
                     return await resp.read()
+            else:
+                await self._raise_exception(resp)
+
+    async def get_stream(self):
+        """
+        Steam downloads content.
+        """
+
+        async with SESSIONS.AIOHTTP.get(
+            self.route,
+            auth=SESSIONS.AUTH,
+                **self.kwargs) as resp:
+            if resp.status == 200:
+                chunk = True
+
+                while chunk:
+                    chunk = await resp.content.read(CONFIG.chunk_size)
+
+                    if chunk:
+                        yield chunk
             else:
                 await self._raise_exception(resp)
 
