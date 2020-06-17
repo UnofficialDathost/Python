@@ -12,6 +12,20 @@ class BadRequest(Exception):
     pass
 
 
+class NotFound(Exception):
+    """
+    ID was not found.
+    """
+    pass
+
+
+class InvalidMaxLines(Exception):
+    """
+    Lines can only be between 1 & 1,000.
+    """
+    pass
+
+
 class RequestTimeout(Exception):
     """
     Dathost timed out our request.

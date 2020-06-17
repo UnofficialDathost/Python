@@ -1,6 +1,6 @@
 from .resources import SESSIONS
 from .exceptions import InvalidAuthorization, UndefinedError, \
-    BadRequest, RequestTimeout, InternalError
+    BadRequest, RequestTimeout, InternalError, NotFound
 
 
 class AWR:
@@ -20,6 +20,8 @@ class AWR:
 
         if resp.status == 401:
             raise InvalidAuthorization(error_message)
+        elif resp.status == 404:
+            raise NotFound(error_message)
         elif resp.status == 400:
             raise BadRequest(error_message)
         elif resp.status == 408:
@@ -44,7 +46,7 @@ class AWR:
             else:
                 await self._raise_exception(resp)
 
-    async def post(self):
+    async def post(self, json=False):
         """ Wrapped post request """
 
         async with SESSIONS.AIOHTTP.post(
@@ -52,7 +54,10 @@ class AWR:
             auth=SESSIONS.AUTH,
                 **self.kwargs) as resp:
             if resp.status == 200:
-                return await resp.json()
+                if not json:
+                    return True
+                else:
+                    return await resp.json()
             else:
                 await self._raise_exception(resp)
 
@@ -64,7 +69,7 @@ class AWR:
             auth=SESSIONS.AUTH,
                 **self.kwargs) as resp:
             if resp.status == 200:
-                return await resp.json()
+                return True
             else:
                 await self._raise_exception(resp)
 
@@ -76,6 +81,6 @@ class AWR:
             auth=SESSIONS.AUTH,
                 **self.kwargs) as resp:
             if resp.status == 200:
-                return await resp.json()
+                return True
             else:
                 await self._raise_exception(resp)

@@ -9,7 +9,9 @@ class Routes:
     server_get = "game-servers/{}"
     server_list = "game-servers"
     server_metrics = "game-servers/{}/metrics"
-    server_clone = "game-servers/{}/duplicate"
+    server_duplicate = "game-servers/{}/duplicate"
+    server_backup = "game-servers/{}/backups"
+    server_backup_restore = "game-servers/{}/backups/{}/restore"
 
     file_delete = "game-servers/{}/files/{}"
     file_sync = "game-servers/{}/sync-files"
