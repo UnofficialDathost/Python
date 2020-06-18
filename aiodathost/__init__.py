@@ -41,6 +41,13 @@ class client:
         else:
             SESSIONS.AIOHTTP = aiohttp.ClientSession()
 
+    async def close(self):
+        """
+        Force closes any sessions left open.
+        """
+
+        await SESSIONS.AIOHTTP.close()
+
     async def account(self):
         """
         Gets details about account.

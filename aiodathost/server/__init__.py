@@ -1,7 +1,7 @@
 from ..wrapped_requests import AWR
 from ..routes import ROUTES
 
-from ..models.server import ServerModel
+from ..models.server import ServerModel, BackupModel
 from ..models.metrics import MetricsModel
 
 from .backup import Backup
@@ -155,10 +155,8 @@ class Server:
             )
         )
 
-        # Add model response once i get the schema.
-        # Should response with the Backup object too.
-
-        return data
+        for backup in data:
+            yield BackupModel(backup)
 
     async def duplicate(self):
         """
@@ -193,6 +191,6 @@ class Server:
             ROUTES.server_get.format(
                 self.server_id
             )
-        )
+        ).get()
 
         return ServerModel(data)

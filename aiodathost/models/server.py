@@ -83,6 +83,12 @@ class TeamSpeak3Model:
         self.admin_token = ts3_settings["ts_admin_token"]
 
 
+class BackupModel:
+    def __init__(self, data):
+        self.name = data["name"]
+        self.timestamp = data["timestamp"]
+
+
 class ServerModel:
     def __init__(self, data):
         self.id = data["id"]
@@ -115,6 +121,18 @@ class ServerModel:
         self.added_voice_server = data["added_voice_server"]
         self.duplicate_source_server = data["duplicate_source_server"]
         self.csgo = CsgoModel(data)
-        self.mumble = MumbleModel(data)
-        self.tf2 = TF2Model(data)
-        self.teamspeak3 = TeamSpeak3Model(data)
+
+        if data["mumble_settings"]:
+            self.mumble = MumbleModel(data)
+        else:
+            self.mumble = None
+
+        if data["teamfortress2_settings"]:
+            self.tf2 = TF2Model(data)
+        else:
+            self.tf2 = None
+
+        if data["teamspeak3_settings"]:
+            self.teamspeak3 = TeamSpeak3Model(data)
+        else:
+            self.teamspeak3 = None
