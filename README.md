@@ -4,6 +4,7 @@
 - [About](#about)
 - [Install](#install)
 - [Example](#example)
+- [Documentation](/docs/README.md)
 - [Dathost's API documentation](https://dathost.net/api)
 
 # About
