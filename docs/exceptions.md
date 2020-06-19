@@ -1,4 +1,12 @@
 # Index
+- [aiodathost.exceptions.InvalidAuthorization](#aiodathostexceptionsinvalidauthorization)
+- [aiodathost.exceptions.BadRequest](#aiodathostexceptionsbadrequest)
+- [aiodathost.exceptions.NotFound](#aiodathostexceptionsnotfound)
+- [aiodathost.exceptions.AboveDiskQuota](#aiodathostexceptionsabovediskquota)
+- [aiodathost.exceptions.InvalidMaxLines](#aiodathostexceptionsinvalidmaxlines)
+- [aiodathost.exceptions.RequestTimeout](#aiodathostexceptionsrequesttimeout)
+- [aiodathost.exceptions.InternalError](#aiodathostexceptionsinternalerror)
+- [aiodathost.exceptions.UndefinedError](#aiodathostexceptionsundefinederror)
 
 ### Exceptions
 ___
