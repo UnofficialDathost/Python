@@ -35,6 +35,14 @@ async def example():
             print(data.id)
             await server.start()
 
+        # If you aren't going to use one of the returned
+        # variables use a '_'.
+        # E.g.
+
+        _, server = await dathost.server(server_id="...").duplicate()
+
+        await server.start()
+
     await dathost.close()
 
 loop = asyncio.get_event_loop()
