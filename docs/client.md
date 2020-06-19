@@ -128,7 +128,8 @@ Any request related exceptions.
 ```python
 async def example():
     async for data in DATHOST.domains():
-        pass
+        # Data would just be a string what represents the domain.
+        print(data)
 ```
 
 ___

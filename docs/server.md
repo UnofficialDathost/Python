@@ -1,5 +1,19 @@
 # Index
-
+- [aiodathost.client.server.create](#async-aiodathostclientservercreate)
+- [aiodathost.client.server.reset](#async-aiodathostclientserverreset)
+- [aiodathost.client.server.metrics](#async-aiodathostclientservermetrics)
+- [aiodathost.client.server.ftp_reset](#async-aiodathostclientserverftp_reset)
+- [aiodathost.client.server.start](#async-aiodathostclientserverstart)
+- [aiodathost.client.server.stop](#async-aiodathostclientserverstop)
+- [aiodathost.client.server.sync](#async-aiodathostclientserversync)
+- [aiodathost.client.server.files](#async-aiodathostclientserverfiles)
+- [aiodathost.client.server.backups](#async-aiodathostclientserverbackups)
+- [aiodathost.client.server.duplicate](#async-aiodathostclientserverduplicate)
+- [aiodathost.client.server.delete](#async-aiodathostclientserverdelete)
+- [aiodathost.client.server.get](#async-aiodathostclientserverget)
+- [aiodathost.client.server.console](#aiodathostclientserverconsole)
+- [aiodathost.client.server.file](#aiodathostclientserverfile)
+- [aiodathost.client.server.backup](#aiodathostclientserverbackup)
 ___
 
 ##### async aiodathost.client.server.create
