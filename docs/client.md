@@ -1,4 +1,10 @@
 # Index
+- [aiodathost.client](#aiodathostclient)
+- [aiodathost.client.close](#async-aiodathostclientclose)
+- [aiodathost.client.account](#async-aiodathostclientaccount)
+- [aiodathost.client.domains](#async-aiodathostclientdomains)
+- [aiodathost.client.servers](#async-aiodathostclientservers)
+- [aiodathost.client.server](#aiodathostclientserver)
 
 ### Client
 ___
