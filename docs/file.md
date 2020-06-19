@@ -1,5 +1,11 @@
 # Index
-
+- [aiodathost.client.server.file.unzip](#async-aiodathostclientserverfileunzip)
+- [aiodathost.client.server.file.delete](#async-aiodathostclientserverfiledelete)
+- [aiodathost.client.server.file.download](#async-aiodathostclientserverfiledownload)
+- [aiodathost.client.server.file.download_iterate](#async-aiodathostclientserverfiledownload_iterate)
+- [aiodathost.client.server.file.save](#async-aiodathostclientserverfilesave)
+- [aiodathost.client.server.file.upload](#async-aiodathostclientserverfileupload)
+- [aiodathost.client.server.file.move](#async-aiodathostclientserverfilemove)
 ___
 
 ##### async aiodathost.client.server.file.unzip
