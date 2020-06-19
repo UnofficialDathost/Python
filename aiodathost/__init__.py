@@ -64,9 +64,12 @@ class client:
         Lists all domains.
         """
 
-        return await AWR(
+        data = await AWR(
             ROUTES.domains
         ).get()
+
+        for domain in data:
+            yield domain["name"]
 
     async def servers(self):
         """

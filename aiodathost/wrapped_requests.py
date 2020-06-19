@@ -9,27 +9,19 @@ class AWR:
 
         self.kwargs = kwargs
 
-    async def _raise_exception(self, resp):
-        error_message = await resp.json()
-
-        if "response" in error_message \
-                and "error" in error_message["response"]:
-            error_message = error_message["response"]["error"]
-        else:
-            error_message = None
-
+    def _raise_exception(self, resp):
         if resp.status == 401:
-            raise InvalidAuthorization(error_message)
+            raise InvalidAuthorization()
         elif resp.status == 404:
-            raise NotFound(error_message)
+            raise NotFound()
         elif resp.status == 400:
-            raise BadRequest(error_message)
+            raise BadRequest()
         elif resp.status == 408:
-            raise RequestTimeout(error_message)
+            raise RequestTimeout()
         elif resp.status == 500:
-            raise InternalError(error_message)
+            raise InternalError()
         else:
-            raise UndefinedError(error_message)
+            raise UndefinedError()
 
     async def get(self, read=False):
         """ Wrapped get request """
@@ -44,7 +36,7 @@ class AWR:
                 else:
                     return await resp.read()
             else:
-                await self._raise_exception(resp)
+                self._raise_exception(resp)
 
     async def get_stream(self):
         """
@@ -64,7 +56,7 @@ class AWR:
                     if chunk:
                         yield chunk
             else:
-                await self._raise_exception(resp)
+                self._raise_exception(resp)
 
     async def post(self, json=False):
         """ Wrapped post request """
@@ -79,7 +71,7 @@ class AWR:
                 else:
                     return await resp.json()
             else:
-                await self._raise_exception(resp)
+                self._raise_exception(resp)
 
     async def delete(self):
         """ Wrapped delete request """
@@ -91,7 +83,7 @@ class AWR:
             if resp.status == 200:
                 return True
             else:
-                await self._raise_exception(resp)
+                self._raise_exception(resp)
 
     async def put(self):
         """ Wrapped put request """
@@ -103,4 +95,4 @@ class AWR:
             if resp.status == 200:
                 return True
             else:
-                await self._raise_exception(resp)
+                self._raise_exception(resp)

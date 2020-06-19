@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class ConnectModels:
     def __init__(self, data):
         self.game = "{}:{}".format(
@@ -86,7 +89,10 @@ class TeamSpeak3Model:
 class BackupModel:
     def __init__(self, data):
         self.name = data["name"]
-        self.timestamp = data["timestamp"]
+        self.timestamp = datetime.strptime(
+            data["timestamp"],
+            "%a %b %d %H:%M %Y"
+        )
 
 
 class ServerModel:

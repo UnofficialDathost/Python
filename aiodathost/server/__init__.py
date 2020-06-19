@@ -153,10 +153,10 @@ class Server:
             ROUTES.server_backup.format(
                 self.server_id
             )
-        )
+        ).get()
 
         for backup in data:
-            yield BackupModel(backup)
+            yield BackupModel(backup), Backup(self.server_id, backup["name"])
 
     async def duplicate(self):
         """
