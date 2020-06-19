@@ -63,6 +63,8 @@ class Server:
             params=params
         ).post(json=True)
 
+        self.server_id = data["id"]
+
         return ServerModel(data)
 
     async def reset(self):
