@@ -51,7 +51,7 @@ class File:
                 self.pathway
             ),
             params={
-                "as_text": as_text,
+                "as_text": str(as_text).lower(),
             }
         ).get(read=True)
 
@@ -74,7 +74,7 @@ class File:
                 self.pathway
             ),
             params={
-                "as_text": as_text,
+                "as_text": str(as_text).lower(),
             }
         )
 
@@ -110,7 +110,9 @@ class File:
                     self.server_id,
                     self.pathway
                 ),
-                data=data
+                data={
+                    "file": data,
+                }
             )
         else:
             request = AWR(

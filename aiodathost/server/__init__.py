@@ -27,6 +27,14 @@ class Server:
 
         pathway: str
             Pathway of file on dathost.
+
+        Notes
+        -----
+        The path is counted from the root node as seen in
+        the file manager in the control panel,
+        i.e. to write csgo/cfg/server.cfg the path would be cfg/server.cfg,
+        if the path ends with / a directory will be
+        created and the file parameter will be ignored.
         """
 
         return File(self.server_id, pathway)
@@ -37,6 +45,25 @@ class Server:
         """
 
         return Backup(self.server_id, backup_name)
+
+    async def create(self, **kwargs):
+        """
+        Creates a server, responses with the data & sets the current
+        initialized object to the created server's ID.
+
+        If the parameter includes a '.' replace it with '__'.
+        """
+
+        params = {}
+        for key in kwargs:
+            params[key.replace("__", ".")] = kwargs[key]
+
+        data = await AWR(
+            ROUTES.server_create,
+            params=params
+        ).post(json=True)
+
+        return ServerModel(data)
 
     async def reset(self):
         """

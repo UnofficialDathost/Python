@@ -1,6 +1,6 @@
 from .resources import SESSIONS, CONFIG
 from .exceptions import InvalidAuthorization, UndefinedError, \
-    BadRequest, RequestTimeout, InternalError, NotFound
+    BadRequest, RequestTimeout, InternalError, NotFound, AboveDiskQuota
 
 
 class AWR:
@@ -20,6 +20,8 @@ class AWR:
             raise RequestTimeout()
         elif resp.status == 500:
             raise InternalError()
+        elif resp.status == 507:
+            raise AboveDiskQuota()
         else:
             raise UndefinedError()
 

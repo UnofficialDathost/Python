@@ -19,6 +19,14 @@ class NotFound(Exception):
     pass
 
 
+class AboveDiskQuota(Exception):
+    """
+    Your disk quota of 30GB per server
+    (excluding base installation) has been exceeded.
+    """
+    pass
+
+
 class InvalidMaxLines(Exception):
     """
     Lines can only be between 1 & 1,000.

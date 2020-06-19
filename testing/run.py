@@ -1,6 +1,9 @@
 import aiodathost
 import asyncio
+import os
 
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 dathost = aiodathost.client(
     email="",
@@ -47,6 +50,32 @@ async def test():
             print("Backups listed.")
 
             await target_server.get()
+
+            file = target_server.file("test.bin")
+
+            print("Attempting to upload some data.")
+            await file.upload(
+                data=b"foobar"
+            )
+            print("File uploaded.")
+
+            # Ensuring the given file is updated in the cache.
+            await target_server.sync()
+
+            print("Looping over uploaded data")
+            async for data in file.download_iterate():
+                print(data)
+
+            print("Finished looping")
+
+            print("Attempting to save file locally.")
+            await file.save(
+                local_pathway=os.path.join(
+                    CURRENT_DIR,
+                    "test.bin"
+                )
+            )
+            print("Saved locally.")
         else:
             print("Please create a server before starting the test.")
 

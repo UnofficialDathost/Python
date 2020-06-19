@@ -41,6 +41,13 @@ class client:
         else:
             SESSIONS.AIOHTTP = aiohttp.ClientSession()
 
+    def server(self, server_id=None):
+        """
+        Object for interacting with a server.
+        """
+
+        return Server(server_id)
+
     async def close(self):
         """
         Force closes any sessions left open.
