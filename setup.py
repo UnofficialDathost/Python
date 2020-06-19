@@ -32,7 +32,11 @@ setup(
     author_email="wardpearce@protonmail.com",
     install_requires=get_requirements(),
     license='GPL v3',
-    packages=['aiodathost'],
+    packages=[
+        'aiodathost',
+        'aiodathost.models',
+        'aiodathost.server'
+    ],
     python_requires='>=3.6',
     include_package_data=True,
     zip_safe=False
