@@ -4,26 +4,38 @@ from .exceptions import InvalidAuthorization, UndefinedError, \
 
 
 class AWR:
+    headers = {
+        "Accept": "application/json",
+    }
+
     def __init__(self, route, **kwargs):
         self.route = route
 
         self.kwargs = kwargs
 
-    def _raise_exception(self, resp):
-        if resp.status == 401:
-            raise InvalidAuthorization()
-        elif resp.status == 404:
-            raise NotFound()
-        elif resp.status == 400:
-            raise BadRequest()
-        elif resp.status == 408:
-            raise RequestTimeout()
-        elif resp.status == 500:
-            raise InternalError()
-        elif resp.status == 507:
-            raise AboveDiskQuota()
+    async def _raise_exception(self, resp):
+        error_message = await resp.json()
+
+        if "response" in error_message and \
+                "error" in error_message["response"]:
+            error_message = error_message["response"]["error"]
         else:
-            raise UndefinedError()
+            error_message = None
+
+        if resp.status == 401:
+            raise InvalidAuthorization(error_message)
+        elif resp.status == 404:
+            raise NotFound(error_message)
+        elif resp.status == 400:
+            raise BadRequest(error_message)
+        elif resp.status == 408:
+            raise RequestTimeout(error_message)
+        elif resp.status == 500:
+            raise InternalError(error_message)
+        elif resp.status == 507:
+            raise AboveDiskQuota(error_message)
+        else:
+            raise UndefinedError(error_message)
 
     async def get(self, read=False):
         """ Wrapped get request """
@@ -31,6 +43,7 @@ class AWR:
         async with SESSIONS.AIOHTTP.get(
             self.route,
             auth=SESSIONS.AUTH,
+            headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:
                 if not read:
@@ -38,7 +51,7 @@ class AWR:
                 else:
                     return await resp.read()
             else:
-                self._raise_exception(resp)
+                await self._raise_exception(resp)
 
     async def get_stream(self):
         """
@@ -48,6 +61,7 @@ class AWR:
         async with SESSIONS.AIOHTTP.get(
             self.route,
             auth=SESSIONS.AUTH,
+            headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:
                 chunk = True
@@ -58,7 +72,7 @@ class AWR:
                     if chunk:
                         yield chunk
             else:
-                self._raise_exception(resp)
+                await self._raise_exception(resp)
 
     async def post(self, json=False):
         """ Wrapped post request """
@@ -66,6 +80,7 @@ class AWR:
         async with SESSIONS.AIOHTTP.post(
             self.route,
             auth=SESSIONS.AUTH,
+            headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:
                 if not json:
@@ -73,7 +88,7 @@ class AWR:
                 else:
                     return await resp.json()
             else:
-                self._raise_exception(resp)
+                await self._raise_exception(resp)
 
     async def delete(self):
         """ Wrapped delete request """
@@ -81,11 +96,12 @@ class AWR:
         async with SESSIONS.AIOHTTP.delete(
             self.route,
             auth=SESSIONS.AUTH,
+            headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:
                 return True
             else:
-                self._raise_exception(resp)
+                await self._raise_exception(resp)
 
     async def put(self):
         """ Wrapped put request """
@@ -93,8 +109,9 @@ class AWR:
         async with SESSIONS.AIOHTTP.put(
             self.route,
             auth=SESSIONS.AUTH,
+            headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:
                 return True
             else:
-                self._raise_exception(resp)
+                await self._raise_exception(resp)

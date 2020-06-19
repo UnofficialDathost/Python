@@ -10,7 +10,7 @@ from .models.account import AccountModel
 from .server import Server
 
 
-__version__ = "5.0.0"
+__version__ = "5.0.1"
 
 
 class client:
