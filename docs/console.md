@@ -1,5 +1,6 @@
 # Index
-
+- [aiodathost.client.server.console.get](#async-aiodathostclientserverconsoleget)
+- [aiodathost.client.server.console.send](#async-aiodathostclientserverconsolesend)
 ___
 
 ##### async aiodathost.client.server.console.get

@@ -26,7 +26,7 @@ class File:
 
     async def delete(self):
         """
-        Deletes the given pathway.
+        Deletes the given file or folder.
         """
 
         return await AWR(
