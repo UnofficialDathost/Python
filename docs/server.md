@@ -1,5 +1,4 @@
 # Index
-- [aiodathost.client.server.create](#async-aiodathostclientservercreate)
 - [aiodathost.client.server.reset](#async-aiodathostclientserverreset)
 - [aiodathost.client.server.metrics](#async-aiodathostclientservermetrics)
 - [aiodathost.client.server.ftp_reset](#async-aiodathostclientserverftp_reset)
@@ -14,41 +13,6 @@
 - [aiodathost.client.server.console](#aiodathostclientserverconsole)
 - [aiodathost.client.server.file](#aiodathostclientserverfile)
 - [aiodathost.client.server.backup](#aiodathostclientserverbackup)
-___
-
-##### async aiodathost.client.server.create
-
-**Functionality**
-
-Creates a server, responses with the data & sets the current
-initialized object to the created server's ID.
-
-
-**Parameters**
-
-- kwargs
-
-If the parameter includes a '.' replace it with '__'.
-
-**Response**
-
-ServerModel
-
-**Raises**
-
-Any request related exceptions.
-
-**Example**
-
-```python
-async def example():
-    await DATHOST.server().create(
-        game="csgo",
-        name="Awesome test server",
-        csgo_settings__rcon="something secure"
-    )
-```
-
 ___
 
 ##### async aiodathost.client.server.reset

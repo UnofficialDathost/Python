@@ -4,6 +4,7 @@
 - [aiodathost.client.account](#async-aiodathostclientaccount)
 - [aiodathost.client.domains](#async-aiodathostclientdomains)
 - [aiodathost.client.servers](#async-aiodathostclientservers)
+- [aiodathost.client.create_server](#async-aiodathostclientcreate)
 - [aiodathost.client.server](#aiodathostclientserver)
 
 ### Client
@@ -161,6 +162,40 @@ async def example():
     async for data, server in DATHOST.servers():
         print(data.id)
         await server.start()
+```
+
+___
+
+##### async aiodathost.client.create_server
+
+**Functionality**
+
+Creates a server.
+
+
+**Parameters**
+
+- kwargs
+
+If the parameter includes a '.' replace it with '__'.
+
+**Response**
+
+ServerModel, Server
+
+**Raises**
+
+Any request related exceptions.
+
+**Example**
+
+```python
+async def example():
+    data, server = await DATHOST.create_server(
+        game="csgo",
+        name="Awesome test server",
+        csgo_settings__rcon="something secure"
+    )
 ```
 
 ___
