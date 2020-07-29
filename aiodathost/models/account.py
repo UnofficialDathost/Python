@@ -1,5 +1,5 @@
 class AccountModel:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         self.id = data["id"]
         self.email = data["email"]
         self.gravatar_url = data["gravatar_url"]

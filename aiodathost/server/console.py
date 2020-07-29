@@ -4,10 +4,16 @@ from ..exceptions import InvalidMaxLines
 
 
 class Console:
-    def __init__(self, server_id):
+    def __init__(self, server_id: str) -> None:
+        """
+        Paramters
+        ---------
+        server_id: str
+        """
+
         self.server_id = server_id
 
-    async def get(self, max_lines: int = 1000):
+    async def get(self, max_lines: int = 1000) -> list:
         """
         Get the last line of backlong.
 
@@ -29,7 +35,7 @@ class Console:
         else:
             raise InvalidMaxLines()
 
-    async def send(self, line: str):
+    async def send(self, line: str) -> bool:
         """
         Sends a command to the console.
 

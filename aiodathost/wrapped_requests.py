@@ -1,4 +1,6 @@
-from .resources import SESSIONS, CONFIG
+import typing
+
+from .resources import Sessions, Config
 from .exceptions import InvalidAuthorization, UndefinedError, \
     BadRequest, RequestTimeout, InternalError, NotFound, AboveDiskQuota
 
@@ -8,12 +10,12 @@ class AWR:
         "Accept": "application/json",
     }
 
-    def __init__(self, route, **kwargs):
+    def __init__(self, route, **kwargs) -> None:
         self.route = route
 
         self.kwargs = kwargs
 
-    async def _raise_exception(self, resp):
+    async def _raise_exception(self, resp) -> None:
         error_message = await resp.json()
 
         if "response" in error_message and \
@@ -37,12 +39,12 @@ class AWR:
         else:
             raise UndefinedError(error_message)
 
-    async def get(self, read=False):
+    async def get(self, read=False) -> typing.Any:
         """ Wrapped get request """
 
-        async with SESSIONS.AIOHTTP.get(
+        async with Sessions.AIOHTTP.get(
             self.route,
-            auth=SESSIONS.AUTH,
+            auth=Sessions.AUTH,
             headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:
@@ -53,33 +55,33 @@ class AWR:
             else:
                 await self._raise_exception(resp)
 
-    async def get_stream(self):
+    async def get_stream(self) -> typing.AsyncGenerator[typing.Any, None]:
         """
         Steam downloads content.
         """
 
-        async with SESSIONS.AIOHTTP.get(
+        async with Sessions.AIOHTTP.get(
             self.route,
-            auth=SESSIONS.AUTH,
+            auth=Sessions.AUTH,
             headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:
                 chunk = True
 
                 while chunk:
-                    chunk = await resp.content.read(CONFIG.chunk_size)
+                    chunk = await resp.content.read(Config.chunk_size)
 
                     if chunk:
                         yield chunk
             else:
                 await self._raise_exception(resp)
 
-    async def post(self, json=False):
+    async def post(self, json=False) -> typing.Any:
         """ Wrapped post request """
 
-        async with SESSIONS.AIOHTTP.post(
+        async with Sessions.AIOHTTP.post(
             self.route,
-            auth=SESSIONS.AUTH,
+            auth=Sessions.AUTH,
             headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:
@@ -90,12 +92,12 @@ class AWR:
             else:
                 await self._raise_exception(resp)
 
-    async def delete(self):
+    async def delete(self) -> typing.Any:
         """ Wrapped delete request """
 
-        async with SESSIONS.AIOHTTP.delete(
+        async with Sessions.AIOHTTP.delete(
             self.route,
-            auth=SESSIONS.AUTH,
+            auth=Sessions.AUTH,
             headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:
@@ -103,12 +105,12 @@ class AWR:
             else:
                 await self._raise_exception(resp)
 
-    async def put(self):
+    async def put(self) -> typing.Any:
         """ Wrapped put request """
 
-        async with SESSIONS.AIOHTTP.put(
+        async with Sessions.AIOHTTP.put(
             self.route,
-            auth=SESSIONS.AUTH,
+            auth=Sessions.AUTH,
             headers=self.headers,
                 **self.kwargs) as resp:
             if resp.status == 200:

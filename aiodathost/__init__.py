@@ -1,6 +1,7 @@
 import aiohttp
+import typing
 
-from .resources import SESSIONS, CONFIG
+from .resources import Sessions, Config
 from .routes import ROUTES
 from .wrapped_requests import AWR
 
@@ -10,12 +11,13 @@ from .models.account import AccountModel
 from .server import Server
 
 
-__version__ = "5.0.2"
+__version__ = "5.1.0"
 
 
 class client:
-    def __init__(self, email, password,
-                 session: aiohttp.ClientSession = None, chunk_size: int = 25):
+    def __init__(self, email: str, password: str,
+                 session: aiohttp.ClientSession = None,
+                 chunk_size: int = 25) -> None:
         """ Dathost API Interface.
             Parameters
             ----------
@@ -26,36 +28,73 @@ class client:
             session: aiohttp.ClientSession
                 Optionally pass a aiohttp ClientSession.
             chunk_size: int
-                How many bytes to load into memory at once.
+                How many bytes to load into memory at once (default 25).
         """
 
-        CONFIG.chunk_size = chunk_size
+        Config.chunk_size = chunk_size
 
-        SESSIONS.AUTH = aiohttp.BasicAuth(
+        Sessions.AUTH = aiohttp.BasicAuth(
             email,
             password
         )
 
         if session:
-            SESSIONS.AIOHTTP = session
+            Sessions.AIOHTTP = session
         else:
-            SESSIONS.AIOHTTP = aiohttp.ClientSession()
+            Sessions.AIOHTTP = aiohttp.ClientSession()
 
-    def server(self, server_id=None):
+    async def create_server(self, **kwargs) -> (ServerModel, Server):
+        """
+        Creates a server, responses with the data & sets the current
+        initialized object to the created server's ID.
+
+        Returns
+        -------
+        ServerModel
+            Holds server data.
+        Server
+            Used for interacting with server.
+
+        Notes
+        -----
+        If the parameter includes a '.' replace it with '__'.
+        """
+
+        params = {}
+        for key in kwargs:
+            params[key.replace("__", ".")] = kwargs[key]
+
+        data = await AWR(
+            ROUTES.server_create,
+            params=params
+        ).post(json=True)
+
+        return ServerModel(data), Server(data["id"])
+
+    def server(self, server_id: str) -> Server:
         """
         Object for interacting with a server.
+
+        Paramters
+        ---------
+        server_id: str
+            ID of server.
         """
 
         return Server(server_id)
 
-    async def close(self):
+    async def close(self) -> None:
         """
         Force closes any sessions left open.
+
+        Notes
+        -----
+        This should always be ran at program shutdown.
         """
 
-        await SESSIONS.AIOHTTP.close()
+        await Sessions.AIOHTTP.close()
 
-    async def account(self):
+    async def account(self) -> AccountModel:
         """
         Gets details about account.
         """
@@ -66,9 +105,14 @@ class client:
 
         return AccountModel(data)
 
-    async def domains(self):
+    async def domains(self) -> typing.AsyncGenerator[typing.Any, None]:
         """
         Lists all domains.
+
+        Yields
+        ------
+        str
+            Domain string.
         """
 
         data = await AWR(
@@ -78,9 +122,16 @@ class client:
         for domain in data:
             yield domain["name"]
 
-    async def servers(self):
+    async def servers(self) -> typing.AsyncGenerator[typing.Any, None]:
         """
         Lists all non-deleted servers.
+
+        Yields
+        ------
+        ServerModel
+            Holds server data.
+        Server
+            Used for interacting with the server.
         """
 
         data = await AWR(

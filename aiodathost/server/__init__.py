@@ -1,3 +1,5 @@
+import typing
+
 from ..wrapped_requests import AWR
 from ..routes import ROUTES
 
@@ -10,23 +12,42 @@ from .file import File
 
 
 class Server:
-    def __init__(self, server_id):
+    def __init__(self, server_id: str) -> None:
+        """
+        Used for interacting with a server.
+
+        Parameter
+        ---------
+        server_id: str
+            ID of server.
+        """
+
         self.server_id = server_id
 
     @property
-    def console(self):
+    def console(self) -> Console:
         """
         Console interactions.
+
+        Returns
+        -------
+        Console
+            Used for interacting with a server's consoles.
         """
 
         return Console(self.server_id)
 
-    def file(self, pathway: str):
+    def file(self, pathway: str) -> File:
         """
         Interact with files.
 
         pathway: str
             Pathway of file on dathost.
+
+        Returns
+        -------
+        File
+            Used for interacting with a servers file.
 
         Notes
         -----
@@ -39,35 +60,24 @@ class Server:
 
         return File(self.server_id, pathway)
 
-    def backup(self, backup_name):
+    def backup(self, backup_name: str) -> Backup:
         """
         Backup interactions.
+
+        Paramters
+        ---------
+        backup_name: str
+            Name of backup.
+        
+        Returns
+        -------
+        Backup
+            Used for interacting with a backup.
         """
 
         return Backup(self.server_id, backup_name)
 
-    async def create(self, **kwargs):
-        """
-        Creates a server, responses with the data & sets the current
-        initialized object to the created server's ID.
-
-        If the parameter includes a '.' replace it with '__'.
-        """
-
-        params = {}
-        for key in kwargs:
-            params[key.replace("__", ".")] = kwargs[key]
-
-        data = await AWR(
-            ROUTES.server_create,
-            params=params
-        ).post(json=True)
-
-        self.server_id = data["id"]
-
-        return ServerModel(data)
-
-    async def reset(self):
+    async def reset(self) -> bool:
         """
         Resets given server to default files.
         """
@@ -78,9 +88,14 @@ class Server:
             )
         ).post()
 
-    async def metrics(self):
+    async def metrics(self) -> MetricsModel:
         """
         Gets metrics about server.
+
+        Returns
+        -------
+        MetricsModel
+            Holds metrics.
         """
 
         data = await AWR(
@@ -91,7 +106,7 @@ class Server:
 
         return MetricsModel(data)
 
-    async def ftp_reset(self):
+    async def ftp_reset(self) -> bool:
         """
         Sets a new random FTP password for the server.
         """
@@ -102,7 +117,7 @@ class Server:
             )
         ).post()
 
-    async def start(self, allow_host_reassignment: bool = True):
+    async def start(self, allow_host_reassignment: bool = True) -> bool:
         """
         Attempts to start given server.
 
@@ -120,7 +135,7 @@ class Server:
             }
         ).post()
 
-    async def stop(self):
+    async def stop(self) -> bool:
         """
         Attempts to stop given server.
         """
@@ -131,7 +146,7 @@ class Server:
             )
         ).post()
 
-    async def sync(self):
+    async def sync(self) -> bool:
         """
         Ensures all files are synced.
         """
@@ -144,10 +159,13 @@ class Server:
 
     async def files(self, pathway: str = None,
                     hide_default_files: bool = False,
-                    with_filesizes: bool = False):
+                    with_filesizes: bool = False
+                    ) -> typing.AsyncGenerator[typing.Any, None]:
         """
         Lists files on the server.
 
+        Paramters
+        ---------
         pathway: str
             Path to use as root, leave empty to get all files
 
@@ -156,7 +174,14 @@ class Server:
             default is all files.
 
         with_filesizes: bool
-            If true, return filesizes with filenames
+            If true, return filesizes with filenames.
+
+        Yields
+        ------
+        str
+            Path to file.
+        File
+            Used for interacting with a file.
         """
 
         data = await AWR(
@@ -173,9 +198,16 @@ class Server:
         for file in data:
             yield file["path"], File(self.server_id, file["path"])
 
-    async def backups(self):
+    async def backups(self) -> typing.AsyncGenerator[typing.Any, None]:
         """
         Lists backups.
+
+        Yields
+        ------
+        BackupModel
+            Holds data around backup.
+        Backup
+            Used for interacting with a backup.
         """
 
         data = await AWR(
@@ -187,9 +219,16 @@ class Server:
         for backup in data:
             yield BackupModel(backup), Backup(self.server_id, backup["name"])
 
-    async def duplicate(self):
+    async def duplicate(self) -> typing.Any:
         """
         Duplicates given server.
+
+        Returns
+        -------
+        ServerModel
+            Holds data on server.
+        Server
+            Used for interacting with server.
         """
 
         data = await AWR(
@@ -200,7 +239,7 @@ class Server:
 
         return ServerModel(data), Server(data["id"])
 
-    async def delete(self):
+    async def delete(self) -> bool:
         """
         Deletes current server.
         """
@@ -211,9 +250,14 @@ class Server:
             )
         ).delete()
 
-    async def get(self):
+    async def get(self) -> ServerModel:
         """
         Gets details about the game server.
+
+        Returns
+        -------
+        ServerModel
+            Holds server data.
         """
 
         data = await AWR(

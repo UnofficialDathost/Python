@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 class ConnectModels:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         self.game = "{}:{}".format(
             data["ip"],
             data["ports"]["game"]
@@ -14,20 +14,20 @@ class ConnectModels:
 
 
 class PortsModel:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         self.game = data["ports"]["game"]
         self.gotv = data["ports"]["gotv"]
 
 
 class MysqlModel:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         self.enabled = data["enable_mysql"]
         self.username = data["mysql_username"]
         self.password = data["mysql_password"]
 
 
 class CsgoModel:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         csgo_settings = data["csgo_settings"]
 
         self.slots = csgo_settings["slots"]
@@ -56,7 +56,7 @@ class CsgoModel:
 
 
 class MumbleModel:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         mumble_settings = data["mumble_settings"]
 
         self.slots = mumble_settings["slots"]
@@ -66,7 +66,7 @@ class MumbleModel:
 
 
 class TF2Model:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         tf2_settings = data["teamfortress2_settings"]
 
         self.slots = tf2_settings["slots"]
@@ -79,7 +79,7 @@ class TF2Model:
 
 
 class TeamSpeak3Model:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         ts3_settings = data["teamspeak3_settings"]
 
         self.slots = ts3_settings["slots"]
@@ -87,7 +87,7 @@ class TeamSpeak3Model:
 
 
 class BackupModel:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         self.name = data["name"]
         self.timestamp = datetime.strptime(
             data["timestamp"],
@@ -96,7 +96,7 @@ class BackupModel:
 
 
 class ServerModel:
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         self.id = data["id"]
         self.name = data["name"]
         self.user = data["user_data"]

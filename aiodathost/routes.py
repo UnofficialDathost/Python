@@ -31,7 +31,7 @@ class Routes:
 
     account = "account"
 
-    def format_routes(self):
+    def format_routes(self) -> None:
         """
         Formats dathost routes.
         """

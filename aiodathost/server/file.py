@@ -1,18 +1,28 @@
+import aiofiles
+import typing
+
 from ..wrapped_requests import AWR
 from ..routes import ROUTES
 
-import aiofiles
-
 
 class File:
-    def __init__(self, server_id, pathway):
+    def __init__(self, server_id: str, pathway: str) -> None:
+        """
+        Paramters
+        ---------
+        server_id: str
+        pathway: str
+        """
+
         self.server_id = server_id
         self.pathway = pathway
 
-    async def unzip(self, destination: str):
+    async def unzip(self, destination: str) -> bool:
         """
         Unzips given file.
 
+        Paramters
+        ---------
         destination: str
             Pathway to move the zip file content to.
         """
@@ -24,7 +34,7 @@ class File:
             )
         ).post()
 
-    async def delete(self):
+    async def delete(self) -> bool:
         """
         Deletes the given file or folder.
         """
@@ -36,10 +46,12 @@ class File:
             )
         ).delete()
 
-    async def download(self, as_text: bool = False):
+    async def download(self, as_text: bool = False) -> bool:
         """
         Downloads the file into memory.
 
+        Paramters
+        ---------
         as_text: bool
             If true, files up to 100kB will be returned as text/plain
             and bigger files will return an error.
@@ -55,10 +67,15 @@ class File:
             }
         ).get(read=True)
 
-    async def download_iterate(self, as_text: bool = False):
+    async def download_iterate(self,
+                               as_text: bool = False
+                               ) -> typing.AsyncGenerator[
+                                   typing.ByteString, None]:
         """
         Iterates over downloading file.
 
+        Paramters
+        ---------
         as_text: bool
             If true, files up to 100kB will be returned as text/plain
             and bigger files will return an error.
@@ -81,10 +98,12 @@ class File:
         async for data in request.get_stream():
             yield data
 
-    async def save(self, local_pathway: str):
+    async def save(self, local_pathway: str) -> None:
         """
         Saves file to local pathway.
 
+        Paramters
+        ---------
         local_pathway: str
             Local pathway.
 
@@ -97,10 +116,12 @@ class File:
             async for data in self.download_iterate():
                 await file.write(data)
 
-    async def upload(self, data: bytes = None):
+    async def upload(self, data: bytes = None) -> None:
         """
         Uploads given data onto the given pathway.
 
+        Notes
+        -----
         If no bytes passed just creates the file/directory.
         """
 
@@ -124,10 +145,12 @@ class File:
 
         return await request.post()
 
-    async def move(self, destination: str):
+    async def move(self, destination: str) -> bool:
         """
         Moves file to given destination.
 
+        Paramters
+        ---------
         destination: str
             Pathway to move the file to.
         """
