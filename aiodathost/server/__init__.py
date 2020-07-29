@@ -68,7 +68,7 @@ class Server:
         ---------
         backup_name: str
             Name of backup.
-        
+      
         Returns
         -------
         Backup
