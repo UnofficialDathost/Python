@@ -18,3 +18,10 @@ class InvalidTickrate(Exception):
     """
 
     pass
+
+
+class InvalidConsoleLine(Exception):
+    """Raised when console line is above 1 or above 100000.
+    """
+
+    pass

@@ -60,6 +60,9 @@ class TestBlockingClient(unittest.TestCase):
 
         self.assertIsInstance(server.get(), ServerModel)
 
+        server.console_send("status")
+        server.console_retrive()
+
         server.update(
             ServerSettings(
                 name="Renamed Blocking CS: GO server",
@@ -68,6 +71,9 @@ class TestBlockingClient(unittest.TestCase):
                 slots=7
             )
         )
+
+        _, duplicate = server.duplicate(sync=True)
+        self.assertIsNone(duplicate.delete())
 
         self.assertIsNone(server.delete())
 

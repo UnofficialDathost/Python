@@ -63,6 +63,9 @@ class Server(Route):
     get = "{}"
     list = ""
     update = "{}"
+    console = "{}/console"
+    duplicate = "{}/duplicate"
+    sync = "{}/sync-files"
 
 
 ACCOUNT = Account()

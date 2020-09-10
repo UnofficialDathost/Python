@@ -62,6 +62,12 @@ class TestAwaitingClient(asynctest.TestCase):
 
         self.assertIsInstance(await server.get(), ServerModel)
 
+        await server.console_send("status")
+        await server.console_retrive()
+
+        _, duplicate = await server.duplicate(sync=True)
+        self.assertIsNone(await duplicate.delete())
+
         self.assertIsNone(await server.delete())
 
     async def test_server_mumble(self):
