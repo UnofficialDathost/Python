@@ -1,5 +1,8 @@
 class AccountModel:
-    def __init__(self, data):
+    """Holds infomation around a account.
+    """
+
+    def __init__(self, data: dict) -> None:
         self.id = data["id"]
         self.email = data["email"]
         self.gravatar_url = data["gravatar_url"]
@@ -8,3 +11,5 @@ class AccountModel:
         self.time_left = data["time_left"]
         self.roles = data["roles"]
         self.trial = data["trial"]
+        self.accepted_terms_of_service_version = \
+            data["accepted_terms_of_service_version"]
