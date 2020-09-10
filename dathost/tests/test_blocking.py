@@ -37,7 +37,12 @@ class TestBlockingClient(unittest.TestCase):
         with Blocking(EMAIL, PASSWORD) as client:
             client.account()
 
-    def test_create_server(self):
+    def test_list_servers(self):
+        for data, server in self.client.servers():
+            self.assertIsInstance(data, ServerModel)
+            self.assertIsInstance(server, ServerBlocking)
+
+    def test_server(self):
         data, server = self.client.create_server(
             ServerSettings(
                 name="Blocking test server",
@@ -52,5 +57,7 @@ class TestBlockingClient(unittest.TestCase):
 
         self.assertIsInstance(data, ServerModel)
         self.assertIsInstance(server, ServerBlocking)
+
+        self.assertIsInstance(server.get(), ServerModel)
 
         self.assertIsNone(server.delete())

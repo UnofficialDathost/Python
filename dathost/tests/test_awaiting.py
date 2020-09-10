@@ -39,7 +39,12 @@ class TestAwaitingClient(asynctest.TestCase):
         async with Awaiting(EMAIL, PASSWORD) as client:
             await client.account()
 
-    async def test_create_server(self):
+    async def test_list_servers(self):
+        async for data, server in self.client.servers():
+            self.assertIsInstance(data, ServerModel)
+            self.assertIsInstance(server, ServerAwaiting)
+
+    async def test_server(self):
         data, server = await self.client.create_server(
             ServerSettings(
                 name="Awaiting test server",
@@ -54,5 +59,7 @@ class TestAwaitingClient(asynctest.TestCase):
 
         self.assertIsInstance(data, ServerModel)
         self.assertIsInstance(server, ServerAwaiting)
+
+        self.assertIsInstance(await server.get(), ServerModel)
 
         self.assertIsNone(await server.delete())

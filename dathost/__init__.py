@@ -85,6 +85,19 @@ class Awaiting(Base, AwaitingHttp):
 
         return ServerAwaiting(self, server_id)
 
+    async def servers(self) -> typing.AsyncGenerator[
+            ServerModel, ServerAwaiting]:
+        """Used to list servers.
+
+        Yields
+        -------
+        ServerModel
+            Holds data on server.
+        """
+
+        for server in await self._get(SERVER.list):
+            yield ServerModel(server), self.server(server["id"])
+
     async def close(self) -> None:
         """Closes sessions
         """
@@ -178,6 +191,18 @@ class Blocking(Base, BlockingHttp):
         """
 
         return ServerBlocking(self, server_id)
+
+    def servers(self) -> typing.AsyncGenerator[ServerModel, ServerBlocking]:
+        """Used to list servers.
+
+        Yields
+        -------
+        ServerModel
+            Holds data on server.
+        """
+
+        for server in self._get(SERVER.list):
+            yield ServerModel(server), self.server(server["id"])
 
     def close(self) -> None:
         """Closes sessions

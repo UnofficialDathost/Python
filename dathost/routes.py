@@ -60,6 +60,8 @@ class Server(Route):
 
     create = ""
     delete = "{}"
+    get = "{}"
+    list = ""
 
 
 ACCOUNT = Account()
