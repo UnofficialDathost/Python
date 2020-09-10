@@ -40,7 +40,7 @@ class TestBlockingClient(unittest.TestCase):
     def test_create_server(self):
         data, server = self.client.create_server(
             ServerSettings(
-                name="Dathost test server",
+                name="Blocking test server",
                 location="sydney",
             ).csgo(
                 slots=5,
@@ -50,5 +50,7 @@ class TestBlockingClient(unittest.TestCase):
             )
         )
 
-        self.assertTrue(isinstance(data, ServerModel))
-        self.assertTrue(isinstance(server, ServerBlocking))
+        self.assertIsInstance(data, ServerModel)
+        self.assertIsInstance(server, ServerBlocking)
+
+        self.assertIsNone(server.delete())

@@ -1,5 +1,6 @@
 class Route:
     _ran = False
+    _prefix = None
 
     def __init__(self, route: str = "https://dathost.net/api/0.1") -> None:
         """Used for formatting route objects.
@@ -27,16 +28,22 @@ class Route:
         ]
 
         for var_name in routes:
+            value = "{}{}/{}".format(
+                self.route,
+                "/" + self._prefix if self._prefix else "",
+                getattr(
+                    self,
+                    var_name
+                )
+            )
+
+            if value[-1:] == "/":
+                value = value[:-1]
+
             setattr(
                 self,
                 var_name,
-                "{}/{}".format(
-                    self.route,
-                    getattr(
-                        self,
-                        var_name
-                    )
-                )
+                value
             )
 
 
@@ -49,7 +56,10 @@ class CustomDomains(Route):
 
 
 class Server(Route):
-    create = "game-servers"
+    _prefix = "game-servers"
+
+    create = ""
+    delete = "{}"
 
 
 ACCOUNT = Account()

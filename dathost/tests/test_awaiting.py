@@ -42,7 +42,7 @@ class TestAwaitingClient(asynctest.TestCase):
     async def test_create_server(self):
         data, server = await self.client.create_server(
             ServerSettings(
-                name="Dathost test server",
+                name="Awaiting test server",
                 location="sydney",
             ).csgo(
                 slots=5,
@@ -52,5 +52,7 @@ class TestAwaitingClient(asynctest.TestCase):
             )
         )
 
-        self.assertTrue(isinstance(data, ServerModel))
-        self.assertTrue(isinstance(server, ServerAwaiting))
+        self.assertIsInstance(data, ServerModel)
+        self.assertIsInstance(server, ServerAwaiting)
+
+        self.assertIsNone(await server.delete())
