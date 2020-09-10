@@ -20,7 +20,19 @@ class Awaiting(Base, AwaitingHttp):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self._client = AsyncClient(self._basic_auth)
+        self._client = AsyncClient(auth=self._basic_auth)
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
+
+    async def close(self) -> None:
+        """Closes sessions
+        """
+
+        await self._client.aclose()
 
     async def account(self) -> AccountModel:
         """Gets account details
@@ -44,16 +56,26 @@ class Awaiting(Base, AwaitingHttp):
             List of domains.
         """
 
-        data = await self._get(CUSTOM_DOMAINS.details)
-        if data:
-            return list(data.values())
+        return await self._get(CUSTOM_DOMAINS.details)
 
 
 class Blocking(Base, BlockingHttp):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.client = Client(self._basic_auth)
+        self._client = Client(auth=self._basic_auth)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def close(self) -> None:
+        """Closes sessions
+        """
+
+        self._client.close()
 
     def account(self) -> AccountModel:
         """Gets account details
@@ -77,6 +99,4 @@ class Blocking(Base, BlockingHttp):
             List of domains.
         """
 
-        data = self._get(CUSTOM_DOMAINS.details)
-        if data:
-            return list(data.values())
+        return self._get(CUSTOM_DOMAINS.details)

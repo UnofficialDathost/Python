@@ -1,14 +1,13 @@
 class Route:
-    _prefix = None
     _ran = False
 
-    def __init__(self, route: str = "https://dathost.net/api/0.1/") -> None:
+    def __init__(self, route: str = "https://dathost.net/api/0.1") -> None:
         """Used for formatting route objects.
 
         Parameters
         ----------
         route : str, optional
-            URL of API, by default "https://dathost.net/api/0.1/"
+            URL of API, by default "https://dathost.net/api/0.1"
         """
 
         self.route = route
@@ -31,9 +30,8 @@ class Route:
             setattr(
                 self,
                 var_name,
-                "{}{}/{}".format(
+                "{}/{}".format(
                     self.route,
-                    self._prefix,
                     getattr(
                         self,
                         var_name
