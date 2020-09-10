@@ -60,6 +60,15 @@ class TestBlockingClient(unittest.TestCase):
 
         self.assertIsInstance(server.get(), ServerModel)
 
+        server.update(
+            ServerSettings(
+                name="Renamed Blocking CS: GO server",
+                location="sydney"
+            ).csgo(
+                slots=7
+            )
+        )
+
         self.assertIsNone(server.delete())
 
     def test_server_mumble(self):

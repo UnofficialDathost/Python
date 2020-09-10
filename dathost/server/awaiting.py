@@ -2,6 +2,8 @@ from .base import ServerBase
 
 from ..models.server import ServerModel
 
+from ..settings import ServerSettings
+
 from ..routes import SERVER
 
 
@@ -25,4 +27,21 @@ class ServerAwaiting(ServerBase):
 
         return ServerModel(
             await self.context._get(SERVER.get.format(self.server_id))
+        )
+
+    async def update(self, settings: ServerSettings) -> None:
+        """Update servers paramters.
+
+        Parameters
+        ----------
+        settings : ServerSettings
+            Used to configure server.
+        """
+
+        await self.context._put(
+            SERVER.update.format(self.server_id),
+            data={
+                **settings.playload,
+                "server_id": self.server_id
+            }
         )

@@ -53,22 +53,21 @@ class ServerSettings:
 
         if custom_domain:
             self.playload["custom_domain"] = custom_domain
-
         if scheduled_commands:
             self.playload["scheduled_commands"] = scheduled_commands
-
         if user_data:
             self.playload["user_data"] = user_data
 
-    def csgo(self, slots: int, game_token: str, tickrate: int,
-             rcon_password: str, game_mode: str = COMPETITIVE,
-             autoload_configs: list = None, disable_bots: bool = False,
-             enable_csay_plugin: bool = False, enable_gotv: bool = False,
-             enable_sourcemod: bool = False, insecure: bool = False,
+    def csgo(self, slots: int = None, tickrate: int = None,
+             game_token: str = None, rcon_password: str = None,
+             game_mode: str = COMPETITIVE, autoload_configs: list = None,
+             disable_bots: bool = False, workshop_start_map_id: int = None,
+             csay_plugin: bool = False, gotv: bool = False,
+             sourcemod: bool = False, insecure: bool = False,
              map_group: str = MAP_GROUP, start_map: str = None,
              password: str = None, pure: bool = True,
              admins: list = None, plugins: list = None, steam_key: str = None,
-             workshop_id: int = None, workshop_start_map_id: int = None
+             workshop_id: int = None
              ) -> None:
         """Used for configuring a CS: GO server.
 
@@ -83,11 +82,11 @@ class ServerSettings:
             by default None
         disable_bots : bool, optional
             by default False
-        enable_csay_plugin : bool, optional
+        csay_plugin : bool, optional
             by default False
-        enable_gotv : bool, optional
+        gotv : bool, optional
             by default False
-        enable_sourcemod : bool, optional
+        sourcemod : bool, optional
             by default False
         insecure : bool, optional
             by default False
@@ -132,56 +131,56 @@ class ServerSettings:
 
         if autoload_configs:
             self.playload["csgo_settings.autoload_configs"] = autoload_configs
-
-        self.playload["csgo_settings.disable_bots"] = disable_bots
-        self.playload["csgo_settings.enable_csay_plugin"] = enable_csay_plugin
-        self.playload["csgo_settings.enable_gotv"] = enable_gotv
-        self.playload["csgo_settings.enable_sourcemod"] = enable_sourcemod
-        self.playload["csgo_settings.game_mode"] = game_mode
-        self.playload["csgo_settings.insecure"] = insecure
-        self.playload["csgo_settings.mapgroup"] = map_group
-
+        if disable_bots:
+            self.playload["csgo_settings.disable_bots"] = disable_bots
+        if csay_plugin:
+            self.playload["csgo_settings.enable_csay_plugin"] = \
+                csay_plugin
+        if gotv:
+            self.playload["csgo_settings.enable_gotv"] = gotv
+        if sourcemod:
+            self.playload["csgo_settings.enable_sourcemod"] = sourcemod
+        if game_mode:
+            self.playload["csgo_settings.game_mode"] = game_mode
+        if insecure:
+            self.playload["csgo_settings.insecure"] = insecure
+        if map_group:
+            self.playload["csgo_settings.mapgroup"] = map_group
         if start_map:
             self.playload["csgo_settings.mapgroup_start_map"] = start_map
-
         if password:
             self.playload["csgo_settings.password"] = password
+        if pure:
+            self.playload["csgo_settings.pure_server"] = pure
+        if rcon_password:
+            self.playload["csgo_settings.rcon"] = rcon_password
+        if slots:
+            if slots < 5 or slots > 64:
+                raise InvalidSlotSize()
 
-        self.playload["csgo_settings.pure_server"] = pure
-        self.playload["csgo_settings.rcon"] = rcon_password
-
-        if slots < 5 or slots > 64:
-            raise InvalidSlotSize()
-
-        self.playload["csgo_settings.slots"] = slots
-
+            self.playload["csgo_settings.slots"] = slots
         if admins:
             self.playload["csgo_settings.sourcemod_admins"] = admins
-
         if plugins:
             self.playload["csgo_settings.sourcemod_plugins"] = plugins
-
-        self.playload["csgo_settings.steam_game_server_login_token"] \
-            = game_token
-
-        if tickrate not in VALID_TICKRATES:
-            raise InvalidTickrate()
-
-        self.playload["csgo_settings.tickrate"] = tickrate
-
+        if game_token:
+            self.playload["csgo_settings.steam_game_server_login_token"] \
+                = game_token
+        if tickrate:
+            if tickrate not in VALID_TICKRATES:
+                raise InvalidTickrate()
+            self.playload["csgo_settings.tickrate"] = tickrate
         if steam_key:
             self.playload["csgo_settings.workshop_authkey"] = steam_key
-
         if workshop_id:
             self.playload["csgo_settings.workshop_id"] = workshop_id
-
         if workshop_start_map_id:
             self.playload["csgo_settings.workshop_start_map_id"] \
                 = workshop_start_map_id
 
         return self
 
-    def mumble(self, slots: int, superuser_password: str,
+    def mumble(self, slots: int = None, superuser_password: str = None,
                password: str = None, motd: str = None) -> None:
         """Used for configuring a Mumble server.
 
@@ -206,23 +205,26 @@ class ServerSettings:
         if self.__game:
             raise MultipleGames()
 
-        if slots < 7 or slots > 700:
-            raise InvalidSlotSize()
+        self.__game = True
 
         self.playload["game"] = "mumble"
-        self.playload["mumble_settings.slots"] = slots
-        self.playload["mumble_settings.superuser_password"] = \
-            superuser_password
 
+        if slots:
+            if slots < 7 or slots > 700:
+                raise InvalidSlotSize()
+
+            self.playload["mumble_settings.slots"] = slots
+        if superuser_password:
+            self.playload["mumble_settings.superuser_password"] = \
+                superuser_password
         if password:
             self.playload["mumble_settings.password"] = password
-
         if motd:
             self.playload["mumble_settings.welcome_text"] = motd
 
         return self
 
-    def tf2(self, slots: int, rcon_password: str,
+    def tf2(self, slots: int = None, rcon_password: str = None,
             gotv: bool = False, sourcemod: bool = False,
             insecure: bool = False, password: str = None,
             admins: list = None) -> None:
@@ -255,18 +257,26 @@ class ServerSettings:
         if self.__game:
             raise MultipleGames()
 
-        if slots < 5 or slots > 32:
-            raise InvalidSlotSize()
+        self.__game = True
 
         self.playload["game"] = "teamfortress2"
-        self.playload["teamfortress2_settings.rcon"] = rcon_password
-        self.playload["teamfortress2_settings.enable_gotv"] = gotv
-        self.playload["teamfortress2_settings.enable_sourcemod"] = sourcemod
-        self.playload["teamfortress2_settings.insecure"] = insecure
 
+        if slots:
+            if slots < 5 or slots > 32:
+                raise InvalidSlotSize()
+
+            self.playload["teamfortress2_settings.slots"] = slots
+        if rcon_password:
+            self.playload["teamfortress2_settings.rcon"] = rcon_password
+        if gotv:
+            self.playload["teamfortress2_settings.enable_gotv"] = gotv
+        if sourcemod:
+            self.playload["teamfortress2_settings.enable_sourcemod"] = \
+                sourcemod
+        if insecure:
+            self.playload["teamfortress2_settings.insecure"] = insecure
         if password:
             self.playload["teamfortress2_settings.password"] = password
-
         if admins:
             self.playload["teamfortress2_settings.sourcemod_admins"] = admins
 
@@ -290,6 +300,8 @@ class ServerSettings:
 
         if self.__game:
             raise MultipleGames()
+
+        self.__game = True
 
         if slots < 5 or slots > 500:
             raise InvalidSlotSize()

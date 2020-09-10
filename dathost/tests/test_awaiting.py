@@ -85,7 +85,7 @@ class TestAwaitingClient(asynctest.TestCase):
     async def test_server_tf2(self):
         data, server = await self.client.create_server(
             ServerSettings(
-                name="Blocking TF2 server",
+                name="Awaiting TF2 server",
                 location="sydney"
             ).tf2(
                 slots=5,
@@ -97,6 +97,15 @@ class TestAwaitingClient(asynctest.TestCase):
         self.assertIsInstance(server, ServerAwaiting)
 
         self.assertIsInstance(await server.get(), ServerModel)
+
+        await server.update(
+            ServerSettings(
+                name="Renamed Awaiting CS: GO server",
+                location="sydney"
+            ).csgo(
+                slots=7
+            )
+        )
 
         self.assertIsNone(await server.delete())
 

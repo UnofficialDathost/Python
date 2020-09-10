@@ -62,6 +62,7 @@ class Server(Route):
     delete = "{}"
     get = "{}"
     list = ""
+    update = "{}"
 
 
 ACCOUNT = Account()
