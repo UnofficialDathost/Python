@@ -66,6 +66,7 @@ class Server(Route):
     console = "{}/console"
     duplicate = "{}/duplicate"
     sync = "{}/sync-files"
+    ftp = "{}/regenerate-ftp-password"
 
 
 ACCOUNT = Account()

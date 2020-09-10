@@ -127,3 +127,11 @@ class ServerAwaiting(ServerBase):
         )
 
         return ServerModel(data), ServerAwaiting(self.context, data["id"])
+
+    async def ftp_reset(self) -> None:
+        """Resets the FRP password.
+        """
+
+        await self.context._post(
+            url=SERVER.ftp.format(self.server_id)
+        )

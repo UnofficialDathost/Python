@@ -127,3 +127,11 @@ class ServerBlocking(ServerBase):
         )
 
         return ServerModel(data), ServerBlocking(self.context, data["id"])
+
+    def ftp_reset(self) -> None:
+        """Resets the FRP password.
+        """
+
+        self.context._post(
+            url=SERVER.ftp.format(self.server_id)
+        )

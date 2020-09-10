@@ -72,6 +72,8 @@ class TestBlockingClient(unittest.TestCase):
             )
         )
 
+        server.ftp_reset()
+
         _, duplicate = server.duplicate(sync=True)
         self.assertIsNone(duplicate.delete())
 

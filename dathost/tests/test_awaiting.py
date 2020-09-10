@@ -65,6 +65,17 @@ class TestAwaitingClient(asynctest.TestCase):
         await server.console_send("status")
         await server.console_retrive()
 
+        await server.update(
+            ServerSettings(
+                name="Renamed Awaiting CS: GO server",
+                location="sydney"
+            ).csgo(
+                slots=7
+            )
+        )
+
+        await server.ftp_reset()
+
         _, duplicate = await server.duplicate(sync=True)
         self.assertIsNone(await duplicate.delete())
 
