@@ -19,13 +19,14 @@ class BlockingHttp(BaseHttp):
             False
         )
 
-    def _post(self, *args, **kwargs) -> bool:
+    def _post(self, read_json: bool = False,
+              *args, **kwargs) -> bool:
         """Wrapped HTTPX Post.
         """
 
         return self.handle_resp(
             self._client.post(*args, **kwargs),
-            False
+            read_json
         )
 
     def _put(self, *args, **kwargs) -> bool:

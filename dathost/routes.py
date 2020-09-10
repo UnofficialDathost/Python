@@ -48,8 +48,13 @@ class CustomDomains(Route):
     details = "custom-domains"
 
 
+class Server(Route):
+    create = "game-servers"
+
+
 ACCOUNT = Account()
 CUSTOM_DOMAINS = CustomDomains()
+SERVER = Server()
 
-for route in [ACCOUNT, CUSTOM_DOMAINS]:
+for route in [ACCOUNT, CUSTOM_DOMAINS, SERVER]:
     route.format()

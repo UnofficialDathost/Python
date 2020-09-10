@@ -19,13 +19,14 @@ class AwaitingHttp(BaseHttp):
             False
         )
 
-    async def _post(self, *args, **kwargs) -> bool:
+    async def _post(self, read_json: bool = False,
+                    *args, **kwargs) -> bool:
         """Wrapped HTTPX Post.
         """
 
         return self.handle_resp(
             await self._client.post(*args, **kwargs),
-            False
+            read_json
         )
 
     async def _put(self, *args, **kwargs) -> bool:
