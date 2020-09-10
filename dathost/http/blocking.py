@@ -6,26 +6,33 @@ class BlockingHttp(BaseHttp):
         """Wrapped HTTPX Delete.
         """
 
-        resp = self._client.get(*args, **kwargs)
-        return self.handle_resp(resp)
+        return self.handle_resp(
+            self._client.get(*args, **kwargs)
+        )
 
     def _delete(self, *args, **kwargs) -> bool:
         """Wrapped HTTPX Delete.
         """
 
-        resp = self._client.delete(*args, **kwargs)
-        return self.handle_resp(resp, False)
+        return self.handle_resp(
+            self._client.delete(*args, **kwargs),
+            False
+        )
 
     def _post(self, *args, **kwargs) -> bool:
         """Wrapped HTTPX Post.
         """
 
-        resp = self._client.post(*args, **kwargs)
-        return self.handle_resp(resp, False)
+        return self.handle_resp(
+            self._client.post(*args, **kwargs),
+            False
+        )
 
     def _put(self, *args, **kwargs) -> bool:
         """Wrapped HTTPX Put.
         """
 
-        resp = self._client.put(*args, **kwargs)
-        return self.handle_resp(resp, False)
+        return self.handle_resp(
+            self._client.put(*args, **kwargs),
+            False
+        )

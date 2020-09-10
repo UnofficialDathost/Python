@@ -6,26 +6,33 @@ class AwaitingHttp(BaseHttp):
         """Wrapped HTTPX Delete.
         """
 
-        resp = await self._client.get(*args, **kwargs)
-        return self.handle_resp(resp)
+        return self.handle_resp(
+            await self._client.get(*args, **kwargs)
+        )
 
     async def _delete(self, *args, **kwargs) -> bool:
         """Wrapped HTTPX Delete.
         """
 
-        resp = await self._client.delete(*args, **kwargs)
-        return self.handle_resp(resp, False)
+        return self.handle_resp(
+            await self._client.delete(*args, **kwargs),
+            False
+        )
 
     async def _post(self, *args, **kwargs) -> bool:
         """Wrapped HTTPX Post.
         """
 
-        resp = await self._client.post(*args, **kwargs)
-        return self.handle_resp(resp, False)
+        return self.handle_resp(
+            await self._client.post(*args, **kwargs),
+            False
+        )
 
     async def _put(self, *args, **kwargs) -> bool:
         """Wrapped HTTPX Put.
         """
 
-        resp = await self._client.put(*args, **kwargs)
-        return self.handle_resp(resp, False)
+        return self.handle_resp(
+            await self._client.put(*args, **kwargs),
+            False
+        )
