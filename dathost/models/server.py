@@ -1,3 +1,3 @@
 class ServerModel:
     def __init__(self, data: dict) -> None:
-        super().__init__()
+        self.server_id = data["id"]

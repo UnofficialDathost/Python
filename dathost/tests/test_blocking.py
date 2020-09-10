@@ -42,16 +42,69 @@ class TestBlockingClient(unittest.TestCase):
             self.assertIsInstance(data, ServerModel)
             self.assertIsInstance(server, ServerBlocking)
 
-    def test_server(self):
+    def test_server_csgo(self):
         data, server = self.client.create_server(
             ServerSettings(
-                name="Blocking test server",
+                name="Blocking CS: GO server",
                 location="sydney",
             ).csgo(
                 slots=5,
                 game_token="",
                 tickrate=128,
                 rcon_password=token_urlsafe()
+            )
+        )
+
+        self.assertIsInstance(data, ServerModel)
+        self.assertIsInstance(server, ServerBlocking)
+
+        self.assertIsInstance(server.get(), ServerModel)
+
+        self.assertIsNone(server.delete())
+
+    def test_server_mumble(self):
+        data, server = self.client.create_server(
+            ServerSettings(
+                name="Blocking Mumble server",
+                location="sydney"
+            ).mumble(
+                slots=7,
+                superuser_password=token_urlsafe()
+            )
+        )
+
+        self.assertIsInstance(data, ServerModel)
+        self.assertIsInstance(server, ServerBlocking)
+
+        self.assertIsInstance(server.get(), ServerModel)
+
+        self.assertIsNone(server.delete())
+
+    def test_server_tf2(self):
+        data, server = self.client.create_server(
+            ServerSettings(
+                name="Blocking TF2 server",
+                location="sydney"
+            ).tf2(
+                slots=5,
+                rcon_password=token_urlsafe()
+            )
+        )
+
+        self.assertIsInstance(data, ServerModel)
+        self.assertIsInstance(server, ServerBlocking)
+
+        self.assertIsInstance(server.get(), ServerModel)
+
+        self.assertIsNone(server.delete())
+
+    def test_server_teamspeak(self):
+        data, server = self.client.create_server(
+            ServerSettings(
+                name="Blocking TF2 server",
+                location="sydney"
+            ).teamspeak(
+                slots=5,
             )
         )
 

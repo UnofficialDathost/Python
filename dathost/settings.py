@@ -68,7 +68,8 @@ class ServerSettings:
              map_group: str = MAP_GROUP, start_map: str = None,
              password: str = None, pure: bool = True,
              admins: list = None, plugins: list = None, steam_key: str = None,
-             workshop_id: int = None, workshop_start_map_id: int = None):
+             workshop_id: int = None, workshop_start_map_id: int = None
+             ) -> None:
         """Used for configuring a CS: GO server.
 
         Parameters
@@ -128,8 +129,10 @@ class ServerSettings:
         self.__game = True
 
         self.playload["game"] = "csgo"
+
         if autoload_configs:
             self.playload["csgo_settings.autoload_configs"] = autoload_configs
+
         self.playload["csgo_settings.disable_bots"] = disable_bots
         self.playload["csgo_settings.enable_csay_plugin"] = enable_csay_plugin
         self.playload["csgo_settings.enable_gotv"] = enable_gotv
@@ -175,5 +178,123 @@ class ServerSettings:
         if workshop_start_map_id:
             self.playload["csgo_settings.workshop_start_map_id"] \
                 = workshop_start_map_id
+
+        return self
+
+    def mumble(self, slots: int, superuser_password: str,
+               password: str = None, motd: str = None) -> None:
+        """Used for configuring a Mumble server.
+
+        Parameters
+        ----------
+        slots : int
+        superuser_password : str
+        password : str, optional
+            by default None
+        motd : str, optional
+            by default None
+
+        Raises
+        ------
+        MultipleGames
+            Raised when you attempt to create one server
+            with multiple games.
+        InvalidSlotSize
+            Raised when slot size is below 7 or above 700.
+        """
+
+        if self.__game:
+            raise MultipleGames()
+
+        if slots < 7 or slots > 700:
+            raise InvalidSlotSize()
+
+        self.playload["game"] = "mumble"
+        self.playload["mumble_settings.slots"] = slots
+        self.playload["mumble_settings.superuser_password"] = \
+            superuser_password
+
+        if password:
+            self.playload["mumble_settings.password"] = password
+
+        if motd:
+            self.playload["mumble_settings.welcome_text"] = motd
+
+        return self
+
+    def tf2(self, slots: int, rcon_password: str,
+            gotv: bool = False, sourcemod: bool = False,
+            insecure: bool = False, password: str = None,
+            admins: list = None) -> None:
+        """Used for configuring a TF2 server.
+
+        Parameters
+        ----------
+        rcon_password : str
+        slots : int
+        gotv : bool, optional
+            by default False
+        sourcemod : bool, optional
+            by default False
+        insecure : bool, optional
+            by default False
+        password : str, optional
+            by default None
+        admins : list, optional
+            by default None
+
+        Raises
+        ------
+        MultipleGames
+            Raised when you attempt to create one server
+            with multiple games.
+        InvalidSlotSize
+            Raised when slot size is below 5 or above 32.
+        """
+
+        if self.__game:
+            raise MultipleGames()
+
+        if slots < 5 or slots > 32:
+            raise InvalidSlotSize()
+
+        self.playload["game"] = "teamfortress2"
+        self.playload["teamfortress2_settings.rcon"] = rcon_password
+        self.playload["teamfortress2_settings.enable_gotv"] = gotv
+        self.playload["teamfortress2_settings.enable_sourcemod"] = sourcemod
+        self.playload["teamfortress2_settings.insecure"] = insecure
+
+        if password:
+            self.playload["teamfortress2_settings.password"] = password
+
+        if admins:
+            self.playload["teamfortress2_settings.sourcemod_admins"] = admins
+
+        return self
+
+    def teamspeak(self, slots: int) -> None:
+        """Used for configuring a teamspeak server.
+
+        Parameters
+        ----------
+        slots : int
+
+        Raises
+        ------
+        MultipleGames
+            Raised when you attempt to create one server
+            with multiple games.
+        InvalidSlotSize
+            Raised when slot size is below 5 or above 500.
+        """
+
+        if self.__game:
+            raise MultipleGames()
+
+        if slots < 5 or slots > 500:
+            raise InvalidSlotSize()
+
+        self.playload["game"] = "teamspeak3"
+        self.playload["teamspeak3_settings.slots"] = slots
 
         return self

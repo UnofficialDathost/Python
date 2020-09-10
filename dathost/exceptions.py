@@ -1,5 +1,5 @@
 class InvalidSlotSize(Exception):
-    """Raised when slot size is below 5 or above 64.
+    """Raised when slot size is invalid.
     """
 
     pass
