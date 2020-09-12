@@ -1,3 +1,5 @@
+import typing
+
 from .base import BaseHttp
 
 
@@ -37,3 +39,17 @@ class AwaitingHttp(BaseHttp):
             await self._client.put(*args, **kwargs),
             False
         )
+
+    async def _stream(self,  *args, **kwargs
+                      ) -> typing.AsyncGenerator[bytes, None]:
+        """Wrapped HTTPX stream GET.
+
+        Yields
+        -------
+        bytes
+        """
+
+        async with self._client.stream("GET", *args, **kwargs) as resp:
+            if resp.status_code == 200:
+                async for chunk in resp.aiter_bytes():
+                    yield chunk

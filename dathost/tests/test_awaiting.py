@@ -6,6 +6,8 @@ from ..models.account import AccountModel
 from ..models.server import ServerModel
 from ..models.file import FileModel
 from ..models.backup import BackupModel
+from ..models.metrics import MetricsModel, MapsModel, PlayerModel, \
+    PlayersOnlineGraphModel
 
 from ..server.awaiting.backup import Backup
 from ..server.awaiting.file import File
@@ -96,6 +98,21 @@ class TestAwaitingClient(asynctest.TestCase):
             self.assertIsInstance(backup, Backup)
 
             await backup.restore()
+
+        metrics = await server.metrics()
+        self.assertIsInstance(metrics, MetricsModel)
+
+        for map_ in metrics.maps():
+            self.assertIsInstance(map_, MapsModel)
+
+        for player in metrics.players_online():
+            self.assertIsInstance(player, PlayerModel)
+
+        for player in metrics.all_time_players():
+            self.assertIsInstance(player, PlayerModel)
+
+        for player in metrics.players_online_graph():
+            self.assertIsInstance(player, PlayersOnlineGraphModel)
 
         await server.ftp_reset()
 

@@ -75,6 +75,10 @@ class Server(Route):
     file_unzip = "{}/unzip/{}"
     backups = "{}/backups"
     backup_restore = "{}/backups/{}"
+    metrics = "{}/metrics"
+
+    # We don't want any formatting applied to this route.
+    _upload = "https://upload.dathost.net/api/0.1/game-servers/{}/files/{}"
 
 
 ACCOUNT = Account()

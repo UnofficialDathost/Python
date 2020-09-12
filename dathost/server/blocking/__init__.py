@@ -5,6 +5,7 @@ from ..base import ServerBase
 from ...models.server import ServerModel
 from ...models.file import FileModel
 from ...models.backup import BackupModel
+from ...models.metrics import MetricsModel
 
 from .backup import Backup
 from .file import File
@@ -187,7 +188,7 @@ class ServerBlocking(ServerBase):
 
     def files(self, hide_default: bool = False, path: str = None,
               file_sizes: bool = False, timeout: int = 30
-              ) -> typing.AsyncGenerator[FileModel, None]:
+              ) -> typing.Generator[FileModel, None, None]:
         """Used to list files.
 
         Parameters
@@ -225,7 +226,7 @@ class ServerBlocking(ServerBase):
             )
 
     def backups(self, timeout: int = 30
-                ) -> typing.AsyncGenerator[BackupModel, Backup]:
+                ) -> typing.Generator[BackupModel, Backup, None]:
         """Used to list backups a server has.
 
         Parameters
@@ -252,3 +253,18 @@ class ServerBlocking(ServerBase):
                 self.context,
                 backup["name"]
             )
+
+    def metrics(self) -> MetricsModel:
+        """Used to get server metrics.
+
+        Returns
+        -------
+        MetricsModel
+            Holds details on server metrics.
+        """
+
+        data = self.context._get(
+            SERVER.metrics.format(self.server_id)
+        )
+
+        return MetricsModel(data)

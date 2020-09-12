@@ -5,6 +5,7 @@ from ..base import ServerBase
 from ...models.server import ServerModel
 from ...models.file import FileModel
 from ...models.backup import BackupModel
+from ...models.metrics import MetricsModel
 
 from .backup import Backup
 from .file import File
@@ -89,6 +90,7 @@ class ServerAwaiting(ServerBase):
         InvalidConsoleLine
             Raised when console lines below 1 or above 100000.
         """
+
         if lines < 1 or lines > 100000:
             raise InvalidConsoleLine()
 
@@ -252,3 +254,18 @@ class ServerAwaiting(ServerBase):
                 self.server_id,
                 backup["name"]
             )
+
+    async def metrics(self) -> MetricsModel:
+        """Used to get server metrics.
+
+        Returns
+        -------
+        MetricsModel
+            Holds details on server metrics.
+        """
+
+        data = await self.context._get(
+            SERVER.metrics.format(self.server_id)
+        )
+
+        return MetricsModel(data)

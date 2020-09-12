@@ -6,6 +6,8 @@ from ..models.account import AccountModel
 from ..models.server import ServerModel
 from ..models.file import FileModel
 from ..models.backup import BackupModel
+from ..models.metrics import MetricsModel, MapsModel, PlayerModel, \
+    PlayersOnlineGraphModel
 
 from ..server.blocking.backup import Backup
 from ..server.blocking.file import File
@@ -94,6 +96,21 @@ class TestBlockingClient(unittest.TestCase):
             self.assertIsInstance(backup, Backup)
 
             backup.restore()
+
+        metrics = server.metrics()
+        self.assertIsInstance(metrics, MetricsModel)
+
+        for map_ in metrics.maps():
+            self.assertIsInstance(map_, MapsModel)
+
+        for player in metrics.players_online():
+            self.assertIsInstance(player, PlayerModel)
+
+        for player in metrics.all_time_players():
+            self.assertIsInstance(player, PlayerModel)
+
+        for player in metrics.players_online_graph():
+            self.assertIsInstance(player, PlayersOnlineGraphModel)
 
         server.ftp_reset()
 

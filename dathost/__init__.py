@@ -117,7 +117,7 @@ class Awaiting(Base, AwaitingHttp):
             await self._get(ACCOUNT.details)
         )
 
-    async def domains(self) -> typing.AsyncGenerator[list, None]:
+    async def domains(self) -> typing.AsyncGenerator[str, None]:
         """Used to list domains.
 
         Returns
@@ -192,7 +192,7 @@ class Blocking(Base, BlockingHttp):
 
         return ServerBlocking(self, server_id)
 
-    def servers(self) -> typing.AsyncGenerator[ServerModel, ServerBlocking]:
+    def servers(self) -> typing.Generator[ServerModel, ServerBlocking, None]:
         """Used to list servers.
 
         Yields
@@ -223,7 +223,7 @@ class Blocking(Base, BlockingHttp):
             self._get(ACCOUNT.details)
         )
 
-    def domains(self) -> typing.AsyncGenerator[list, None]:
+    def domains(self) -> typing.Generator[str, None, None]:
         """Used to list domains.
 
         Returns
