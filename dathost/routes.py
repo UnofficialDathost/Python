@@ -72,6 +72,7 @@ class Server(Route):
     stop = "{}/stop"
     files = "{}/files"
     backups = "{}/backups"
+    backup_restore = "{}/backups/{}"
 
 
 ACCOUNT = Account()

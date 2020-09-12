@@ -7,7 +7,7 @@ from ..models.server import ServerModel
 from ..models.file import FileModel
 from ..models.backup import BackupModel
 
-from ..server.backup import Backup
+from ..server.blocking.backup import Backup
 
 from ..server.blocking import ServerBlocking
 
@@ -89,6 +89,8 @@ class TestBlockingClient(unittest.TestCase):
         for data, backup in server.backups():
             self.assertIsInstance(data, BackupModel)
             self.assertIsInstance(backup, Backup)
+
+            backup.restore()
 
         server.ftp_reset()
 

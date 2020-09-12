@@ -7,7 +7,7 @@ from ..models.server import ServerModel
 from ..models.file import FileModel
 from ..models.backup import BackupModel
 
-from ..server.backup import Backup
+from ..server.awaiting.backup import Backup
 
 from ..server.awaiting import ServerAwaiting
 
@@ -91,6 +91,8 @@ class TestAwaitingClient(asynctest.TestCase):
         async for data, backup in server.backups():
             self.assertIsInstance(data, BackupModel)
             self.assertIsInstance(backup, Backup)
+
+            await backup.restore()
 
         await server.ftp_reset()
 

@@ -1,30 +1,30 @@
 import typing
 
-from .base import ServerBase
+from ..base import ServerBase
 
-from ..models.server import ServerModel
-from ..models.file import FileModel
-from ..models.backup import BackupModel
+from ...models.server import ServerModel
+from ...models.file import FileModel
+from ...models.backup import BackupModel
 
 from .backup import Backup
 
-from ..settings import ServerSettings
+from ...settings import ServerSettings
 
-from ..exceptions import InvalidConsoleLine
+from ...exceptions import InvalidConsoleLine
 
-from ..routes import SERVER
+from ...routes import SERVER
 
 
-class ServerAwaiting(ServerBase):
-    async def delete(self) -> None:
+class ServerBlocking(ServerBase):
+    def delete(self) -> None:
         """Used to delete a sever.
         """
 
-        await self.context._delete(
+        self.context._delete(
             SERVER.delete.format(self.server_id)
         )
 
-    async def get(self) -> ServerModel:
+    def get(self) -> ServerModel:
         """Used to get details on server.
 
         Returns
@@ -34,10 +34,10 @@ class ServerAwaiting(ServerBase):
         """
 
         return ServerModel(
-            await self.context._get(SERVER.get.format(self.server_id))
+            self.context._get(SERVER.get.format(self.server_id))
         )
 
-    async def update(self, settings: ServerSettings) -> None:
+    def update(self, settings: ServerSettings) -> None:
         """Update servers paramters.
 
         Parameters
@@ -46,7 +46,7 @@ class ServerAwaiting(ServerBase):
             Used to configure server.
         """
 
-        await self.context._put(
+        self.context._put(
             SERVER.update.format(self.server_id),
             data={
                 **settings.playload,
@@ -54,8 +54,8 @@ class ServerAwaiting(ServerBase):
             }
         )
 
-    async def console_send(self, line: str) -> None:
-        """Used to send a rcon command to console.
+    def console_send(self, line: str) -> None:
+        """Used to send a command to console.
 
         Parameters
         ----------
@@ -63,14 +63,14 @@ class ServerAwaiting(ServerBase):
             Console command.
         """
 
-        await self.context._post(
+        self.context._post(
             url=SERVER.console.format(self.server_id),
             data={
                 "line": line,
             }
         )
 
-    async def console_retrive(self, lines: int = 1000) -> list:
+    def console_retrive(self, lines: int = 1000) -> list:
         """Used to retrive lines from the console.
 
         Parameters
@@ -91,7 +91,7 @@ class ServerAwaiting(ServerBase):
         if lines < 1 or lines > 100000:
             raise InvalidConsoleLine()
 
-        data = await self.context._get(
+        data = self.context._get(
             url=SERVER.console.format(self.server_id),
             params={
                 "max_lines": lines,
@@ -100,15 +100,15 @@ class ServerAwaiting(ServerBase):
 
         return data["lines"]
 
-    async def sync(self) -> None:
+    def sync(self) -> None:
         """Used to sync files from server to cache.
         """
 
-        await self.context._post(
+        self.context._post(
             url=SERVER.sync.format(self.server_id)
         )
 
-    async def duplicate(self, sync: bool = False) -> (ServerModel, ServerBase):
+    def duplicate(self, sync: bool = False) -> (ServerModel, ServerBase):
         """Used to duplicate a server.
 
         Parameters
@@ -120,29 +120,29 @@ class ServerAwaiting(ServerBase):
         -------
         ServerModel
             Holds server data.
-        ServerAwaiting
+        ServerBlocking
             Used to interact with server.
         """
 
         if sync:
-            await self.sync()
+            self.sync()
 
-        data = await self.context._post(
+        data = self.context._post(
             url=SERVER.duplicate.format(self.server_id),
             read_json=True
         )
 
-        return ServerModel(data), ServerAwaiting(self.context, data["id"])
+        return ServerModel(data), ServerBlocking(self.context, data["id"])
 
-    async def ftp_reset(self) -> None:
+    def ftp_reset(self) -> None:
         """Resets the FRP password.
         """
 
-        await self.context._post(
+        self.context._post(
             url=SERVER.ftp.format(self.server_id)
         )
 
-    async def stop(self, timeout: int = 60) -> None:
+    def stop(self, timeout: int = 60) -> None:
         """Used to stop the server.
 
         Parameters
@@ -151,13 +151,13 @@ class ServerAwaiting(ServerBase):
             by default 60
         """
 
-        await self.context._post(
+        self.context._post(
             url=SERVER.stop.format(self.server_id),
             timeout=timeout
         )
 
-    async def start(self, timeout: int = 60) -> None:
-        """Used to start the server.
+    def start(self, timeout: int = 60) -> None:
+        """Used to stop the server.
 
         Parameters
         ----------
@@ -165,12 +165,12 @@ class ServerAwaiting(ServerBase):
             by default 60
         """
 
-        await self.context._post(
+        self.context._post(
             url=SERVER.start.format(self.server_id),
             timeout=timeout
         )
 
-    async def reset(self, timeout: int = 60) -> None:
+    def reset(self, timeout: int = 60) -> None:
         """Used to restart the server.
 
         Parameters
@@ -179,14 +179,14 @@ class ServerAwaiting(ServerBase):
             by default 60
         """
 
-        await self.context._post(
+        self.context._post(
             url=SERVER.reset.format(self.server_id),
             timeout=timeout
         )
 
-    async def files(self, hide_default: bool = False, path: str = None,
-                    file_sizes: bool = False, timeout: int = 30
-                    ) -> typing.AsyncGenerator[FileModel, None]:
+    def files(self, hide_default: bool = False, path: str = None,
+              file_sizes: bool = False, timeout: int = 30
+              ) -> typing.AsyncGenerator[FileModel, None]:
         """Used to list files.
 
         Parameters
@@ -206,7 +206,7 @@ class ServerAwaiting(ServerBase):
             Holds details on a file.
         """
 
-        data = await self.context._get(
+        data = self.context._get(
             SERVER.files.format(self.server_id),
             params={
                 "hide_default_files": hide_default,
@@ -219,8 +219,8 @@ class ServerAwaiting(ServerBase):
         for file_ in data:
             yield FileModel(file_)
 
-    async def backups(self, timeout: int = 30
-                      ) -> typing.AsyncGenerator[BackupModel, Backup]:
+    def backups(self, timeout: int = 30
+                ) -> typing.AsyncGenerator[BackupModel, Backup]:
         """Used to list backups a server has.
 
         Parameters
@@ -236,10 +236,14 @@ class ServerAwaiting(ServerBase):
             Used for interacting with a backup.
         """
 
-        data = await self.context._get(
+        data = self.context._get(
             SERVER.backups.format(self.server_id),
             timeout=timeout
         )
 
         for backup in data:
-            yield BackupModel(backup), Backup(backup["name"])
+            yield BackupModel(backup), Backup(
+                self.server_id,
+                self.context,
+                backup["name"]
+            )
