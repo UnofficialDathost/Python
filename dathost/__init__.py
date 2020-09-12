@@ -42,7 +42,7 @@ class Awaiting(Base, AwaitingHttp):
 
         Parameters
         ----------
-        settings: ServerSettings
+        settings : ServerSettings
             Used to configure server.
 
         Returns
