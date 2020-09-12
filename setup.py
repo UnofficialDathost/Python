@@ -36,7 +36,9 @@ setup(
         "dathost",
         "dathost.models",
         "dathost.tests",
-        "dathost.server"
+        "dathost.http",
+        "dathost.server",
+        "dathost.server.file",
     ],
     python_requires=">=3.6",
     include_package_data=True,

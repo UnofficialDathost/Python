@@ -4,6 +4,10 @@ from secrets import token_urlsafe
 
 from ..models.account import AccountModel
 from ..models.server import ServerModel
+from ..models.file import FileModel
+from ..models.backup import BackupModel
+
+from ..server.backup import Backup
 
 from ..server.awaiting import ServerAwaiting
 
@@ -77,6 +81,16 @@ class TestAwaitingClient(asynctest.TestCase):
                 slots=7
             )
         )
+
+        async for data in server.files():
+            self.assertIsInstance(data, FileModel)
+
+        async for data in server.files(hide_default=True, file_sizes=True):
+            self.assertIsInstance(data, FileModel)
+
+        async for data, backup in server.backups():
+            self.assertIsInstance(data, BackupModel)
+            self.assertIsInstance(backup, Backup)
 
         await server.ftp_reset()
 

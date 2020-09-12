@@ -70,6 +70,8 @@ class Server(Route):
     reset = "{}/reset"
     start = "{}/start"
     stop = "{}/stop"
+    files = "{}/files"
+    backups = "{}/backups"
 
 
 ACCOUNT = Account()

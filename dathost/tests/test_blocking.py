@@ -4,6 +4,10 @@ from secrets import token_urlsafe
 
 from ..models.account import AccountModel
 from ..models.server import ServerModel
+from ..models.file import FileModel
+from ..models.backup import BackupModel
+
+from ..server.backup import Backup
 
 from ..server.blocking import ServerBlocking
 
@@ -75,6 +79,16 @@ class TestBlockingClient(unittest.TestCase):
                 slots=7
             )
         )
+
+        for data in server.files():
+            self.assertIsInstance(data, FileModel)
+
+        for data in server.files(hide_default=True, file_sizes=True):
+            self.assertIsInstance(data, FileModel)
+
+        for data, backup in server.backups():
+            self.assertIsInstance(data, BackupModel)
+            self.assertIsInstance(backup, Backup)
 
         server.ftp_reset()
 

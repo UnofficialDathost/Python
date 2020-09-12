@@ -1,6 +1,12 @@
+import typing
+
 from .base import ServerBase
 
 from ..models.server import ServerModel
+from ..models.file import FileModel
+from ..models.backup import BackupModel
+
+from .backup import Backup
 
 from ..settings import ServerSettings
 
@@ -177,3 +183,63 @@ class ServerAwaiting(ServerBase):
             url=SERVER.reset.format(self.server_id),
             timeout=timeout
         )
+
+    async def files(self, hide_default: bool = False, path: str = None,
+                    file_sizes: bool = False, timeout: int = 30
+                    ) -> typing.AsyncGenerator[FileModel, None]:
+        """Used to list files.
+
+        Parameters
+        ----------
+        hide_default : bool, optional
+            by default False
+        path : str, optional
+            Path to use as root, by default None
+        file_sizes : bool, optional
+            by default False
+        timeout : int
+            by default 30
+
+        Yields
+        ------
+        FileModel
+            Holds details on a file.
+        """
+
+        data = await self.context._get(
+            SERVER.files.format(self.server_id),
+            params={
+                "hide_default_files": hide_default,
+                "path": path,
+                "with_filesizes": file_sizes,
+            },
+            timeout=timeout
+        )
+
+        for file_ in data:
+            yield FileModel(file_)
+
+    async def backups(self, timeout: int = 30
+                      ) -> typing.AsyncGenerator[BackupModel, Backup]:
+        """Used to list backups a server has.
+
+        Parameters
+        ----------
+        timeout : int, optional
+            by default 30
+
+        Yields
+        -------
+        BackupModel
+            Holds details on backup.
+        Backup
+            Used for interacting with a backup.
+        """
+
+        data = await self.context._get(
+            SERVER.backups.format(self.server_id),
+            timeout=timeout
+        )
+
+        for backup in data:
+            yield BackupModel(backup), Backup(backup["name"])
