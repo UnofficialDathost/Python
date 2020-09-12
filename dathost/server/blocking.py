@@ -135,3 +135,45 @@ class ServerBlocking(ServerBase):
         self.context._post(
             url=SERVER.ftp.format(self.server_id)
         )
+
+    def stop(self, timeout: int = 60) -> None:
+        """Used to stop the server.
+
+        Parameters
+        ----------
+        timeout : int, optional
+            by default 60
+        """
+
+        self.context._post(
+            url=SERVER.stop.format(self.server_id),
+            timeout=timeout
+        )
+
+    def start(self, timeout: int = 60) -> None:
+        """Used to stop the server.
+
+        Parameters
+        ----------
+        timeout : int, optional
+            by default 60
+        """
+
+        self.context._post(
+            url=SERVER.start.format(self.server_id),
+            timeout=timeout
+        )
+
+    def reset(self, timeout: int = 60) -> None:
+        """Used to restart the server.
+
+        Parameters
+        ----------
+        timeout : int, optional
+            by default 60
+        """
+
+        self.context._post(
+            url=SERVER.reset.format(self.server_id),
+            timeout=timeout
+        )

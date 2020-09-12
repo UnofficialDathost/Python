@@ -65,6 +65,10 @@ class TestAwaitingClient(asynctest.TestCase):
         await server.console_send("status")
         await server.console_retrive()
 
+        await server.start()
+        await server.stop()
+        await server.reset()
+
         await server.update(
             ServerSettings(
                 name="Renamed Awaiting CS: GO server",

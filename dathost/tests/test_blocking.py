@@ -63,6 +63,10 @@ class TestBlockingClient(unittest.TestCase):
         server.console_send("status")
         server.console_retrive()
 
+        server.start()
+        server.stop()
+        server.reset()
+
         server.update(
             ServerSettings(
                 name="Renamed Blocking CS: GO server",

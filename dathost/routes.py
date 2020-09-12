@@ -67,6 +67,9 @@ class Server(Route):
     duplicate = "{}/duplicate"
     sync = "{}/sync-files"
     ftp = "{}/regenerate-ftp-password"
+    reset = "{}/reset"
+    start = "{}/start"
+    stop = "{}/stop"
 
 
 ACCOUNT = Account()
