@@ -71,6 +71,8 @@ class Server(Route):
     start = "{}/start"
     stop = "{}/stop"
     files = "{}/files"
+    file_interact = "{}/files/{}"
+    file_unzip = "{}/unzip/{}"
     backups = "{}/backups"
     backup_restore = "{}/backups/{}"
 

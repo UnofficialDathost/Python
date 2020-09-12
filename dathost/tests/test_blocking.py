@@ -8,6 +8,7 @@ from ..models.file import FileModel
 from ..models.backup import BackupModel
 
 from ..server.blocking.backup import Backup
+from ..server.blocking.file import File
 
 from ..server.blocking import ServerBlocking
 
@@ -80,11 +81,13 @@ class TestBlockingClient(unittest.TestCase):
             )
         )
 
-        for data in server.files():
+        for data, f in server.files():
             self.assertIsInstance(data, FileModel)
+            self.assertIsInstance(f, File)
 
-        for data in server.files(hide_default=True, file_sizes=True):
+        for data, f in server.files(hide_default=True, file_sizes=True):
             self.assertIsInstance(data, FileModel)
+            self.assertIsInstance(f, File)
 
         for data, backup in server.backups():
             self.assertIsInstance(data, BackupModel)

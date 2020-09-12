@@ -8,6 +8,7 @@ from ..models.file import FileModel
 from ..models.backup import BackupModel
 
 from ..server.awaiting.backup import Backup
+from ..server.awaiting.file import File
 
 from ..server.awaiting import ServerAwaiting
 
@@ -82,11 +83,13 @@ class TestAwaitingClient(asynctest.TestCase):
             )
         )
 
-        async for data in server.files():
+        async for data, f in server.files():
             self.assertIsInstance(data, FileModel)
+            self.assertIsInstance(f, File)
 
-        async for data in server.files(hide_default=True, file_sizes=True):
+        async for data, f in server.files(hide_default=True, file_sizes=True):
             self.assertIsInstance(data, FileModel)
+            self.assertIsInstance(f, File)
 
         async for data, backup in server.backups():
             self.assertIsInstance(data, BackupModel)

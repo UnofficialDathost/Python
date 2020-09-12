@@ -7,6 +7,7 @@ from ...models.file import FileModel
 from ...models.backup import BackupModel
 
 from .backup import Backup
+from .file import File
 
 from ...settings import ServerSettings
 
@@ -217,7 +218,11 @@ class ServerAwaiting(ServerBase):
         )
 
         for file_ in data:
-            yield FileModel(file_)
+            yield FileModel(file_), File(
+                self.context,
+                self.server_id,
+                file_["path"]
+            )
 
     async def backups(self, timeout: int = 30
                       ) -> typing.AsyncGenerator[BackupModel, Backup]:
