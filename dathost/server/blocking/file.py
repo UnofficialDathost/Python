@@ -1,5 +1,3 @@
-import os
-
 from ...routes import SERVER
 
 from ..file_base import FileBase
@@ -7,7 +5,7 @@ from ..file_base import FileBase
 from ...exceptions import AwaitingOnly
 
 
-class File(FileBase):
+class BlockingFile(FileBase):
     def delete(self) -> None:
         """Deletes file.
         """
@@ -22,6 +20,10 @@ class File(FileBase):
         Parameters
         ----------
         destination : str
+
+        Notes
+        ------
+        When called the file_path changes to the given destination.
         """
 
         self.context._put(
@@ -30,6 +32,8 @@ class File(FileBase):
                 "destination": destination,
             }
         )
+
+        self.file_path = destination
 
     def unzip(self, destination: str) -> None:
         """Used to unzip a file.
@@ -55,7 +59,7 @@ class File(FileBase):
             Local file to upload.
         """
 
-        with os.open(local_pathway, "rb") as f:
+        with open(local_pathway, "rb") as f:
             self.upload(f.read())
 
     def upload(self, data: bytes, timeout: int = 60) -> None:
@@ -88,7 +92,7 @@ class File(FileBase):
             by default 60
         """
 
-        with os.open(local_pathway, "wb+") as f:
+        with open(local_pathway, "wb+") as f:
             f.write(self.dowload(timeout=timeout))
 
     def download_iterate(self) -> None:
@@ -122,5 +126,7 @@ class File(FileBase):
 
         return self.context._get(
             SERVER.file_interact.format(self.server_id, self.file_path),
-            timeout=timeout
+            timeout=timeout,
+            read_bytes=True,
+            read_json=False
         )

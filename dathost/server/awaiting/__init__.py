@@ -8,7 +8,7 @@ from ...models.backup import BackupModel
 from ...models.metrics import MetricsModel
 
 from .backup import Backup
-from .file import File
+from .file import AwaitingFile
 
 from ...settings import ServerSettings
 
@@ -220,11 +220,30 @@ class ServerAwaiting(ServerBase):
         )
 
         for file_ in data:
-            yield FileModel(file_), File(
+            yield FileModel(file_), AwaitingFile(
                 self.context,
                 self.server_id,
                 file_["path"]
             )
+
+    def file(self, pathway: str) -> AwaitingFile:
+        """Used to interact with a file on the server.
+
+        Parameters
+        ----------
+        pathway : str
+            Pathway of file on server.
+
+        Returns
+        -------
+        AwaitingFile
+        """
+
+        return AwaitingFile(
+            self.context,
+            self.server_id,
+            pathway
+        )
 
     async def backups(self, timeout: int = 30
                       ) -> typing.AsyncGenerator[BackupModel, Backup]:

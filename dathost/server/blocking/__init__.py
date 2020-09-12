@@ -8,7 +8,7 @@ from ...models.backup import BackupModel
 from ...models.metrics import MetricsModel
 
 from .backup import Backup
-from .file import File
+from .file import BlockingFile
 
 from ...settings import ServerSettings
 
@@ -219,11 +219,30 @@ class ServerBlocking(ServerBase):
         )
 
         for file_ in data:
-            yield FileModel(file_), File(
+            yield FileModel(file_), BlockingFile(
                 self.context,
                 self.server_id,
                 file_["path"]
             )
+
+    def file(self, pathway: str) -> BlockingFile:
+        """Used to interact with a file on the server.
+
+        Parameters
+        ----------
+        pathway : str
+            Pathway of file on server.
+
+        Returns
+        -------
+        BlockingFile
+        """
+
+        return BlockingFile(
+            self.context,
+            self.server_id,
+            pathway
+        )
 
     def backups(self, timeout: int = 30
                 ) -> typing.Generator[BackupModel, Backup, None]:

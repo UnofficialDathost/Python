@@ -6,7 +6,7 @@ from ...routes import SERVER
 from ..file_base import FileBase
 
 
-class File(FileBase):
+class AwaitingFile(FileBase):
     async def delete(self) -> None:
         """Deletes file.
         """
@@ -21,6 +21,10 @@ class File(FileBase):
         Parameters
         ----------
         destination : str
+
+        Notes
+        ------
+        When called the file_path changes to the given destination.
         """
 
         await self.context._put(
@@ -29,6 +33,8 @@ class File(FileBase):
                 "destination": destination,
             }
         )
+
+        self.file_path = destination
 
     async def unzip(self, destination: str) -> None:
         """Used to unzip a file.
@@ -57,7 +63,7 @@ class File(FileBase):
         async with aiofiles.open(local_pathway, "rb") as f:
             await self.upload(await f.read())
 
-    async def upload(self, data: bytes, timeout: int = 60) -> None:
+    async def upload(self, data: bytes = None, timeout: int = 60) -> None:
         """Used for uploading raw bytes.
 
         Parameters
@@ -128,5 +134,7 @@ class File(FileBase):
 
         return await self.context._get(
             SERVER.file_interact.format(self.server_id, self.file_path),
-            timeout=timeout
+            timeout=timeout,
+            read_bytes=True,
+            read_json=False
         )

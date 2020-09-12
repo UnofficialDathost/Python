@@ -10,7 +10,7 @@ from ..models.metrics import MetricsModel, MapsModel, PlayerModel, \
     PlayersOnlineGraphModel
 
 from ..server.blocking.backup import Backup
-from ..server.blocking.file import File
+from ..server.blocking.file import BlockingFile
 
 from ..server.blocking import ServerBlocking
 
@@ -18,7 +18,7 @@ from ..settings import ServerSettings
 
 from .. import Blocking
 
-from .shared_vars import EMAIL, PASSWORD
+from .shared_vars import EMAIL, PASSWORD, TEST_IMAGE_DIRETORY
 
 
 class TestBlockingClient(unittest.TestCase):
@@ -85,11 +85,11 @@ class TestBlockingClient(unittest.TestCase):
 
         for data, f in server.files():
             self.assertIsInstance(data, FileModel)
-            self.assertIsInstance(f, File)
+            self.assertIsInstance(f, BlockingFile)
 
         for data, f in server.files(hide_default=True, file_sizes=True):
             self.assertIsInstance(data, FileModel)
-            self.assertIsInstance(f, File)
+            self.assertIsInstance(f, BlockingFile)
 
         for data, backup in server.backups():
             self.assertIsInstance(data, BackupModel)
@@ -113,6 +113,20 @@ class TestBlockingClient(unittest.TestCase):
             self.assertIsInstance(player, PlayersOnlineGraphModel)
 
         server.ftp_reset()
+
+        test_1_file = server.file("test.txt")
+        self.assertIsNone(test_1_file.upload(b"hello world"))
+        self.assertIsNone(test_1_file.move("cfg"))
+
+        self.assertTrue(type(test_1_file.dowload()) == bytes)
+
+        self.assertIsNone(test_1_file.delete())
+
+        test_2_file = server.file("test.jpg")
+        test_2_file.upload_file(TEST_IMAGE_DIRETORY)
+        test_2_file.save(TEST_IMAGE_DIRETORY)
+
+        self.assertIsNone(test_2_file.delete())
 
         _, duplicate = server.duplicate(sync=True)
         self.assertIsNone(duplicate.delete())

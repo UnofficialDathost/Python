@@ -10,7 +10,7 @@ from ..models.metrics import MetricsModel, MapsModel, PlayerModel, \
     PlayersOnlineGraphModel
 
 from ..server.awaiting.backup import Backup
-from ..server.awaiting.file import File
+from ..server.awaiting.file import AwaitingFile
 
 from ..server.awaiting import ServerAwaiting
 
@@ -18,7 +18,7 @@ from .. import Awaiting
 
 from ..settings import ServerSettings
 
-from .shared_vars import EMAIL, PASSWORD
+from .shared_vars import EMAIL, PASSWORD, TEST_IMAGE_DIRETORY
 
 
 class TestAwaitingClient(asynctest.TestCase):
@@ -87,11 +87,11 @@ class TestAwaitingClient(asynctest.TestCase):
 
         async for data, f in server.files():
             self.assertIsInstance(data, FileModel)
-            self.assertIsInstance(f, File)
+            self.assertIsInstance(f, AwaitingFile)
 
         async for data, f in server.files(hide_default=True, file_sizes=True):
             self.assertIsInstance(data, FileModel)
-            self.assertIsInstance(f, File)
+            self.assertIsInstance(f, AwaitingFile)
 
         async for data, backup in server.backups():
             self.assertIsInstance(data, BackupModel)
@@ -115,6 +115,23 @@ class TestAwaitingClient(asynctest.TestCase):
             self.assertIsInstance(player, PlayersOnlineGraphModel)
 
         await server.ftp_reset()
+
+        test_1_file = server.file("test.txt")
+        await test_1_file.upload(b"hello world")
+        await test_1_file.move("cfg")
+
+        self.assertTrue(type(await test_1_file.dowload()) == bytes)
+
+        self.assertIsNone(await test_1_file.delete())
+
+        test_2_file = server.file("test.jpg")
+        await test_2_file.upload_file(TEST_IMAGE_DIRETORY)
+        await test_2_file.save(TEST_IMAGE_DIRETORY)
+
+        async for data in test_2_file.download_iterate():
+            self.assertTrue(type(data) == bytes)
+
+        self.assertIsNone(await test_2_file.delete())
 
         _, duplicate = await server.duplicate(sync=True)
         self.assertIsNone(await duplicate.delete())
