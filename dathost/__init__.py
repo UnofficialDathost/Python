@@ -29,16 +29,31 @@ __license__ = "GPL v3"
 
 
 class Awaiting(Base, AwaitingHttp):
+    __client_closed = False
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self._client = AsyncClient(auth=self._basic_auth)
+        self.__create_client()
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> None:
+        if self.__client_closed:
+            self.__create_client()
+
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         await self.close()
+
+    def __create_client(self) -> None:
+        self._client = AsyncClient(auth=self._basic_auth)
+
+    async def close(self) -> None:
+        """Closes sessions
+        """
+
+        self.__client_closed = True
+        await self._client.aclose()
 
     async def create_match(self, match_settings: MatchSettings,
                            timeout: int = 60) -> (MatchModel, AwaitingMatch):
@@ -148,12 +163,6 @@ class Awaiting(Base, AwaitingHttp):
         for server in await self._get(SERVER.list):
             yield ServerModel(server), self.server(server["id"])
 
-    async def close(self) -> None:
-        """Closes sessions
-        """
-
-        await self._client.aclose()
-
     async def account(self) -> AccountModel:
         """Gets account details
 
@@ -182,16 +191,31 @@ class Awaiting(Base, AwaitingHttp):
 
 
 class Blocking(Base, BlockingHttp):
+    __client_closed = False
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self._client = Client(auth=self._basic_auth)
+        self.__create_client()
 
-    def __enter__(self):
+    def __enter__(self) -> None:
+        if self.__client_closed:
+            self.__create_client()
+
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.close()
+
+    def close(self) -> None:
+        """Closes sessions
+        """
+
+        self.__client_closed = True
+        self._client.close()
+
+    def __create_client(self) -> None:
+        self._client = Client(auth=self._basic_auth)
 
     def create_match(self, match_settings: MatchSettings,
                      timeout: int = 60) -> (MatchModel, BlockingMatch):
@@ -299,12 +323,6 @@ class Blocking(Base, BlockingHttp):
 
         for server in self._get(SERVER.list):
             yield ServerModel(server), self.server(server["id"])
-
-    def close(self) -> None:
-        """Closes sessions
-        """
-
-        self._client.close()
 
     def account(self) -> AccountModel:
         """Gets account details

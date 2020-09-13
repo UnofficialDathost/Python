@@ -44,8 +44,14 @@ class TestBlockingClient(unittest.TestCase):
             self.assertTrue(type(domain) == str)
 
     def test_context(self):
-        with Blocking(EMAIL, PASSWORD) as client:
+        context = Blocking(EMAIL, PASSWORD)
+
+        with context as client:
             client.account()
+
+        with context as client:
+            for domain in client.domains():
+                pass
 
     def test_list_servers(self):
         for data, server in self.client.servers():
