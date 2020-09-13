@@ -2,12 +2,29 @@ import typing
 
 
 class TeamModel:
+    """Holds details on team.
+
+    Attributes
+    ----------
+    score : int
+    players : list
+    """
+
     def __init__(self, players: list, score: int) -> None:
         self.score = score
         self.players = players
 
 
 class MatchPlayerModel:
+    """Holds match player details.
+
+    Attributes
+    ----------
+    steamid : str
+    kills : int
+    deaths : int
+    assists : int
+    """
     def __init__(self, data: dict) -> None:
         self.steamid = data["steam_id"]
         self.kills = data["kills"]
@@ -16,6 +33,22 @@ class MatchPlayerModel:
 
 
 class MatchModel:
+    """Holds match details.
+
+    Attributes
+    ----------
+    match_id : str
+    server_id : str
+    connect_time : int
+    round_end_webhook : str
+    match_end_webhook : str
+    finished : bool
+    cancel_reason : str
+    rounds_played : int
+    spectators : list
+    team_1 : TeamModel
+    team_2 : TeamModel
+    """
     def __init__(self, data: dict) -> None:
         self.match_id = data["id"]
         self.server_id = data["game_server_id"]

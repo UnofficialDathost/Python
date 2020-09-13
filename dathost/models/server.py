@@ -2,12 +2,31 @@ import typing
 
 
 class PortsModel:
+    """Holds details on ports
+
+    Attributes
+    ----------
+    game : int
+    gotv : int
+    """
+
     def __init__(self, data: dict) -> None:
         self.game = data["game"]
         self.gotv = data["gotv"]
 
 
 class ScheduledCommandsModel:
+    """Holds details on scheduled commands
+
+    Attributes
+    ----------
+    name : str
+    action : str
+    command : str
+    run_at : str
+    repeat : bool
+    """
+
     def __init__(self, data: dict) -> None:
         self.name = data["name"]
         self.action = data["action"]
@@ -17,12 +36,33 @@ class ScheduledCommandsModel:
 
 
 class TeamspeakModel:
+    """Holds details on teamspeak server
+
+    Attributes
+    ----------
+    slots : int
+    admin_token : str
+    """
+
     def __init__(self, data: dict) -> None:
         self.slots = data["slots"]
         self.admin_token = data["ts_admin_token"]
 
 
 class TeamFortressModel:
+    """Holds details on tf2.
+
+    Attributes
+    ----------
+    slots : int
+    rcon : str
+    password : str
+    admins : str
+    gotv : bool
+    sourcemod : bool
+    insecure : bool
+    """
+
     def __init__(self, data: dict) -> None:
         self.slots = data["slots"]
         self.rcon = data["rcon"]
@@ -34,6 +74,16 @@ class TeamFortressModel:
 
 
 class MumbleModel:
+    """Holds details on mumble server
+
+    Attributes
+    ----------
+    slot : int
+    password : str
+    superuser_password : str
+    motd : str
+    """
+
     def __init__(self, data: dict) -> None:
         self.slots = data["slots"]
         self.password = data["password"]
@@ -42,9 +92,36 @@ class MumbleModel:
 
 
 class CsgoModel:
+    """Holds details on csgo server
+
+    Attributes
+    ----------
+    slots : int
+    game_token : str
+    rcon : str
+    password : str
+    maps_source : str
+    map_group : str
+    map_group_start_map : str
+    workshop_id : str
+    workshop_start_map_id : str
+    steam_key : str
+    autoload_configs : list
+    admins : str
+    plugins : list
+    gotv : bool
+    sourcemod : bool
+    csay_plugin : bool
+    game_mode : str
+    tickrate : int
+    pure : bool
+    insecure : bool
+    disable_bots: bool
+    """
+
     def __init__(self, data: dict) -> None:
         self.slots = data["slots"]
-        self.game_tokens = data["steam_game_server_login_token"]
+        self.game_token = data["steam_game_server_login_token"]
         self.rcon = data["rcon"]
         self.password = data["password"]
         self.maps_source = data["maps_source"]
@@ -67,6 +144,43 @@ class CsgoModel:
 
 
 class ServerModel:
+    """Holds details on server
+
+    Attributes
+    ----------
+    server_id : str
+    name : str
+    user_data : str
+    game : str
+    location : str
+    players_online : int
+    status : list
+    booting : bool
+    server_error : str
+    ip : str
+    raw_ip : str
+    on : bool
+    ports : PortsModel
+    confirmed : bool
+    cost_per_hour : int
+    max_cost_per_hour : int
+    mysql : bool
+    autostop : bool
+    autostop_minutes : int
+    mysql_username : str
+    mysql_password : str
+    ftp_password : str
+    disk_usage_bytes : int
+    default_file_locations : list
+    custom_domain :  str
+    added_voice_server : str
+    duplicate_source_server : str
+    teamspeak : TeamspeakModel
+    teamfortress : TeamFortressModel
+    mumble : MumbleModel
+    csgo : CsgoModel
+    """
+
     def __init__(self, data: dict) -> None:
         self.server_id = data["id"]
         self.name = data["name"]
@@ -108,7 +222,7 @@ class ServerModel:
         self.csgo = CsgoModel(data["csgo_settings"]) \
             if data["csgo_settings"] else None
 
-        self._scheduled_commands = data["scheduled_commands"]
+        self.__scheduled_commands = data["scheduled_commands"]
 
     def scheduled_commands(self) \
             -> typing.Generator[ScheduledCommandsModel, None, None]:
@@ -120,5 +234,5 @@ class ServerModel:
             Holds data on scheduled commands.
         """
 
-        for data in self._scheduled_commands:
+        for data in self.__scheduled_commands:
             yield ScheduledCommandsModel(data)
