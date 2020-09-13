@@ -1,17 +1,21 @@
 import typing
 
 from .base import Base
-from .routes import ACCOUNT, CUSTOM_DOMAINS, SERVER
+from .routes import ACCOUNT, CUSTOM_DOMAINS, SERVER, MATCHES
 
 from .http import AwaitingHttp, BlockingHttp
 
 from .server.blocking import ServerBlocking
 from .server.awaiting import ServerAwaiting
 
-from .settings import ServerSettings
+from .match.awaiting import AwaitingMatch
+from .match.blocking import BlockingMatch
+
+from .settings import ServerSettings, MatchSettings
 
 from .models.account import AccountModel
 from .models.server import ServerModel
+from .models.match import MatchModel
 
 from httpx import AsyncClient, Client
 
@@ -35,6 +39,52 @@ class Awaiting(Base, AwaitingHttp):
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
+
+    async def create_match(self, match_settings: MatchSettings,
+                           timeout: int = 60) -> (MatchModel, AwaitingMatch):
+        """Creates a match.
+
+        Parameters
+        ----------
+        match_settings : MatchSettings
+            Holds details on the match.
+        timeout : int, optional
+            by default 60
+
+        Returns
+        -------
+        MatchModel
+            Holds match details.
+        AwaitingMatch
+            Used to interact with a match.
+        """
+
+        data = await self._post(
+            MATCHES.create,
+            data=match_settings.playload,
+            read_json=True,
+            timeout=timeout
+        )
+
+        return MatchModel(data), self.match(data["id"])
+
+    def match(self, match_id: str) -> AwaitingMatch:
+        """Used to interact with a match.
+
+        Parameters
+        ----------
+        match_id : str
+            Dathost Match ID.
+
+        Returns
+        -------
+        AwaitingMatch
+        """
+
+        return AwaitingMatch(
+            self,
+            match_id
+        )
 
     async def create_server(self, settings: ServerSettings
                             ) -> (ServerModel, ServerAwaiting):
@@ -142,6 +192,52 @@ class Blocking(Base, BlockingHttp):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+    def create_match(self, match_settings: MatchSettings,
+                     timeout: int = 60) -> (MatchModel, BlockingMatch):
+        """Creates a match.
+
+        Parameters
+        ----------
+        match_settings : MatchSettings
+            Holds details on the match.
+        timeout : int, optional
+            by default 60
+
+        Returns
+        -------
+        MatchModel
+            Holds match details.
+        BlockingMatch
+            Used to interact with a match.
+        """
+
+        data = self._post(
+            MATCHES.create,
+            data=match_settings.playload,
+            read_json=True,
+            timeout=timeout
+        )
+
+        return MatchModel(data), self.match(data["id"])
+
+    def match(self, match_id: str) -> BlockingMatch:
+        """Used to interact with a match.
+
+        Parameters
+        ----------
+        match_id : str
+            Dathost Match ID.
+
+        Returns
+        -------
+        BlockingMatch
+        """
+
+        return BlockingMatch(
+            self,
+            match_id
+        )
 
     def create_server(self, settings: ServerSettings
                       ) -> (ServerModel, ServerBlocking):

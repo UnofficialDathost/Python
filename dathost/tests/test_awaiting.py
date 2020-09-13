@@ -8,15 +8,18 @@ from ..models.file import FileModel
 from ..models.backup import BackupModel
 from ..models.metrics import MetricsModel, MapsModel, PlayerModel, \
     PlayersOnlineGraphModel
+from ..models.match import MatchModel, TeamModel, MatchPlayerModel
 
-from ..server.awaiting.backup import Backup
+from ..server.awaiting.backup import AwaitingBackup
 from ..server.awaiting.file import AwaitingFile
+
+from ..match.awaiting import AwaitingMatch
 
 from ..server.awaiting import ServerAwaiting
 
 from .. import Awaiting
 
-from ..settings import ServerSettings
+from ..settings import ServerSettings, MatchSettings
 
 from .shared_vars import EMAIL, PASSWORD, TEST_IMAGE_DIRETORY
 
@@ -52,7 +55,7 @@ class TestAwaitingClient(asynctest.TestCase):
             self.assertIsInstance(server, ServerAwaiting)
 
     async def test_server_csgo(self):
-        data, server = await self.client.create_server(
+        server_data, server = await self.client.create_server(
             ServerSettings(
                 name="Awaiting CS: GO server",
                 location="sydney",
@@ -64,7 +67,7 @@ class TestAwaitingClient(asynctest.TestCase):
             )
         )
 
-        self.assertIsInstance(data, ServerModel)
+        self.assertIsInstance(server_data, ServerModel)
         self.assertIsInstance(server, ServerAwaiting)
 
         self.assertIsInstance(await server.get(), ServerModel)
@@ -95,7 +98,7 @@ class TestAwaitingClient(asynctest.TestCase):
 
         async for data, backup in server.backups():
             self.assertIsInstance(data, BackupModel)
-            self.assertIsInstance(backup, Backup)
+            self.assertIsInstance(backup, AwaitingBackup)
 
             await backup.restore()
 
@@ -135,6 +138,35 @@ class TestAwaitingClient(asynctest.TestCase):
 
         _, duplicate = await server.duplicate(sync=True)
         self.assertIsNone(await duplicate.delete())
+
+        match_data, match = await self.client.create_match(
+            MatchSettings(
+                server_data.server_id,
+            ).team_1(
+                [
+                    "[U:1:116962485]",
+                    76561198017567105,
+                    "STEAM_0:1:186064092"
+                ]
+            ).team_2(
+                [
+                    "[U:1:320762620]",
+                    "STEAM_0:1:83437164",
+                    76561198214871324
+                ]
+            )
+        )
+
+        self.assertIsInstance(match_data, MatchModel)
+        self.assertIsInstance(match, AwaitingMatch)
+
+        self.assertIsInstance(await match.get(), MatchModel)
+
+        self.assertIsInstance(match_data.team_1, TeamModel)
+        self.assertIsInstance(match_data.team_2, TeamModel)
+
+        for player in match_data.players():
+            self.assertIsInstance(player, MatchPlayerModel)
 
         self.assertIsNone(await server.delete())
 

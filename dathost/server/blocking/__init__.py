@@ -7,7 +7,7 @@ from ...models.file import FileModel
 from ...models.backup import BackupModel
 from ...models.metrics import MetricsModel
 
-from .backup import Backup
+from .backup import BlockingBackup
 from .file import BlockingFile
 
 from ...settings import ServerSettings
@@ -18,12 +18,18 @@ from ...routes import SERVER
 
 
 class ServerBlocking(ServerBase):
-    def delete(self) -> None:
+    def delete(self, timeout: int = 60) -> None:
         """Used to delete a sever.
+
+        Parameters
+        ----------
+        timeout : int, optional
+            by default 60
         """
 
         self.context._delete(
-            SERVER.delete.format(self.server_id)
+            SERVER.delete.format(self.server_id),
+            timeout=timeout
         )
 
     def get(self) -> ServerModel:
@@ -110,13 +116,16 @@ class ServerBlocking(ServerBase):
             url=SERVER.sync.format(self.server_id)
         )
 
-    def duplicate(self, sync: bool = False) -> (ServerModel, ServerBase):
+    def duplicate(self, sync: bool = False,
+                  timeout: int = 60) -> (ServerModel, ServerBase):
         """Used to duplicate a server.
 
         Parameters
         ----------
         sync : bool
             Used to force update server cache, by default False
+        timeout : int, optional
+            by default 60
 
         Returns
         -------
@@ -131,7 +140,8 @@ class ServerBlocking(ServerBase):
 
         data = self.context._post(
             url=SERVER.duplicate.format(self.server_id),
-            read_json=True
+            read_json=True,
+            timeout=timeout
         )
 
         return ServerModel(data), ServerBlocking(self.context, data["id"])
@@ -219,11 +229,7 @@ class ServerBlocking(ServerBase):
         )
 
         for file_ in data:
-            yield FileModel(file_), BlockingFile(
-                self.context,
-                self.server_id,
-                file_["path"]
-            )
+            yield FileModel(file_), self.file(file_["path"])
 
     def file(self, pathway: str) -> BlockingFile:
         """Used to interact with a file on the server.
@@ -245,7 +251,7 @@ class ServerBlocking(ServerBase):
         )
 
     def backups(self, timeout: int = 30
-                ) -> typing.Generator[BackupModel, Backup, None]:
+                ) -> typing.Generator[BackupModel, BlockingBackup, None]:
         """Used to list backups a server has.
 
         Parameters
@@ -267,11 +273,26 @@ class ServerBlocking(ServerBase):
         )
 
         for backup in data:
-            yield BackupModel(backup), Backup(
-                self.server_id,
-                self.context,
-                backup["name"]
-            )
+            yield BackupModel(backup), self.backup(backup["name"])
+
+    def backup(self, backup_name: str) -> BlockingBackup:
+        """Used to interact with a backup.
+
+        Parameters
+        ----------
+        backup_name : str
+            Name of backup.
+
+        Returns
+        -------
+        BlockingBackup
+        """
+
+        return BlockingBackup(
+            self.context,
+            self.server_id,
+            backup_name
+        )
 
     def metrics(self) -> MetricsModel:
         """Used to get server metrics.

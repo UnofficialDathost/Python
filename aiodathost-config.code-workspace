@@ -12,7 +12,8 @@
 			"gotv",
 			"motd",
 			"noqa",
-			"rcon"
+			"rcon",
+			"usteamid"
 		]
 	}
 }

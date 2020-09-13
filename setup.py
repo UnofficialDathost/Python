@@ -40,6 +40,7 @@ setup(
         "dathost.server",
         "dathost.server.awaiting",
         "dathost.server.blocking",
+        "dathost.match",
     ],
     python_requires=">=3.6",
     include_package_data=True,

@@ -81,9 +81,16 @@ class Server(Route):
     _upload = "https://upload.dathost.net/api/0.1/game-servers/{}/files/{}"
 
 
+class Matches(Route):
+    _prefix = "matches"
+    create = ""
+    details = "{}"
+
+
 ACCOUNT = Account()
 CUSTOM_DOMAINS = CustomDomains()
 SERVER = Server()
+MATCHES = Matches()
 
-for route in [ACCOUNT, CUSTOM_DOMAINS, SERVER]:
+for route in [ACCOUNT, CUSTOM_DOMAINS, SERVER, MATCHES]:
     route.format()

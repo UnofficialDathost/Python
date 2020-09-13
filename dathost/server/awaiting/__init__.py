@@ -7,7 +7,7 @@ from ...models.file import FileModel
 from ...models.backup import BackupModel
 from ...models.metrics import MetricsModel
 
-from .backup import Backup
+from .backup import AwaitingBackup
 from .file import AwaitingFile
 
 from ...settings import ServerSettings
@@ -18,12 +18,18 @@ from ...routes import SERVER
 
 
 class ServerAwaiting(ServerBase):
-    async def delete(self) -> None:
+    async def delete(self, timeout: int = 60) -> None:
         """Used to delete a sever.
+
+        Parameters
+        ----------
+        timeout : int, optional
+            by default 60
         """
 
         await self.context._delete(
-            SERVER.delete.format(self.server_id)
+            SERVER.delete.format(self.server_id),
+            timeout=timeout
         )
 
     async def get(self) -> ServerModel:
@@ -111,13 +117,16 @@ class ServerAwaiting(ServerBase):
             url=SERVER.sync.format(self.server_id)
         )
 
-    async def duplicate(self, sync: bool = False) -> (ServerModel, ServerBase):
+    async def duplicate(self, sync: bool = False,
+                        timeout: int = 60) -> (ServerModel, ServerBase):
         """Used to duplicate a server.
 
         Parameters
         ----------
         sync : bool
             Used to force update server cache, by default False
+        timeout : int, optional
+            by default 60
 
         Returns
         -------
@@ -132,7 +141,8 @@ class ServerAwaiting(ServerBase):
 
         data = await self.context._post(
             url=SERVER.duplicate.format(self.server_id),
-            read_json=True
+            read_json=True,
+            timeout=timeout
         )
 
         return ServerModel(data), ServerAwaiting(self.context, data["id"])
@@ -220,11 +230,7 @@ class ServerAwaiting(ServerBase):
         )
 
         for file_ in data:
-            yield FileModel(file_), AwaitingFile(
-                self.context,
-                self.server_id,
-                file_["path"]
-            )
+            yield FileModel(file_), self.file(file_["path"])
 
     def file(self, pathway: str) -> AwaitingFile:
         """Used to interact with a file on the server.
@@ -246,7 +252,7 @@ class ServerAwaiting(ServerBase):
         )
 
     async def backups(self, timeout: int = 30
-                      ) -> typing.AsyncGenerator[BackupModel, Backup]:
+                      ) -> typing.AsyncGenerator[BackupModel, AwaitingBackup]:
         """Used to list backups a server has.
 
         Parameters
@@ -258,7 +264,7 @@ class ServerAwaiting(ServerBase):
         -------
         BackupModel
             Holds details on backup.
-        Backup
+        AwaitingBackup
             Used for interacting with a backup.
         """
 
@@ -268,11 +274,26 @@ class ServerAwaiting(ServerBase):
         )
 
         for backup in data:
-            yield BackupModel(backup), Backup(
-                self.context,
-                self.server_id,
-                backup["name"]
-            )
+            yield BackupModel(backup), self.backup(backup["name"])
+
+    def backup(self, backup_name: str) -> AwaitingBackup:
+        """Used to interact with a backup.
+
+        Parameters
+        ----------
+        backup_name : str
+            Name of backup.
+
+        Returns
+        -------
+        AwaitingBackup
+        """
+
+        return AwaitingBackup(
+            self.context,
+            self.server_id,
+            backup_name
+        )
 
     async def metrics(self) -> MetricsModel:
         """Used to get server metrics.

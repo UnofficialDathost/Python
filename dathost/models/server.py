@@ -111,7 +111,7 @@ class ServerModel:
         self._scheduled_commands = data["scheduled_commands"]
 
     def scheduled_commands(self) \
-            -> typing.AsyncGenerator[ScheduledCommandsModel, None]:
+            -> typing.Generator[ScheduledCommandsModel, None, None]:
         """Lists scheduled commands.
 
         Yields

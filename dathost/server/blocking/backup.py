@@ -3,7 +3,7 @@ from ..backup_base import BackupBase
 from ...routes import SERVER
 
 
-class Backup(BackupBase):
+class BlockingBackup(BackupBase):
     def restore(self, timeout: int = 60) -> None:
         """Used to restore a backup.
 

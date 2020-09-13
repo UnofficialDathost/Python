@@ -1,7 +1,8 @@
 from .gamemodes import COMPETITIVE
 from .map_source import MAP_GROUP
 
-from .exceptions import InvalidSlotSize, MultipleGames, InvalidTickrate
+from .exceptions import InvalidSlotSize, MultipleGames, InvalidTickrate, \
+    InvalidSteamID
 
 
 VALID_TICKRATES = [
@@ -308,5 +309,148 @@ class ServerSettings:
 
         self.playload["game"] = "teamspeak3"
         self.playload["teamspeak3_settings.slots"] = slots
+
+        return self
+
+
+class MatchSettings:
+    def __init__(self, server_id: str, connection_time: int = 300) -> None:
+        self.playload = {
+            "game_server_id": server_id,
+            "connection_time": connection_time
+        }
+
+    def __convert_id(self, given_id) -> str:
+        """Converts any steamID format to 32.
+
+        Parameters
+        ----------
+        given_id
+            Given steamID.
+
+        Returns
+        -------
+        str
+            SteamID32
+
+        Raises
+        ------
+        InvalidSteamID
+            Raised when the given ID isn't understood.
+        """
+
+        if type(given_id) == int:
+            steamid = [
+                "STEAM_1:"
+            ]
+
+            steamidacct = given_id - 76561197960265728
+            if steamidacct % 2 == 0:
+                steamid.append("0:")
+            else:
+                steamid.append("1:")
+
+            steamid.append(str(steamidacct // 2))
+
+            return "".join(steamid)
+
+        elif "STEAM_1" in given_id or "STEAM_0" in given_id:
+            return given_id.replace("STEAM_0", "STEAM_1")
+
+        elif "[U:" in given_id:
+            for ch in ["[", "]"]:
+                if ch in given_id:
+                    usteamid = given_id.replace(ch, "")
+
+            usteamid_split = usteamid.split(":")
+            steamid = [
+                "STEAM_1:"
+            ]
+
+            z = int(usteamid_split[2])
+
+            if z % 2 == 0:
+                steamid.append("0:")
+            else:
+                steamid.append("1:")
+
+            steamacct = z // 2
+
+            steamid.append(str(steamacct))
+
+            return "".join(steamid)
+        else:
+            raise InvalidSteamID()
+
+    def __format_players(self, players: list) -> None:
+        formatted_players = []
+        formatted_players_append = formatted_players.append
+
+        for steamid in players:
+            formatted_players_append(self.__convert_id(steamid))
+
+        return ",".join(formatted_players)
+
+    def webhook(self, match_end: str, round_end: str,
+                authorization: str = None) -> None:
+        """Used to set webhooks.
+
+        Parameters
+        ----------
+        match_end : str
+            URL of match end webhook.
+        round_end : str
+            URL of round end webhook.
+        authorization : str, optional
+            by default None
+        """
+
+        self.playload["match_end_webhook_url"] = match_end
+        self.playload["round_end_webhook_url"] = round_end
+
+        if authorization:
+            self.playload["webhook_authorization_header"] = authorization
+
+        return self
+
+    def spectators(self, players: list) -> None:
+        """Spectators
+
+        Parameters
+        ----------
+        players : list
+            List of spectator steam IDs,
+            steamID 64, 32 & u are supported.
+        """
+
+        self.playload["spectator_steam_ids"] = self.__format_players(players)
+
+        return self
+
+    def team_1(self, players: list) -> None:
+        """Team 1 players
+
+        Parameters
+        ----------
+        players : list
+            List of spectator steam IDs,
+            steamID 64, 32 & u are supported.
+        """
+
+        self.playload["team1_steam_ids"] = self.__format_players(players)
+
+        return self
+
+    def team_2(self, players: list) -> None:
+        """Team 2 players
+
+        Parameters
+        ----------
+        players : list
+            List of spectator steam IDs,
+            steamID 64, 32 & u are supported.
+        """
+
+        self.playload["team2_steam_ids"] = self.__format_players(players)
 
         return self

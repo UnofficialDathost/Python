@@ -32,3 +32,10 @@ class AwaitingOnly(Exception):
     """
 
     pass
+
+
+class InvalidSteamID(Exception):
+    """Raised when give ID isn't understood.
+    """
+
+    pass
