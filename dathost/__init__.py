@@ -20,8 +20,8 @@ from .models.match import MatchModel
 from httpx import AsyncClient, Client
 
 
-__version__ = "0.0.1"
-__url__ = "https://github.com/WardPearce/dathost"
+__version__ = "0.0.2"
+__url__ = "https://dathost.readthedocs.io/en/latest/"
 __description__ = "Asynchronous / Synchronous dathost API wrapper."
 __author__ = "WardPearce"
 __author_email__ = "wardpearce@protonmail.com"

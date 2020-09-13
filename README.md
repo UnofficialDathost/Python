@@ -9,3 +9,7 @@ This is a unofficial asynchronous & synchronous wrapper for Dathost’s API.
 ### Install
 - Pip: ``pip3 install dathost``
 - Git: ``pip3 install git+https://github.com/WardPearce/dathost.git``
+
+
+### Documentation
+[Documentation](https://dathost.readthedocs.io/en/latest/)
