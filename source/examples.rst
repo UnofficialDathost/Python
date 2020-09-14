@@ -27,3 +27,39 @@ Creating a server
 
     server.start()
     print(data.slots)
+
+
+Creating a match
+~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from dathost.settings import MatchSettings
+
+    data, match = client.create_match(
+        MatchSettings(
+            server_id="...",
+            connection_time=60,
+        ).team_1(
+            [
+                "[U:1:116962485]",
+                76561198017567105,
+                "STEAM_0:1:186064092"
+            ]
+        ).team_2(
+            [
+                "[U:1:320762620]",
+                "STEAM_0:1:83437164",
+                76561198214871324
+            ]
+        ).spectators(
+            [
+                "[U:1:320762620]",
+                "STEAM_0:1:83437164",
+                76561198214871324
+            ]
+        )
+    )
+
+    # Don't worry about steam IDs, the wrapper
+    # ensures they're all converted correctly.
