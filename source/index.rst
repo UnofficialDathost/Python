@@ -8,6 +8,7 @@ This is a unofficial asynchronous & synchronous wrapper for Dathost's API.
 - Full API coverage.
 - Asynchronous & synchronous support.
 - Easy to use with an object oriented design.
+- 100% test coverage.
 
 Install
 -------
