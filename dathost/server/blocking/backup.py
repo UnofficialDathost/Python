@@ -10,5 +10,4 @@ class BlockingBackup(BackupBase):
 
         self.context._post(
             url=SERVER.backup_restore.format(self.server_id, self.backup_name),
-            timeout=timeout
         )
