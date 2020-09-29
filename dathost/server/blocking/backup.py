@@ -1,16 +1,11 @@
-from ..backup_base import BackupBase
+from ..base import BackupBase
 
 from ...routes import SERVER
 
 
 class BlockingBackup(BackupBase):
-    def restore(self, timeout: int = 60) -> None:
+    def restore(self) -> None:
         """Used to restore a backup.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
         """
 
         self.context._post(

@@ -3,7 +3,7 @@ import aiofiles
 
 from ...routes import SERVER
 
-from ..file_base import FileBase
+from ..base import FileBase
 
 
 class AwaitingFile(FileBase):
@@ -63,15 +63,13 @@ class AwaitingFile(FileBase):
         async with aiofiles.open(local_pathway, "rb") as f:
             await self.upload(await f.read())
 
-    async def upload(self, data: bytes = None, timeout: int = 60) -> None:
+    async def upload(self, data: bytes = None) -> None:
         """Used for uploading raw bytes.
 
         Parameters
         ----------
         data : bytes
             Data to upload.
-        timeout : int
-            by default 60
         """
 
         await self.context._post(
@@ -79,32 +77,24 @@ class AwaitingFile(FileBase):
             data={
                 "file": data,
             },
-            timeout=timeout
         )
 
-    async def save(self, local_pathway: str, timeout: int = 60) -> None:
+    async def save(self, local_pathway: str) -> None:
         """Saves file to local pathway.
 
         Parameters
         ----------
         local_pathway : str
             Pathway to save file to.
-        timeout : int, optional
-            by default 60
         """
 
         async with aiofiles.open(local_pathway, "wb+") as f:
-            async for data in self.download_iterate(timeout=timeout):
+            async for data in self.download_iterate():
                 await f.write(data)
 
-    async def download_iterate(self,  timeout: int = 60
+    async def download_iterate(self
                                ) -> typing.AsyncGenerator[bytes, None]:
         """Asynchronously downloads data into memory.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
 
         Yields
         -------
@@ -112,16 +102,11 @@ class AwaitingFile(FileBase):
         """
 
         url = SERVER.file_interact.format(self.server_id, self.file_path)
-        async for data in self.context._stream(url, timeout=timeout):
+        async for data in self.context._stream(url):
             yield data
 
-    async def dowload(self, timeout: int = 60) -> bytes:
+    async def dowload(self) -> bytes:
         """Used to download a file into memory.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
 
         Returns
         -------
@@ -134,7 +119,6 @@ class AwaitingFile(FileBase):
 
         return await self.context._get(
             SERVER.file_interact.format(self.server_id, self.file_path),
-            timeout=timeout,
             read_bytes=True,
             read_json=False
         )

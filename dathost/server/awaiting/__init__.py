@@ -18,18 +18,12 @@ from ...routes import SERVER
 
 
 class ServerAwaiting(ServerBase):
-    async def delete(self, timeout: int = 60) -> None:
+    async def delete(self) -> None:
         """Used to delete a sever.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
         """
 
         await self.context._delete(
             SERVER.delete.format(self.server_id),
-            timeout=timeout
         )
 
     async def get(self) -> ServerModel:
@@ -118,15 +112,13 @@ class ServerAwaiting(ServerBase):
         )
 
     async def duplicate(self, sync: bool = False,
-                        timeout: int = 60) -> (ServerModel, ServerBase):
+                        ) -> typing.Tuple[ServerModel, ServerBase]:
         """Used to duplicate a server.
 
         Parameters
         ----------
         sync : bool
             Used to force update server cache, by default False
-        timeout : int, optional
-            by default 60
 
         Returns
         -------
@@ -142,7 +134,6 @@ class ServerAwaiting(ServerBase):
         data = await self.context._post(
             url=SERVER.duplicate.format(self.server_id),
             read_json=True,
-            timeout=timeout
         )
 
         return ServerModel(data), ServerAwaiting(self.context, data["id"])
@@ -155,50 +146,32 @@ class ServerAwaiting(ServerBase):
             url=SERVER.ftp.format(self.server_id)
         )
 
-    async def stop(self, timeout: int = 60) -> None:
+    async def stop(self) -> None:
         """Used to stop the server.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
         """
 
         await self.context._post(
             url=SERVER.stop.format(self.server_id),
-            timeout=timeout
         )
 
-    async def start(self, timeout: int = 60) -> None:
+    async def start(self) -> None:
         """Used to start the server.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
         """
 
         await self.context._post(
             url=SERVER.start.format(self.server_id),
-            timeout=timeout
         )
 
-    async def reset(self, timeout: int = 60) -> None:
+    async def reset(self) -> None:
         """Used to restart the server.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
         """
 
         await self.context._post(
             url=SERVER.reset.format(self.server_id),
-            timeout=timeout
         )
 
     async def files(self, hide_default: bool = False, path: str = None,
-                    file_sizes: bool = False, timeout: int = 30
+                    file_sizes: bool = False
                     ) -> typing.AsyncGenerator[FileModel, None]:
         """Used to list files.
 
@@ -210,8 +183,6 @@ class ServerAwaiting(ServerBase):
             Path to use as root, by default None
         file_sizes : bool, optional
             by default False
-        timeout : int
-            by default 30
 
         Yields
         ------
@@ -226,7 +197,6 @@ class ServerAwaiting(ServerBase):
                 "path": path,
                 "with_filesizes": file_sizes,
             },
-            timeout=timeout
         )
 
         for file_ in data:
@@ -251,14 +221,9 @@ class ServerAwaiting(ServerBase):
             pathway
         )
 
-    async def backups(self, timeout: int = 30
+    async def backups(self
                       ) -> typing.AsyncGenerator[BackupModel, AwaitingBackup]:
         """Used to list backups a server has.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 30
 
         Yields
         -------
@@ -270,7 +235,6 @@ class ServerAwaiting(ServerBase):
 
         data = await self.context._get(
             SERVER.backups.format(self.server_id),
-            timeout=timeout
         )
 
         for backup in data:

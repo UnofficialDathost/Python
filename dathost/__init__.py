@@ -20,7 +20,7 @@ from .models.match import MatchModel
 from httpx import AsyncClient, Client
 
 
-__version__ = "0.0.3"
+__version__ = "0.1.0"
 __url__ = "https://dathost.readthedocs.io/en/latest/"
 __description__ = "Asynchronous / Synchronous dathost API wrapper."
 __author__ = "WardPearce"
@@ -46,7 +46,10 @@ class Awaiting(Base, AwaitingHttp):
         await self.close()
 
     def __create_client(self) -> None:
-        self._client = AsyncClient(auth=self._basic_auth)
+        self._client = AsyncClient(
+            auth=self._basic_auth,
+            timeout=self._timeout
+        )
 
     async def close(self) -> None:
         """Closes sessions
@@ -56,15 +59,13 @@ class Awaiting(Base, AwaitingHttp):
         await self._client.aclose()
 
     async def create_match(self, match_settings: MatchSettings,
-                           timeout: int = 60) -> (MatchModel, AwaitingMatch):
+                           ) -> typing.Tuple[MatchModel, AwaitingMatch]:
         """Creates a match.
 
         Parameters
         ----------
         match_settings : MatchSettings
             Holds details on the match.
-        timeout : int, optional
-            by default 60
 
         Returns
         -------
@@ -77,8 +78,7 @@ class Awaiting(Base, AwaitingHttp):
         data = await self._post(
             MATCHES.create,
             data=match_settings.playload,
-            read_json=True,
-            timeout=timeout
+            read_json=True
         )
 
         return MatchModel(data), self.match(data["id"])
@@ -102,7 +102,7 @@ class Awaiting(Base, AwaitingHttp):
         )
 
     async def create_server(self, settings: ServerSettings
-                            ) -> (ServerModel, ServerAwaiting):
+                            ) -> typing.Tuple[ServerModel, ServerAwaiting]:
         """Creates a new server.
 
         Parameters
@@ -116,14 +116,6 @@ class Awaiting(Base, AwaitingHttp):
             Holds data on server.
         ServerAwaiting
             Used to interact with the created server.
-
-        Reference
-        ---------
-        https://dathost.net/api#/default/post_game_servers
-
-        Notes
-        -----
-        Any dots (.) should be replaced with double underscore '__'.
         """
 
         data = await self._post(
@@ -215,18 +207,19 @@ class Blocking(Base, BlockingHttp):
         self._client.close()
 
     def __create_client(self) -> None:
-        self._client = Client(auth=self._basic_auth)
+        self._client = Client(
+            auth=self._basic_auth,
+            timeout=self._timeout
+        )
 
     def create_match(self, match_settings: MatchSettings,
-                     timeout: int = 60) -> (MatchModel, BlockingMatch):
+                     ) -> typing.Tuple[MatchModel, BlockingMatch]:
         """Creates a match.
 
         Parameters
         ----------
         match_settings : MatchSettings
             Holds details on the match.
-        timeout : int, optional
-            by default 60
 
         Returns
         -------
@@ -239,8 +232,7 @@ class Blocking(Base, BlockingHttp):
         data = self._post(
             MATCHES.create,
             data=match_settings.playload,
-            read_json=True,
-            timeout=timeout
+            read_json=True
         )
 
         return MatchModel(data), self.match(data["id"])
@@ -264,7 +256,7 @@ class Blocking(Base, BlockingHttp):
         )
 
     def create_server(self, settings: ServerSettings
-                      ) -> (ServerModel, ServerBlocking):
+                      ) -> typing.Tuple[ServerModel, ServerBlocking]:
         """Creates a new server.
 
         Parameters
@@ -278,14 +270,6 @@ class Blocking(Base, BlockingHttp):
             Holds data on server.
         ServerBlocking
             Used to interact with the created server.
-
-        Reference
-        ---------
-        https://dathost.net/api#/default/post_game_servers
-
-        Notes
-        -----
-        Any dots (.) should be replaced with double underscore '__'.
         """
 
         data = self._post(

@@ -39,3 +39,32 @@ class InvalidSteamID(Exception):
     """
 
     pass
+
+
+class NotFound(Exception):
+    """Resource not found.
+    """
+
+    pass
+
+
+class BadRequest(Exception):
+    """Path is a directory or Cannot move file into itself.
+    """
+
+    pass
+
+
+class ExceededStorage(Exception):
+    """Your disk quota of 30GB per server (excluding base installation)
+    has been exceeded
+    """
+
+    pass
+
+
+class ServerStart(Exception):
+    """Failed to start server.
+    """
+
+    pass

@@ -1,6 +1,6 @@
 from ...routes import SERVER
 
-from ..file_base import FileBase
+from ..base import FileBase
 
 from ...exceptions import AwaitingOnly
 
@@ -62,15 +62,13 @@ class BlockingFile(FileBase):
         with open(local_pathway, "rb") as f:
             self.upload(f.read())
 
-    def upload(self, data: bytes, timeout: int = 60) -> None:
+    def upload(self, data: bytes) -> None:
         """Used for uploading raw bytes.
 
         Parameters
         ----------
         data : bytes
             Data to upload.
-        timeout : int
-            by default 60
         """
 
         self.context._post(
@@ -78,22 +76,19 @@ class BlockingFile(FileBase):
             data={
                 "file": data,
             },
-            timeout=timeout
         )
 
-    def save(self, local_pathway: str, timeout: int = 60) -> None:
+    def save(self, local_pathway: str) -> None:
         """Saves file to local pathway.
 
         Parameters
         ----------
         local_pathway : str
             Pathway to save file to.
-        timeout : int, optional
-            by default 60
         """
 
         with open(local_pathway, "wb+") as f:
-            f.write(self.dowload(timeout=timeout))
+            f.write(self.dowload())
 
     def download_iterate(self) -> None:
         """
@@ -107,13 +102,8 @@ class BlockingFile(FileBase):
         # This only exists so API structure remains identical.
         raise AwaitingOnly()
 
-    def dowload(self, timeout: int = 60) -> bytes:
+    def dowload(self) -> bytes:
         """Used to download a file into memory.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
 
         Returns
         -------
@@ -126,7 +116,6 @@ class BlockingFile(FileBase):
 
         return self.context._get(
             SERVER.file_interact.format(self.server_id, self.file_path),
-            timeout=timeout,
             read_bytes=True,
             read_json=False
         )

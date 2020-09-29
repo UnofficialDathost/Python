@@ -18,18 +18,12 @@ from ...routes import SERVER
 
 
 class ServerBlocking(ServerBase):
-    def delete(self, timeout: int = 60) -> None:
+    def delete(self) -> None:
         """Used to delete a sever.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
         """
 
         self.context._delete(
             SERVER.delete.format(self.server_id),
-            timeout=timeout
         )
 
     def get(self) -> ServerModel:
@@ -117,15 +111,13 @@ class ServerBlocking(ServerBase):
         )
 
     def duplicate(self, sync: bool = False,
-                  timeout: int = 60) -> (ServerModel, ServerBase):
+                  ) -> typing.Tuple[ServerModel, ServerBase]:
         """Used to duplicate a server.
 
         Parameters
         ----------
         sync : bool
             Used to force update server cache, by default False
-        timeout : int, optional
-            by default 60
 
         Returns
         -------
@@ -141,7 +133,6 @@ class ServerBlocking(ServerBase):
         data = self.context._post(
             url=SERVER.duplicate.format(self.server_id),
             read_json=True,
-            timeout=timeout
         )
 
         return ServerModel(data), ServerBlocking(self.context, data["id"])
@@ -154,50 +145,32 @@ class ServerBlocking(ServerBase):
             url=SERVER.ftp.format(self.server_id)
         )
 
-    def stop(self, timeout: int = 60) -> None:
+    def stop(self) -> None:
         """Used to stop the server.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
         """
 
         self.context._post(
             url=SERVER.stop.format(self.server_id),
-            timeout=timeout
         )
 
-    def start(self, timeout: int = 60) -> None:
+    def start(self) -> None:
         """Used to stop the server.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
         """
 
         self.context._post(
             url=SERVER.start.format(self.server_id),
-            timeout=timeout
         )
 
-    def reset(self, timeout: int = 60) -> None:
+    def reset(self) -> None:
         """Used to restart the server.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 60
         """
 
         self.context._post(
             url=SERVER.reset.format(self.server_id),
-            timeout=timeout
         )
 
     def files(self, hide_default: bool = False, path: str = None,
-              file_sizes: bool = False, timeout: int = 30
+              file_sizes: bool = False
               ) -> typing.Generator[FileModel, None, None]:
         """Used to list files.
 
@@ -209,8 +182,6 @@ class ServerBlocking(ServerBase):
             Path to use as root, by default None
         file_sizes : bool, optional
             by default False
-        timeout : int
-            by default 30
 
         Yields
         ------
@@ -225,7 +196,6 @@ class ServerBlocking(ServerBase):
                 "path": path,
                 "with_filesizes": file_sizes,
             },
-            timeout=timeout
         )
 
         for file_ in data:
@@ -250,14 +220,9 @@ class ServerBlocking(ServerBase):
             pathway
         )
 
-    def backups(self, timeout: int = 30
+    def backups(self
                 ) -> typing.Generator[BackupModel, BlockingBackup, None]:
         """Used to list backups a server has.
-
-        Parameters
-        ----------
-        timeout : int, optional
-            by default 30
 
         Yields
         -------
@@ -269,7 +234,6 @@ class ServerBlocking(ServerBase):
 
         data = self.context._get(
             SERVER.backups.format(self.server_id),
-            timeout=timeout
         )
 
         for backup in data:
