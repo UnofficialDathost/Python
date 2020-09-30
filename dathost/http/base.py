@@ -24,7 +24,14 @@ class BaseHttp:
             by default True
         """
 
-        if resp.status_code == 404:
+        if resp.status_code == 200:
+            if json:
+                return resp.json()
+            elif read:
+                return resp.read()
+            else:
+                return True
+        elif resp.status_code == 404:
             raise NotFound()
         elif resp.status_code == 400:
             raise BadRequest()
@@ -32,12 +39,5 @@ class BaseHttp:
             raise ExceededStorage()
         elif resp.status_code == 500:
             raise ServerStart()
-        elif resp.status_code != 200:
-            resp.raise_for_status()
-
-        if json:
-            return resp.json()
-        elif read:
-            return resp.read()
         else:
-            return True
+            resp.raise_for_status()
