@@ -6,18 +6,46 @@ from ...models.server import ServerModel
 from ...models.file import FileModel
 from ...models.backup import BackupModel
 from ...models.metrics import MetricsModel
+from ...models.match import MatchModel
+
+from ...match.awaiting import AwaitingMatch
 
 from .backup import AwaitingBackup
 from .file import AwaitingFile
 
-from ...settings import ServerSettings
+from ...settings import ServerSettings, MatchSettings
 
 from ...exceptions import InvalidConsoleLine
 
-from ...routes import SERVER
+from ...routes import SERVER, MATCHES
 
 
 class ServerAwaiting(ServerBase):
+    async def create_match(self, match_settings: MatchSettings,
+                           ) -> typing.Tuple[MatchModel, AwaitingMatch]:
+        """Creates a match.
+
+        Parameters
+        ----------
+        match_settings : MatchSettings
+            Holds details on the match.
+
+        Returns
+        -------
+        MatchModel
+            Holds match details.
+        AwaitingMatch
+            Used to interact with a match.
+        """
+
+        data = await self.context._post(
+            MATCHES.create,
+            data={"game_server_id": self.server_id, **match_settings.payload},
+            read_json=True
+        )
+
+        return MatchModel(data), AwaitingMatch(self.context, data["id"])
+
     async def delete(self) -> None:
         """Used to delete a sever.
         """
@@ -51,7 +79,7 @@ class ServerAwaiting(ServerBase):
         await self.context._put(
             SERVER.update.format(self.server_id),
             data={
-                **settings.playload,
+                **settings.payload,
                 "server_id": self.server_id
             }
         )

@@ -13,6 +13,11 @@ VALID_TICKRATES = [
     128
 ]
 
+WARNING = """WARNING: server_id will be removed from
+MatchSettings in the next version,
+please use Awaiting/Blocking.server.create_match instead.
+"""
+
 
 class ServerSettings:
     __game = False
@@ -44,7 +49,7 @@ class ServerSettings:
             User meta data, by default None
         """
 
-        self.playload = {
+        self.payload = {
             "name": name,
             "location": location,
             "autostop": autostop,
@@ -53,11 +58,11 @@ class ServerSettings:
         }
 
         if custom_domain:
-            self.playload["custom_domain"] = custom_domain
+            self.payload["custom_domain"] = custom_domain
         if scheduled_commands:
-            self.playload["scheduled_commands"] = scheduled_commands
+            self.payload["scheduled_commands"] = scheduled_commands
         if user_data:
-            self.playload["user_data"] = user_data
+            self.payload["user_data"] = user_data
 
     def csgo(self, slots: int = None, tickrate: int = None,
              game_token: str = None, rcon_password: str = None,
@@ -128,55 +133,55 @@ class ServerSettings:
 
         self.__game = True
 
-        self.playload["game"] = "csgo"
+        self.payload["game"] = "csgo"
 
         if autoload_configs:
-            self.playload["csgo_settings.autoload_configs"] = autoload_configs
+            self.payload["csgo_settings.autoload_configs"] = autoload_configs
         if disable_bots:
-            self.playload["csgo_settings.disable_bots"] = disable_bots
+            self.payload["csgo_settings.disable_bots"] = disable_bots
         if csay_plugin:
-            self.playload["csgo_settings.enable_csay_plugin"] = \
+            self.payload["csgo_settings.enable_csay_plugin"] = \
                 csay_plugin
         if gotv:
-            self.playload["csgo_settings.enable_gotv"] = gotv
+            self.payload["csgo_settings.enable_gotv"] = gotv
         if sourcemod:
-            self.playload["csgo_settings.enable_sourcemod"] = sourcemod
+            self.payload["csgo_settings.enable_sourcemod"] = sourcemod
         if game_mode:
-            self.playload["csgo_settings.game_mode"] = game_mode
+            self.payload["csgo_settings.game_mode"] = game_mode
         if insecure:
-            self.playload["csgo_settings.insecure"] = insecure
+            self.payload["csgo_settings.insecure"] = insecure
         if map_group:
-            self.playload["csgo_settings.mapgroup"] = map_group
+            self.payload["csgo_settings.mapgroup"] = map_group
         if start_map:
-            self.playload["csgo_settings.mapgroup_start_map"] = start_map
+            self.payload["csgo_settings.mapgroup_start_map"] = start_map
         if password:
-            self.playload["csgo_settings.password"] = password
+            self.payload["csgo_settings.password"] = password
         if pure:
-            self.playload["csgo_settings.pure_server"] = pure
+            self.payload["csgo_settings.pure_server"] = pure
         if rcon_password:
-            self.playload["csgo_settings.rcon"] = rcon_password
+            self.payload["csgo_settings.rcon"] = rcon_password
         if slots:
             if slots < 5 or slots > 64:
                 raise InvalidSlotSize()
 
-            self.playload["csgo_settings.slots"] = slots
+            self.payload["csgo_settings.slots"] = slots
         if admins:
-            self.playload["csgo_settings.sourcemod_admins"] = admins
+            self.payload["csgo_settings.sourcemod_admins"] = admins
         if plugins:
-            self.playload["csgo_settings.sourcemod_plugins"] = plugins
+            self.payload["csgo_settings.sourcemod_plugins"] = plugins
         if game_token:
-            self.playload["csgo_settings.steam_game_server_login_token"] \
+            self.payload["csgo_settings.steam_game_server_login_token"] \
                 = game_token
         if tickrate:
             if tickrate not in VALID_TICKRATES:
                 raise InvalidTickrate()
-            self.playload["csgo_settings.tickrate"] = tickrate
+            self.payload["csgo_settings.tickrate"] = tickrate
         if steam_key:
-            self.playload["csgo_settings.workshop_authkey"] = steam_key
+            self.payload["csgo_settings.workshop_authkey"] = steam_key
         if workshop_id:
-            self.playload["csgo_settings.workshop_id"] = workshop_id
+            self.payload["csgo_settings.workshop_id"] = workshop_id
         if workshop_start_map_id:
-            self.playload["csgo_settings.workshop_start_map_id"] \
+            self.payload["csgo_settings.workshop_start_map_id"] \
                 = workshop_start_map_id
 
         return self
@@ -208,20 +213,20 @@ class ServerSettings:
 
         self.__game = True
 
-        self.playload["game"] = "mumble"
+        self.payload["game"] = "mumble"
 
         if slots:
             if slots < 7 or slots > 700:
                 raise InvalidSlotSize()
 
-            self.playload["mumble_settings.slots"] = slots
+            self.payload["mumble_settings.slots"] = slots
         if superuser_password:
-            self.playload["mumble_settings.superuser_password"] = \
+            self.payload["mumble_settings.superuser_password"] = \
                 superuser_password
         if password:
-            self.playload["mumble_settings.password"] = password
+            self.payload["mumble_settings.password"] = password
         if motd:
-            self.playload["mumble_settings.welcome_text"] = motd
+            self.payload["mumble_settings.welcome_text"] = motd
 
         return self
 
@@ -260,26 +265,26 @@ class ServerSettings:
 
         self.__game = True
 
-        self.playload["game"] = "teamfortress2"
+        self.payload["game"] = "teamfortress2"
 
         if slots:
             if slots < 5 or slots > 32:
                 raise InvalidSlotSize()
 
-            self.playload["teamfortress2_settings.slots"] = slots
+            self.payload["teamfortress2_settings.slots"] = slots
         if rcon_password:
-            self.playload["teamfortress2_settings.rcon"] = rcon_password
+            self.payload["teamfortress2_settings.rcon"] = rcon_password
         if gotv:
-            self.playload["teamfortress2_settings.enable_gotv"] = gotv
+            self.payload["teamfortress2_settings.enable_gotv"] = gotv
         if sourcemod:
-            self.playload["teamfortress2_settings.enable_sourcemod"] = \
+            self.payload["teamfortress2_settings.enable_sourcemod"] = \
                 sourcemod
         if insecure:
-            self.playload["teamfortress2_settings.insecure"] = insecure
+            self.payload["teamfortress2_settings.insecure"] = insecure
         if password:
-            self.playload["teamfortress2_settings.password"] = password
+            self.payload["teamfortress2_settings.password"] = password
         if admins:
-            self.playload["teamfortress2_settings.sourcemod_admins"] = admins
+            self.payload["teamfortress2_settings.sourcemod_admins"] = admins
 
         return self
 
@@ -307,18 +312,22 @@ class ServerSettings:
         if slots < 5 or slots > 500:
             raise InvalidSlotSize()
 
-        self.playload["game"] = "teamspeak3"
-        self.playload["teamspeak3_settings.slots"] = slots
+        self.payload["game"] = "teamspeak3"
+        self.payload["teamspeak3_settings.slots"] = slots
 
         return self
 
 
 class MatchSettings:
-    def __init__(self, server_id: str, connection_time: int = 300) -> None:
-        self.playload = {
-            "game_server_id": server_id,
+    def __init__(self, server_id: str = None,
+                 connection_time: int = 300) -> None:
+        self.payload = {
             "connection_time": connection_time
         }
+
+        if server_id:
+            print(WARNING)
+            self.payload["game_server_id"] = server_id
 
     def __convert_id(self, given_id) -> str:
         """Converts any steamID format to 32.
@@ -405,11 +414,11 @@ class MatchSettings:
             by default None
         """
 
-        self.playload["match_end_webhook_url"] = match_end
-        self.playload["round_end_webhook_url"] = round_end
+        self.payload["match_end_webhook_url"] = match_end
+        self.payload["round_end_webhook_url"] = round_end
 
         if authorization:
-            self.playload["webhook_authorization_header"] = authorization
+            self.payload["webhook_authorization_header"] = authorization
 
         return self
 
@@ -423,7 +432,7 @@ class MatchSettings:
             steamID 64, 32 & u are supported.
         """
 
-        self.playload["spectator_steam_ids"] = self.__format_players(players)
+        self.payload["spectator_steam_ids"] = self.__format_players(players)
 
         return self
 
@@ -437,7 +446,7 @@ class MatchSettings:
             steamID 64, 32 & u are supported.
         """
 
-        self.playload["team1_steam_ids"] = self.__format_players(players)
+        self.payload["team1_steam_ids"] = self.__format_players(players)
 
         return self
 
@@ -451,6 +460,6 @@ class MatchSettings:
             steamID 64, 32 & u are supported.
         """
 
-        self.playload["team2_steam_ids"] = self.__format_players(players)
+        self.payload["team2_steam_ids"] = self.__format_players(players)
 
         return self

@@ -145,9 +145,8 @@ class TestAwaitingClient(asynctest.TestCase):
         _, duplicate = await server.duplicate(sync=True)
         self.assertIsNone(await duplicate.delete())
 
-        match_data, match = await self.client.create_match(
+        match_data, match = await server.create_match(
             MatchSettings(
-                server_data.server_id,
             ).team_1(
                 [
                     "[U:1:116962485]",

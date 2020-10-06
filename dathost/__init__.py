@@ -20,12 +20,18 @@ from .models.match import MatchModel
 from httpx import AsyncClient, Client
 
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __url__ = "https://dathost.readthedocs.io/en/latest/"
 __description__ = "Asynchronous / Synchronous dathost API wrapper."
 __author__ = "WardPearce"
 __author_email__ = "wardpearce@protonmail.com"
 __license__ = "GPL v3"
+
+
+WARNING = """WARNING: Awaiting/Blocking.create_match
+will be removed in the next version, please use
+Awaiting/Blocking.server.create_match instead.
+"""
 
 
 class Awaiting(Base, AwaitingHttp):
@@ -75,9 +81,11 @@ class Awaiting(Base, AwaitingHttp):
             Used to interact with a match.
         """
 
+        print(WARNING)
+
         data = await self._post(
             MATCHES.create,
-            data=match_settings.playload,
+            data=match_settings.payload,
             read_json=True
         )
 
@@ -121,7 +129,7 @@ class Awaiting(Base, AwaitingHttp):
         data = await self._post(
             url=SERVER.create,
             read_json=True,
-            data=settings.playload,
+            data=settings.payload,
         )
 
         return ServerModel(data), self.server(data["id"])
@@ -229,9 +237,11 @@ class Blocking(Base, BlockingHttp):
             Used to interact with a match.
         """
 
+        print(WARNING)
+
         data = self._post(
             MATCHES.create,
-            data=match_settings.playload,
+            data=match_settings.payload,
             read_json=True
         )
 
@@ -275,7 +285,7 @@ class Blocking(Base, BlockingHttp):
         data = self._post(
             url=SERVER.create,
             read_json=True,
-            data=settings.playload,
+            data=settings.payload,
         )
 
         return ServerModel(data), self.server(data["id"])

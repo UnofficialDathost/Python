@@ -140,9 +140,8 @@ class TestBlockingClient(unittest.TestCase):
         _, duplicate = server.duplicate(sync=True)
         self.assertIsNone(duplicate.delete())
 
-        match_data, match = self.client.create_match(
+        match_data, match = server.create_match(
             MatchSettings(
-                server_data.server_id,
             ).team_1(
                 [
                     "[U:1:116962485]",
