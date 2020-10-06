@@ -36,9 +36,8 @@ Creating a match
 
     from dathost.settings import MatchSettings
 
-    data, match = client.create_match(
+    data, match = server.create_match(
         MatchSettings(
-            server_id="...",
             connection_time=60,
         ).team_1(
             [
