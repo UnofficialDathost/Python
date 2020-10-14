@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .gamemodes import COMPETITIVE
 from .map_source import MAP_GROUP
 
@@ -12,11 +14,6 @@ VALID_TICKRATES = [
     102.4,
     128
 ]
-
-WARNING = """WARNING: server_id will be removed from
-MatchSettings in the next version,
-please use Awaiting/Blocking.server.create_match instead.
-"""
 
 
 class ServerSettings:
@@ -74,7 +71,7 @@ class ServerSettings:
              password: str = None, pure: bool = True,
              admins: list = None, plugins: list = None, steam_key: str = None,
              workshop_id: int = None
-             ) -> None:
+             ) -> ServerSettings:
         """Used for configuring a CS: GO server.
 
         Parameters
@@ -126,6 +123,10 @@ class ServerSettings:
             Raised when slot size is below 5 or above 64.
         InvalidTickrate
             Raised when tickrate is invalid.
+
+        Returns
+        -------
+        ServerSettings
         """
 
         if self.__game:
@@ -187,7 +188,7 @@ class ServerSettings:
         return self
 
     def mumble(self, slots: int = None, superuser_password: str = None,
-               password: str = None, motd: str = None) -> None:
+               password: str = None, motd: str = None) -> ServerSettings:
         """Used for configuring a Mumble server.
 
         Parameters
@@ -206,6 +207,10 @@ class ServerSettings:
             with multiple games.
         InvalidSlotSize
             Raised when slot size is below 7 or above 700.
+
+        Returns
+        -------
+        ServerSettings
         """
 
         if self.__game:
@@ -233,7 +238,7 @@ class ServerSettings:
     def tf2(self, slots: int = None, rcon_password: str = None,
             gotv: bool = False, sourcemod: bool = False,
             insecure: bool = False, password: str = None,
-            admins: list = None) -> None:
+            admins: list = None) -> ServerSettings:
         """Used for configuring a TF2 server.
 
         Parameters
@@ -258,6 +263,10 @@ class ServerSettings:
             with multiple games.
         InvalidSlotSize
             Raised when slot size is below 5 or above 32.
+
+        Returns
+        -------
+        ServerSettings
         """
 
         if self.__game:
@@ -288,7 +297,7 @@ class ServerSettings:
 
         return self
 
-    def teamspeak(self, slots: int) -> None:
+    def teamspeak(self, slots: int) -> ServerSettings:
         """Used for configuring a teamspeak server.
 
         Parameters
@@ -302,6 +311,10 @@ class ServerSettings:
             with multiple games.
         InvalidSlotSize
             Raised when slot size is below 5 or above 500.
+
+        Returns
+        -------
+        ServerSettings
         """
 
         if self.__game:
@@ -319,15 +332,18 @@ class ServerSettings:
 
 
 class MatchSettings:
-    def __init__(self, server_id: str = None,
-                 connection_time: int = 300) -> None:
+    def __init__(self, connection_time: int = 300) -> None:
+        """Used to create a match.
+
+        Parameters
+        ----------
+        connection_time : int, optional
+            by default 300
+        """
+
         self.payload = {
             "connection_time": connection_time
         }
-
-        if server_id:
-            print(WARNING)
-            self.payload["game_server_id"] = server_id
 
     def __convert_id(self, given_id) -> str:
         """Converts any steamID format to 32.
@@ -401,7 +417,7 @@ class MatchSettings:
         return ",".join(formatted_players)
 
     def webhook(self, match_end: str, round_end: str,
-                authorization: str = None) -> None:
+                authorization: str = None) -> MatchSettings:
         """Used to set webhooks.
 
         Parameters
@@ -412,6 +428,10 @@ class MatchSettings:
             URL of round end webhook.
         authorization : str, optional
             by default None
+
+        Returns
+        -------
+        MatchSettings
         """
 
         self.payload["match_end_webhook_url"] = match_end
@@ -422,7 +442,7 @@ class MatchSettings:
 
         return self
 
-    def spectators(self, players: list) -> None:
+    def spectators(self, players: list) -> MatchSettings:
         """Spectators
 
         Parameters
@@ -430,13 +450,17 @@ class MatchSettings:
         players : list
             List of spectator steam IDs,
             steamID 64, 32 & u are supported.
+
+        Returns
+        -------
+        MatchSettings
         """
 
         self.payload["spectator_steam_ids"] = self.__format_players(players)
 
         return self
 
-    def team_1(self, players: list) -> None:
+    def team_1(self, players: list) -> MatchSettings:
         """Team 1 players
 
         Parameters
@@ -444,13 +468,17 @@ class MatchSettings:
         players : list
             List of spectator steam IDs,
             steamID 64, 32 & u are supported.
+
+        Returns
+        -------
+        MatchSettings
         """
 
         self.payload["team1_steam_ids"] = self.__format_players(players)
 
         return self
 
-    def team_2(self, players: list) -> None:
+    def team_2(self, players: list) -> MatchSettings:
         """Team 2 players
 
         Parameters
@@ -458,6 +486,10 @@ class MatchSettings:
         players : list
             List of spectator steam IDs,
             steamID 64, 32 & u are supported.
+
+        Returns
+        -------
+        MatchSettings
         """
 
         self.payload["team2_steam_ids"] = self.__format_players(players)

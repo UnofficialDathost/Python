@@ -1,7 +1,7 @@
 import typing
 
 from .base import Base
-from .routes import ACCOUNT, CUSTOM_DOMAINS, SERVER, MATCHES
+from .routes import ACCOUNT, CUSTOM_DOMAINS, SERVER
 
 from .http import AwaitingHttp, BlockingHttp
 
@@ -11,27 +11,20 @@ from .server.awaiting import ServerAwaiting
 from .match.awaiting import AwaitingMatch
 from .match.blocking import BlockingMatch
 
-from .settings import ServerSettings, MatchSettings
+from .settings import ServerSettings
 
 from .models.account import AccountModel
 from .models.server import ServerModel
-from .models.match import MatchModel
 
 from httpx import AsyncClient, Client
 
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 __url__ = "https://dathost.readthedocs.io/en/latest/"
 __description__ = "Asynchronous / Synchronous dathost API wrapper."
 __author__ = "WardPearce"
 __author_email__ = "wardpearce@protonmail.com"
 __license__ = "GPL v3"
-
-
-WARNING = """WARNING: Awaiting/Blocking.create_match
-will be removed in the next version, please use
-Awaiting/Blocking.server.create_match instead.
-"""
 
 
 class Awaiting(Base, AwaitingHttp):
@@ -63,33 +56,6 @@ class Awaiting(Base, AwaitingHttp):
 
         self.__client_closed = True
         await self._client.aclose()
-
-    async def create_match(self, match_settings: MatchSettings,
-                           ) -> typing.Tuple[MatchModel, AwaitingMatch]:
-        """Creates a match.
-
-        Parameters
-        ----------
-        match_settings : MatchSettings
-            Holds details on the match.
-
-        Returns
-        -------
-        MatchModel
-            Holds match details.
-        AwaitingMatch
-            Used to interact with a match.
-        """
-
-        print(WARNING)
-
-        data = await self._post(
-            MATCHES.create,
-            data=match_settings.payload,
-            read_json=True
-        )
-
-        return MatchModel(data), self.match(data["id"])
 
     def match(self, match_id: str) -> AwaitingMatch:
         """Used to interact with a match.
@@ -219,33 +185,6 @@ class Blocking(Base, BlockingHttp):
             auth=self._basic_auth,
             timeout=self._timeout
         )
-
-    def create_match(self, match_settings: MatchSettings,
-                     ) -> typing.Tuple[MatchModel, BlockingMatch]:
-        """Creates a match.
-
-        Parameters
-        ----------
-        match_settings : MatchSettings
-            Holds details on the match.
-
-        Returns
-        -------
-        MatchModel
-            Holds match details.
-        BlockingMatch
-            Used to interact with a match.
-        """
-
-        print(WARNING)
-
-        data = self._post(
-            MATCHES.create,
-            data=match_settings.payload,
-            read_json=True
-        )
-
-        return MatchModel(data), self.match(data["id"])
 
     def match(self, match_id: str) -> BlockingMatch:
         """Used to interact with a match.
