@@ -1,70 +1,88 @@
-class InvalidSlotSize(Exception):
+class DathostException(Exception):
+    """Base exception for dathost.
+    """
+
+    def __init__(self, msg="Dathost base exception", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
+
+
+class InvalidSlotSize(DathostException):
     """Raised when slot size is invalid.
     """
 
-    pass
+    def __init__(self, msg="Invalid slot size", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
 
 
-class MultipleGames(Exception):
+class MultipleGames(DathostException):
     """Raised when you attempt to create one server
        with multiple games.
     """
 
-    pass
+    def __init__(self, msg="Multiple games called", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
 
 
-class InvalidTickrate(Exception):
+class InvalidTickrate(DathostException):
     """Raised when tickrate is invalid.
     """
 
-    pass
+    def __init__(self, msg="Invalid tickrate", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
 
 
-class InvalidConsoleLine(Exception):
+class InvalidConsoleLine(DathostException):
     """Raised when console line is above 1 or above 100000.
     """
 
-    pass
+    def __init__(self, msg="Invalid console line", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
 
 
-class AwaitingOnly(Exception):
+class AwaitingOnly(DathostException):
     """Raised when a coroutine called is awaiting supported only.
     """
 
-    pass
+    def __init__(self, msg="Only awaiting supported", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
 
 
-class InvalidSteamID(Exception):
+class InvalidSteamID(DathostException):
     """Raised when give ID isn't understood.
     """
 
-    pass
+    def __init__(self, msg="Invalid Steam ID", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
 
 
-class NotFound(Exception):
+class NotFound(DathostException):
     """Resource not found.
     """
 
-    pass
+    def __init__(self, msg="Resource not found", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
 
 
-class BadRequest(Exception):
+class BadRequest(DathostException):
     """Path is a directory or Cannot move file into itself.
     """
 
-    pass
+    def __init__(self, msg="Bad request", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
 
 
-class ExceededStorage(Exception):
+class ExceededStorage(DathostException):
     """Your disk quota of 30GB per server (excluding base installation)
     has been exceeded
     """
 
-    pass
+    def __init__(self, msg="Storage exceeded", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)
 
 
-class ServerStart(Exception):
+class ServerStart(DathostException):
     """Failed to start server.
     """
 
-    pass
+    def __init__(self, msg="Failed to start server", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)

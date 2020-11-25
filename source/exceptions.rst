@@ -1,31 +1,34 @@
 Exceptions
 ==========
-.. autoclass:: dathost.exceptions.InvalidSlotSize
+.. autoclass:: dathost.exceptions.DathostException()
     :members:
 
-.. autoclass:: dathost.exceptions.MultipleGames
+.. autoclass:: dathost.exceptions.InvalidSlotSize()
     :members:
 
-.. autoclass:: dathost.exceptions.InvalidTickrate
+.. autoclass:: dathost.exceptions.MultipleGames()
     :members:
 
-.. autoclass:: dathost.exceptions.InvalidConsoleLine
+.. autoclass:: dathost.exceptions.InvalidTickrate()
     :members:
 
-.. autoclass:: dathost.exceptions.AwaitingOnly
+.. autoclass:: dathost.exceptions.InvalidConsoleLine()
     :members:
 
-.. autoclass:: dathost.exceptions.InvalidSteamID
+.. autoclass:: dathost.exceptions.AwaitingOnly()
     :members:
 
-.. autoclass:: dathost.exceptions.NotFound
+.. autoclass:: dathost.exceptions.InvalidSteamID()
     :members:
 
-.. autoclass:: dathost.exceptions.BadRequest
+.. autoclass:: dathost.exceptions.NotFound()
     :members:
 
-.. autoclass:: dathost.exceptions.ExceededStorage
+.. autoclass:: dathost.exceptions.BadRequest()
     :members:
 
-.. autoclass:: dathost.exceptions.ServerStart
+.. autoclass:: dathost.exceptions.ExceededStorage()
+    :members:
+
+.. autoclass:: dathost.exceptions.ServerStart()
     :members:

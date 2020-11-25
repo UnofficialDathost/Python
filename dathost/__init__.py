@@ -19,7 +19,7 @@ from .models.server import ServerModel
 from httpx import AsyncClient, Client
 
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 __url__ = "https://dathost.readthedocs.io/en/latest/"
 __description__ = "Asynchronous / Synchronous dathost API wrapper."
 __author__ = "WardPearce"
