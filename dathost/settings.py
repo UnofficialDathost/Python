@@ -45,6 +45,8 @@ class ServerSettings:
             List of scheduled commands, by default None
         user_data : str, optional
             User meta data, by default None
+        reboot_on_crash : bool, optional
+            by default True
         """
 
         self.payload = {
