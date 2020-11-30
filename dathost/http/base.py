@@ -1,6 +1,8 @@
 import typing
+import logging
 
 from httpx import Response
+from json import JSONDecodeError
 
 from ..exceptions import (
     NotFound,
@@ -31,13 +33,21 @@ class BaseHttp:
                 return resp.read()
             else:
                 return True
-        elif resp.status_code == 404:
-            raise NotFound()
-        elif resp.status_code == 400:
-            raise BadRequest()
-        elif resp.status_code == 507:
-            raise ExceededStorage()
-        elif resp.status_code == 500:
-            raise ServerStart()
         else:
-            resp.raise_for_status()
+            try:
+                message = (resp.json())["message"]
+            except JSONDecodeError:
+                message = None
+            else:
+                logging.error(message)
+
+            if resp.status_code == 404:
+                raise NotFound(message)
+            elif resp.status_code == 400:
+                raise BadRequest(message)
+            elif resp.status_code == 507:
+                raise ExceededStorage(message)
+            elif resp.status_code == 500:
+                raise ServerStart(message)
+            else:
+                resp.raise_for_status()

@@ -48,6 +48,12 @@ class MatchModel:
     spectators : list
     team_1 : TeamModel
     team_2 : TeamModel
+    knife_round : bool
+    playwin : bool
+    playwin_webhook : str
+    playwin_result : dict
+    warmup_time : int
+    wait_for_spectators : bool
     """
     def __init__(self, data: dict) -> None:
         self.match_id = data["id"]
@@ -59,6 +65,12 @@ class MatchModel:
         self.cancel_reason = data["cancel_reason"]
         self.rounds_played = data["rounds_played"]
         self.spectators = data["spectator_steam_ids"]
+        self.knife_round = data["enable_knife_round"]
+        self.playwin = data["enable_playwin"]
+        self.playwin_webhook = data["playwin_result_webhook_url"]
+        self.playwin_result = data["playwin_result"]
+        self.warmup_time = data["warmup_time"]
+        self.wait_for_spectators = data["wait_for_spectators"]
 
         self.team_1 = TeamModel(
             data["team1_steam_ids"],

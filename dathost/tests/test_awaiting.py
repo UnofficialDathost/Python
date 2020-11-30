@@ -156,7 +156,7 @@ class TestAwaitingClient(asynctest.TestCase):
             ).team_2(
                 [
                     "[U:1:320762620]",
-                    "STEAM_0:1:83437164",
+                    "STEAM_1:1:83437164",
                     76561198214871324
                 ]
             )

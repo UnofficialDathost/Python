@@ -23,7 +23,8 @@ class ServerSettings:
                  custom_domain: str = None,
                  autostop: bool = False, autostop_minutes: int = 0,
                  mysql: bool = False, scheduled_commands: list = None,
-                 user_data: str = None) -> None:
+                 user_data: str = None,
+                 reboot_on_crash: bool = True) -> None:
         """Used to store settings on a server.
 
         Parameters
@@ -52,6 +53,7 @@ class ServerSettings:
             "autostop": autostop,
             "autostop_minutes": autostop_minutes,
             "enable_mysql": mysql,
+            "reboot_on_crash": reboot_on_crash
         }
 
         if custom_domain:
@@ -332,17 +334,29 @@ class ServerSettings:
 
 
 class MatchSettings:
-    def __init__(self, connection_time: int = 300) -> None:
+    def __init__(self, connection_time: int = 300,
+                 knife_round: bool = False,
+                 wait_for_spectators: bool = True,
+                 warmup_time: int = 15) -> None:
         """Used to create a match.
 
         Parameters
         ----------
         connection_time : int, optional
             by default 300
+        knife_round : bool, optional
+            by default False
+        wait_for_spectators : bool, optional
+            by default True
+        warmup_time : int, optional
+            by default 15
         """
 
         self.payload = {
-            "connection_time": connection_time
+            "connection_time": connection_time,
+            "enable_knife_round": knife_round,
+            "wait_for_spectators": wait_for_spectators,
+            "warmup_time": warmup_time
         }
 
     def __convert_id(self, given_id) -> str:
@@ -408,13 +422,26 @@ class MatchSettings:
             raise InvalidSteamID()
 
     def __format_players(self, players: list) -> None:
-        formatted_players = []
-        formatted_players_append = formatted_players.append
+        return ",".join([self.__convert_id(steam_id) for steam_id in players])
 
-        for steamid in players:
-            formatted_players_append(self.__convert_id(steamid))
+    def playwin(self, webhook: str = None) -> MatchSettings:
+        """Enables playwin AC.
 
-        return ",".join(formatted_players)
+        Parameters
+        ----------
+        webhook : str, optional
+            Webhook to push playwin results, by default None
+
+        Returns
+        -------
+        MatchSettings
+        """
+
+        self.payload["enable_playwin"] = True
+        if webhook:
+            self.payload["playwin_result_webhook_url"] = webhook
+
+        return self
 
     def webhook(self, match_end: str, round_end: str,
                 authorization: str = None) -> MatchSettings:
