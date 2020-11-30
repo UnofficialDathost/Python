@@ -3,8 +3,12 @@ from __future__ import annotations
 from .gamemodes import COMPETITIVE
 from .map_source import MAP_GROUP
 
-from .exceptions import InvalidSlotSize, MultipleGames, InvalidTickrate, \
+from .exceptions import (
+    InvalidSlotSize,
+    MultipleGames,
+    InvalidTickrate,
     InvalidSteamID
+)
 
 
 VALID_TICKRATES = [
