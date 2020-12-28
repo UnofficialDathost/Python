@@ -2,3 +2,4 @@ httpx
 asynctest
 aiofiles
 sphinxcontrib-trio
+git+https://github.com/bashtage/sphinx-material.git
