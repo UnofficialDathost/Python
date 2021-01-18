@@ -164,6 +164,9 @@ class ServerModel:
     confirmed : bool
     cost_per_hour : int
     max_cost_per_hour : int
+    month_credits : float
+    month_reset_at : int
+    max_cost_per_month : float
     mysql : bool
     autostop : bool
     autostop_minutes : int
