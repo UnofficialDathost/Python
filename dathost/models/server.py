@@ -1,4 +1,5 @@
 import typing
+from datetime import datetime
 
 
 class PortsModel:
@@ -165,7 +166,7 @@ class ServerModel:
     cost_per_hour : int
     max_cost_per_hour : int
     month_credits : float
-    month_reset_at : int
+    month_reset_at : datetime
     max_cost_per_month : float
     mysql : bool
     autostop : bool
@@ -202,7 +203,7 @@ class ServerModel:
         self.cost_per_hour = data["cost_per_hour"]
         self.max_cost_per_hour = data["max_cost_per_hour"]
         self.month_credits = data["month_credits"]
-        self.month_reset_at = data["month_reset_at"]
+        self.month_reset_at = datetime.fromtimestamp(data["month_reset_at"])
         self.max_cost_per_month = data["max_cost_per_month"]
         self.mysql = data["enable_mysql"]
         self.autostop = data["autostop"]
