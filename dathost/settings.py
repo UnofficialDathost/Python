@@ -20,13 +20,6 @@ VALID_TICKRATES = [
     128
 ]
 
-VALID_STORAGE_SIZES = [
-    30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
-    49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
-    68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86,
-    87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100
-]
-
 
 class ServerSettings:
     __game = False
@@ -89,7 +82,7 @@ class ServerSettings:
         if manual_sort_order is not None:
             self.payload["manual_sort_order"] = manual_sort_order
         if max_disk_usage_gb is not None:
-            if max_disk_usage_gb not in VALID_STORAGE_SIZES:
+            if max_disk_usage_gb > 100 or max_disk_usage_gb < 30:
                 raise InvalidStorageSize()
 
             self.payload["max_disk_usage_gb"] = max_disk_usage_gb
