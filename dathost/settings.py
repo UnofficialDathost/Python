@@ -7,7 +7,8 @@ from .exceptions import (
     InvalidSlotSize,
     MultipleGames,
     InvalidTickrate,
-    InvalidSteamID
+    InvalidSteamID,
+    InvalidStorageSize
 )
 
 
@@ -19,6 +20,13 @@ VALID_TICKRATES = [
     128
 ]
 
+VALID_STORAGE_SIZES = [
+    30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48,
+    49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
+    68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86,
+    87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100
+]
+
 
 class ServerSettings:
     __game = False
@@ -28,7 +36,10 @@ class ServerSettings:
                  autostop: bool = False, autostop_minutes: int = 0,
                  mysql: bool = False, scheduled_commands: list = None,
                  user_data: str = None,
-                 reboot_on_crash: bool = True) -> None:
+                 reboot_on_crash: bool = True,
+                 max_disk_usage_gb: int = None,
+                 manual_sort_order: int = None,
+                 core_dump: bool = False) -> None:
         """Used to store settings on a server.
 
         Parameters
@@ -51,6 +62,12 @@ class ServerSettings:
             User meta data, by default None
         reboot_on_crash : bool, optional
             by default True
+        max_disk_usage_gb : int, optional
+            by default None
+        manual_sort_order : int, optional
+            by default None
+        core_dump : bool, optional
+            by default False
         """
 
         self.payload = {
@@ -59,7 +76,8 @@ class ServerSettings:
             "autostop": autostop,
             "autostop_minutes": autostop_minutes,
             "enable_mysql": mysql,
-            "reboot_on_crash": reboot_on_crash
+            "reboot_on_crash": reboot_on_crash,
+            "enable_core_dump": core_dump
         }
 
         if custom_domain:
@@ -68,6 +86,13 @@ class ServerSettings:
             self.payload["scheduled_commands"] = scheduled_commands
         if user_data:
             self.payload["user_data"] = user_data
+        if manual_sort_order is not None:
+            self.payload["manual_sort_order"] = manual_sort_order
+        if max_disk_usage_gb is not None:
+            if max_disk_usage_gb not in VALID_STORAGE_SIZES:
+                raise InvalidStorageSize()
+
+            self.payload["max_disk_usage_gb"] = max_disk_usage_gb
 
     def csgo(self, slots: int = None, tickrate: int = None,
              game_token: str = None, rcon_password: str = None,
@@ -305,6 +330,32 @@ class ServerSettings:
 
         return self
 
+    def valheim(self, password: str, world_name: str) -> ServerSettings:
+        """Used to configure valheim server.
+
+        Parameters
+        ----------
+        password : str
+        world_name : str
+
+        Returns
+        -------
+        ServerSettings
+
+        Raises
+        ------
+        MultipleGames
+        """
+
+        if self.__game:
+            raise MultipleGames()
+
+        self.payload["game"] = "valheim"
+        self.payload["valheim_settings.password"] = password
+        self.payload["valheim_settings.world_name"] = world_name
+
+        return self
+
     def teamspeak(self, slots: int) -> ServerSettings:
         """Used for configuring a teamspeak server.
 
@@ -384,20 +435,20 @@ class MatchSettings:
             Raised when the given ID isn't understood.
         """
 
-        if type(given_id) == int:
-            steamid = [
-                "STEAM_1:"
-            ]
+        if type(given_id) == int or given_id.isdigit():
+            given_id = int(given_id)
+
+            steamid = "STEAM_1:"
 
             steamidacct = given_id - 76561197960265728
             if steamidacct % 2 == 0:
-                steamid.append("0:")
+                steamid += "0:"
             else:
-                steamid.append("1:")
+                steamid += "1:"
 
-            steamid.append(str(steamidacct // 2))
+            steamid += str(steamidacct // 2)
 
-            return "".join(steamid)
+            return steamid
 
         elif "STEAM_1" in given_id or "STEAM_0" in given_id:
             return given_id.replace("STEAM_0", "STEAM_1")
@@ -408,22 +459,19 @@ class MatchSettings:
                     usteamid = given_id.replace(ch, "")
 
             usteamid_split = usteamid.split(":")
-            steamid = [
-                "STEAM_1:"
-            ]
+
+            steamid = "STEAM_1:"
 
             z = int(usteamid_split[2])
 
             if z % 2 == 0:
-                steamid.append("0:")
+                steamid += "0:"
             else:
-                steamid.append("1:")
+                steamid += "1:"
 
-            steamacct = z // 2
+            steamid += str(z // 2)
 
-            steamid.append(str(steamacct))
-
-            return "".join(steamid)
+            return steamid
         else:
             raise InvalidSteamID()
 

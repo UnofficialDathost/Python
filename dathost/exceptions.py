@@ -86,3 +86,11 @@ class ServerStart(DathostException):
 
     def __init__(self, msg="Failed to start server", *args, **kwargs) -> None:
         super().__init__(msg, *args, **kwargs)
+
+
+class InvalidStorageSize(DathostException):
+    """Storage size is invalid.
+    """
+
+    def __init__(self, msg="Storage size is invalid", *args, **kwargs) -> None:
+        super().__init__(msg, *args, **kwargs)

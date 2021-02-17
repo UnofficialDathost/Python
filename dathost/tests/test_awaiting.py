@@ -30,7 +30,8 @@ class TestAwaitingClient(asynctest.TestCase):
     async def setUp(self):
         self.client = Awaiting(
             email=EMAIL,
-            password=PASSWORD
+            password=PASSWORD,
+            timeout=360
         )
 
     async def tearDown(self):
@@ -151,13 +152,15 @@ class TestAwaitingClient(asynctest.TestCase):
                 [
                     "[U:1:116962485]",
                     76561198017567105,
-                    "STEAM_0:1:186064092"
+                    "STEAM_0:1:186064092",
+                    "76561198214871321"
                 ]
             ).team_2(
                 [
                     "[U:1:320762620]",
                     "STEAM_1:1:83437164",
-                    76561198214871324
+                    76561198214871324,
+                    "76561198214871323"
                 ]
             )
         )

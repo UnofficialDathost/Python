@@ -183,6 +183,9 @@ class ServerModel:
     teamfortress : TeamFortressModel
     mumble : MumbleModel
     csgo : CsgoModel
+    max_disk_usage_gb : int
+    reboot_on_crash : bool
+    core_dump : bool
     """
 
     def __init__(self, data: dict) -> None:
@@ -200,6 +203,9 @@ class ServerModel:
         self.on = data["on"]
         self.ports = PortsModel(data["ports"])
         self.confirmed = data["confirmed"]
+        self.reboot_on_crash = data["reboot_on_crash"]
+        self.max_disk_usage_gb = data["max_disk_usage_gb"]
+        self.core_dump = data["enable_core_dump"]
         self.cost_per_hour = data["cost_per_hour"]
         self.max_cost_per_hour = data["max_cost_per_hour"]
         self.month_credits = data["month_credits"]

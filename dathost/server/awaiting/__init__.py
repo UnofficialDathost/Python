@@ -182,12 +182,18 @@ class ServerAwaiting(ServerBase):
             url=SERVER.stop.format(self.server_id),
         )
 
-    async def start(self) -> None:
+    async def start(self, allow_host_reassignment: bool = True) -> None:
         """Used to start the server.
+
+        Parameters
+        ----------
+        allow_host_reassignment : bool, optional
+            By default True
         """
 
         await self.context._post(
             url=SERVER.start.format(self.server_id),
+            data={"allow_host_reassignment": allow_host_reassignment}
         )
 
     async def reset(self) -> None:

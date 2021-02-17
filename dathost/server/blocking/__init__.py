@@ -181,12 +181,18 @@ class ServerBlocking(ServerBase):
             url=SERVER.stop.format(self.server_id),
         )
 
-    def start(self) -> None:
+    def start(self, allow_host_reassignment: bool = True) -> None:
         """Used to stop the server.
+
+        Parameters
+        ----------
+        allow_host_reassignment : bool, optional
+            By default True
         """
 
         self.context._post(
             url=SERVER.start.format(self.server_id),
+            data={"allow_host_reassignment": allow_host_reassignment}
         )
 
     def reset(self) -> None:

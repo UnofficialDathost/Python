@@ -28,7 +28,8 @@ class TestBlockingClient(unittest.TestCase):
     def setUp(self):
         self.client = Blocking(
             email=EMAIL,
-            password=PASSWORD
+            password=PASSWORD,
+            timeout=360
         )
 
     def tearDown(self):
