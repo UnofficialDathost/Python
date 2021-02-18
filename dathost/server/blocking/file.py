@@ -73,7 +73,7 @@ class BlockingFile(FileBase):
 
         self.context._post(
             url=SERVER._upload.format(self.server_id, self.file_path),
-            data={
+            files={
                 "file": data,
             },
         )
