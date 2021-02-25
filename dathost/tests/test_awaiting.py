@@ -37,16 +37,16 @@ class TestAwaitingClient(asynctest.TestCase):
     async def tearDown(self):
         await self.client.close()
 
-    async def test_account(self):
+    async def test_awaiting_account(self):
         account = await self.client.account()
 
         self.assertTrue(isinstance(account, AccountModel))
 
-    async def test_domains(self):
+    async def test_awaiting_domains(self):
         async for domain in self.client.domains():
             self.assertTrue(type(domain) == str)
 
-    async def test_context(self):
+    async def test_awaiting_context(self):
         context = Awaiting(EMAIL, PASSWORD)
 
         async with context as client:
@@ -56,12 +56,12 @@ class TestAwaitingClient(asynctest.TestCase):
             async for domain in client.domains():
                 pass
 
-    async def test_list_servers(self):
+    async def test_awaiting_list_servers(self):
         async for data, server in self.client.servers():
             self.assertIsInstance(data, ServerModel)
             self.assertIsInstance(server, ServerAwaiting)
 
-    async def test_server_csgo(self):
+    async def test_awaiting_server_csgo(self):
         server_data, server = await self.client.create_server(
             ServerSettings(
                 name="Awaiting CS: GO server",
@@ -178,7 +178,32 @@ class TestAwaitingClient(asynctest.TestCase):
 
         self.assertIsNone(await server.delete())
 
-    async def test_server_mumble(self):
+    async def test_awaiting_server_valheim(self):
+        data, server = await self.client.create_server(
+            ServerSettings(
+                name="Blocking valheim server",
+                location="sydney"
+            ).valheim(
+                password=token_urlsafe(8),
+                world_name="Poggers",
+                plus=False,
+                admins=[
+                    "[U:1:116962485]",
+                    76561198017567105,
+                    "STEAM_0:1:186064092",
+                    "76561198214871321"
+                ]
+            )
+        )
+
+        self.assertIsInstance(data, ServerModel)
+        self.assertIsInstance(server, ServerAwaiting)
+
+        self.assertIsInstance(await server.get(), ServerModel)
+
+        self.assertIsNone(await server.delete())
+
+    async def test_awaiting_server_mumble(self):
         data, server = await self.client.create_server(
             ServerSettings(
                 name="Blocking Mumble server",
@@ -196,7 +221,7 @@ class TestAwaitingClient(asynctest.TestCase):
 
         self.assertIsNone(await server.delete())
 
-    async def test_server_tf2(self):
+    async def test_awaiting_server_tf2(self):
         data, server = await self.client.create_server(
             ServerSettings(
                 name="Awaiting TF2 server",
@@ -223,7 +248,7 @@ class TestAwaitingClient(asynctest.TestCase):
 
         self.assertIsNone(await server.delete())
 
-    async def test_server_teamspeak(self):
+    async def test_awaiting_server_teamspeak(self):
         data, server = await self.client.create_server(
             ServerSettings(
                 name="Blocking TF2 server",

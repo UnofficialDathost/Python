@@ -35,8 +35,8 @@ class BaseHttp:
                 return True
         else:
             try:
-                message = (resp.json())["message"]
-            except (JSONDecodeError, TypeError):
+                message = resp.json()
+            except JSONDecodeError:
                 message = None
             else:
                 logging.error(message)

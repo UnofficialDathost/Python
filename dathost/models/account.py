@@ -23,5 +23,6 @@ class AccountModel:
         self.time_left = data["time_left"]
         self.roles = data["roles"]
         self.trial = data["trial"]
-        self.accepted_terms_of_service_version = \
+        self.accepted_terms_of_service_version = (
             data["accepted_terms_of_service_version"]
+        )

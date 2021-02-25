@@ -223,14 +223,18 @@ class ServerModel:
         self.added_voice_server = data["added_voice_server"]
         self.duplicate_source_server = data["duplicate_source_server"]
 
-        self.teamspeak = TeamspeakModel(data["teamspeak3_settings"]) \
-            if data["teamspeak3_settings"] else None
-        self.teamfortress = TeamFortressModel(data["teamfortress2_settings"]) \
-            if data["teamfortress2_settings"] else None
-        self.mumble = MumbleModel(data["mumble_settings"]) \
-            if data["mumble_settings"] else None
-        self.csgo = CsgoModel(data["csgo_settings"]) \
-            if data["csgo_settings"] else None
+        self.teamspeak = TeamspeakModel(
+            data["teamspeak3_settings"]
+        ) if data["teamspeak3_settings"] else None
+        self.teamfortress = TeamFortressModel(
+            data["teamfortress2_settings"]
+        ) if data["teamfortress2_settings"] else None
+        self.mumble = MumbleModel(
+            data["mumble_settings"]
+        ) if data["mumble_settings"] else None
+        self.csgo = CsgoModel(
+            data["csgo_settings"]
+        ) if data["csgo_settings"] else None
 
         self.__scheduled_commands = data["scheduled_commands"]
 

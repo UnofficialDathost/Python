@@ -1,4 +1,7 @@
 from __future__ import annotations
+from typing import Any, List
+
+from steam.steamid import SteamID
 
 from .gamemodes import COMPETITIVE
 from .map_source import MAP_GROUP
@@ -24,55 +27,61 @@ VALID_TICKRATES = [
 class ServerSettings:
     __game = False
 
-    def __init__(self, name: str, location: str,
+    def __init__(self, name: str = None, location: str = None,
                  custom_domain: str = None,
-                 autostop: bool = False, autostop_minutes: int = 0,
-                 mysql: bool = False, scheduled_commands: list = None,
+                 autostop: bool = None, autostop_minutes: int = None,
+                 mysql: bool = None, scheduled_commands: List[str] = None,
                  user_data: str = None,
-                 reboot_on_crash: bool = True,
+                 reboot_on_crash: bool = None,
                  max_disk_usage_gb: int = None,
                  manual_sort_order: int = None,
-                 core_dump: bool = False) -> None:
+                 core_dump: bool = None) -> None:
         """Used to store settings on a server.
 
         Parameters
         ----------
-        name : str
-            Name of server.
-        location : str
-            Location of server.
+        name : str, optional
+            Name of server, by default None
+        location : str, optional
+            Location of server, by default None
         custom_domain : str, optional
             Custom domain name, by default None
         autostop : bool, optional
-            If autostop is enabled, by default False
+            If autostop is enabled, by default None
         autostop_minutes : int, optional
-            How many minutes, by default 0
+            How many minutes, by default None
         mysql : bool, optional
-            If myself is enabled, by default False
-        scheduled_commands : list, optional
+            If myself is enabled, by default None
+        scheduled_commands : List[str], optional
             List of scheduled commands, by default None
         user_data : str, optional
             User meta data, by default None
         reboot_on_crash : bool, optional
-            by default True
+            by default None
         max_disk_usage_gb : int, optional
             by default None
         manual_sort_order : int, optional
             by default None
         core_dump : bool, optional
-            by default False
+            by default None
         """
 
-        self.payload = {
-            "name": name,
-            "location": location,
-            "autostop": autostop,
-            "autostop_minutes": autostop_minutes,
-            "enable_mysql": mysql,
-            "reboot_on_crash": reboot_on_crash,
-            "enable_core_dump": core_dump
-        }
+        self.payload = {}
 
+        if name:
+            self.payload["name"] = name
+        if location:
+            self.payload["location"] = location
+        if autostop is not None:
+            self.payload["autostop"] = autostop
+        if autostop_minutes is not None:
+            self.payload["autostop_minutes"] = autostop_minutes
+        if mysql is not None:
+            self.payload["enable_mysql"] = mysql
+        if reboot_on_crash is not None:
+            self.payload["reboot_on_crash"] = reboot_on_crash
+        if core_dump is not None:
+            self.payload["enable_core_dump"] = core_dump
         if custom_domain:
             self.payload["custom_domain"] = custom_domain
         if scheduled_commands:
@@ -89,14 +98,15 @@ class ServerSettings:
 
     def csgo(self, slots: int = None, tickrate: int = None,
              game_token: str = None, rcon_password: str = None,
-             game_mode: str = COMPETITIVE, autoload_configs: list = None,
+             game_mode: str = COMPETITIVE, autoload_configs: List[str] = None,
              disable_bots: bool = False, workshop_start_map_id: int = None,
              csay_plugin: bool = False, gotv: bool = False,
              sourcemod: bool = False, insecure: bool = False,
              map_group: str = MAP_GROUP, start_map: str = None,
              password: str = None, pure: bool = True,
-             admins: list = None, plugins: list = None, steam_key: str = None,
-             workshop_id: int = None
+             admins: List[Any] = None, plugins: List[Any] = None,
+             steam_key: str = None,
+             workshop_id: int = None, maps_source: str = None
              ) -> ServerSettings:
         """Used for configuring a CS: GO server.
 
@@ -107,7 +117,7 @@ class ServerSettings:
         tickrate : int
         game_mode : str, optional
             by default COMPETITIVE
-        autoload_configs : list, optional
+        autoload_configs : List[str], optional
             by default None
         disable_bots : bool, optional
             by default False
@@ -129,15 +139,17 @@ class ServerSettings:
             by default True
         rcon_password : str, optional
             by default None
-        admins : list, optional
+        admins : List[Any], optional
             by default None
-        plugins : list, optional
+        plugins : List[Any], optional
             by default None
         steam_key : str, optional
             by default None
         workshop_id : int, optional
             by default None
         workshop_start_map_id : int, optional
+            by default None
+        maps_source : int, optional
             by default None
 
         Raises
@@ -167,15 +179,16 @@ class ServerSettings:
         if disable_bots:
             self.payload["csgo_settings.disable_bots"] = disable_bots
         if csay_plugin:
-            self.payload["csgo_settings.enable_csay_plugin"] = \
-                csay_plugin
+            self.payload[
+                "csgo_settings.enable_csay_plugin"
+            ] = csay_plugin
         if gotv:
             self.payload["csgo_settings.enable_gotv"] = gotv
         if sourcemod:
             self.payload["csgo_settings.enable_sourcemod"] = sourcemod
         if game_mode:
             self.payload["csgo_settings.game_mode"] = game_mode
-        if insecure:
+        if insecure is not None:
             self.payload["csgo_settings.insecure"] = insecure
         if map_group:
             self.payload["csgo_settings.mapgroup"] = map_group
@@ -183,7 +196,7 @@ class ServerSettings:
             self.payload["csgo_settings.mapgroup_start_map"] = start_map
         if password:
             self.payload["csgo_settings.password"] = password
-        if pure:
+        if pure is not None:
             self.payload["csgo_settings.pure_server"] = pure
         if rcon_password:
             self.payload["csgo_settings.rcon"] = rcon_password
@@ -193,13 +206,22 @@ class ServerSettings:
 
             self.payload["csgo_settings.slots"] = slots
         if admins:
-            self.payload["csgo_settings.sourcemod_admins"] = admins
+            self.payload["csgo_settings.sourcemod_admins"] = []
+            admins_append = self.payload[
+                "csgo_settings.sourcemod_admins"
+            ].append
+
+            for steam_id in admins:
+                admins_append(
+                    SteamID(steam_id).as_steam2_zero
+                )
         if plugins:
             self.payload["csgo_settings.sourcemod_plugins"] = plugins
         if game_token:
-            self.payload["csgo_settings.steam_game_server_login_token"] \
-                = game_token
-        if tickrate:
+            self.payload[
+                "csgo_settings.steam_game_server_login_token"
+            ] = game_token
+        if tickrate is not None:
             if tickrate not in VALID_TICKRATES:
                 raise InvalidTickrate()
             self.payload["csgo_settings.tickrate"] = tickrate
@@ -208,8 +230,11 @@ class ServerSettings:
         if workshop_id:
             self.payload["csgo_settings.workshop_id"] = workshop_id
         if workshop_start_map_id:
-            self.payload["csgo_settings.workshop_start_map_id"] \
-                = workshop_start_map_id
+            self.payload[
+                "csgo_settings.workshop_start_map_id"
+            ] = workshop_start_map_id
+        if maps_source:
+            self.payload["csgo_settings.maps_source"] = maps_source
 
         return self
 
@@ -246,14 +271,15 @@ class ServerSettings:
 
         self.payload["game"] = "mumble"
 
-        if slots:
+        if slots is not None:
             if slots < 7 or slots > 700:
                 raise InvalidSlotSize()
 
             self.payload["mumble_settings.slots"] = slots
         if superuser_password:
-            self.payload["mumble_settings.superuser_password"] = \
-                superuser_password
+            self.payload[
+                "mumble_settings.superuser_password"
+            ] = superuser_password
         if password:
             self.payload["mumble_settings.password"] = password
         if motd:
@@ -302,34 +328,52 @@ class ServerSettings:
 
         self.payload["game"] = "teamfortress2"
 
-        if slots:
+        if slots is not None:
             if slots < 5 or slots > 32:
                 raise InvalidSlotSize()
 
             self.payload["teamfortress2_settings.slots"] = slots
         if rcon_password:
             self.payload["teamfortress2_settings.rcon"] = rcon_password
-        if gotv:
+        if gotv is not None:
             self.payload["teamfortress2_settings.enable_gotv"] = gotv
-        if sourcemod:
-            self.payload["teamfortress2_settings.enable_sourcemod"] = \
-                sourcemod
-        if insecure:
+        if sourcemod is not None:
+            self.payload[
+                "teamfortress2_settings.enable_sourcemod"
+            ] = sourcemod
+        if insecure is not None:
             self.payload["teamfortress2_settings.insecure"] = insecure
         if password:
             self.payload["teamfortress2_settings.password"] = password
         if admins:
-            self.payload["teamfortress2_settings.sourcemod_admins"] = admins
+            self.payload["teamfortress2_settings.sourcemod_admins"] = []
+
+            admins_append = self.payload[
+                "teamfortress2_settings.sourcemod_admins"
+            ].append
+
+            for steam_id in admins:
+                admins_append(
+                    SteamID(steam_id).as_steam2_zero
+                )
 
         return self
 
-    def valheim(self, password: str, world_name: str) -> ServerSettings:
+    def valheim(self, password: str = None, world_name: str = None,
+                plus: bool = None, admins: List[Any] = None
+                ) -> ServerSettings:
         """Used to configure valheim server.
 
         Parameters
         ----------
-        password : str
-        world_name : str
+        password : str, optional
+            by default None
+        world_name : str, optional
+            by default None
+        plus : bool, optional
+            by default None
+        admins : List[Any], optional
+            List of SteamIDs in any format, by default None
 
         Returns
         -------
@@ -344,8 +388,23 @@ class ServerSettings:
             raise MultipleGames()
 
         self.payload["game"] = "valheim"
-        self.payload["valheim_settings.password"] = password
-        self.payload["valheim_settings.world_name"] = world_name
+        if password:
+            self.payload["valheim_settings.password"] = password
+        if world_name:
+            self.payload["valheim_settings.world_name"] = world_name
+        if plus is not None:
+            self.payload["valheim_settings.enable_valheimplus"] = plus
+        if admins:
+            self.payload["valheim_settings.admins_steamid64"] = []
+
+            admins_append = self.payload[
+                "valheim_settings.admins_steamid64"
+            ].append
+
+            for steam_id in admins:
+                admins_append(
+                    SteamID(steam_id).as_64
+                )
 
         return self
 
@@ -409,12 +468,12 @@ class MatchSettings:
             "warmup_time": warmup_time
         }
 
-    def __convert_id(self, given_id) -> str:
+    def __convert_id(self, given_id: Any) -> str:
         """Converts any steamID format to 32.
 
         Parameters
         ----------
-        given_id
+        given_id : Any
             Given steamID.
 
         Returns
@@ -428,45 +487,11 @@ class MatchSettings:
             Raised when the given ID isn't understood.
         """
 
-        if type(given_id) == int or given_id.isdigit():
-            given_id = int(given_id)
-
-            steamid = "STEAM_1:"
-
-            steamidacct = given_id - 76561197960265728
-            if steamidacct % 2 == 0:
-                steamid += "0:"
-            else:
-                steamid += "1:"
-
-            steamid += str(steamidacct // 2)
-
-            return steamid
-
-        elif "STEAM_1" in given_id or "STEAM_0" in given_id:
-            return given_id.replace("STEAM_0", "STEAM_1")
-
-        elif "[U:" in given_id:
-            for ch in ["[", "]"]:
-                if ch in given_id:
-                    usteamid = given_id.replace(ch, "")
-
-            usteamid_split = usteamid.split(":")
-
-            steamid = "STEAM_1:"
-
-            z = int(usteamid_split[2])
-
-            if z % 2 == 0:
-                steamid += "0:"
-            else:
-                steamid += "1:"
-
-            steamid += str(z // 2)
-
-            return steamid
-        else:
+        steam_id = SteamID(given_id)
+        if not steam_id.is_valid():
             raise InvalidSteamID()
+
+        return steam_id.as_steam2
 
     def __format_players(self, players: list) -> None:
         return ",".join([self.__convert_id(steam_id) for steam_id in players])

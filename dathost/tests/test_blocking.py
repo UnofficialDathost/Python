@@ -35,16 +35,16 @@ class TestBlockingClient(unittest.TestCase):
     def tearDown(self):
         self.client.close()
 
-    def test_account(self):
+    def test_blocking_account(self):
         account = self.client.account()
 
         self.assertTrue(isinstance(account, AccountModel))
 
-    def test_domains(self):
+    def test_blocking_domains(self):
         for domain in self.client.domains():
             self.assertTrue(type(domain) == str)
 
-    def test_context(self):
+    def test_blocking_context(self):
         context = Blocking(EMAIL, PASSWORD)
 
         with context as client:
@@ -54,12 +54,12 @@ class TestBlockingClient(unittest.TestCase):
             for domain in client.domains():
                 pass
 
-    def test_list_servers(self):
+    def test_blocking_list_servers(self):
         for data, server in self.client.servers():
             self.assertIsInstance(data, ServerModel)
             self.assertIsInstance(server, ServerBlocking)
 
-    def test_server_csgo(self):
+    def test_blocking_server_csgo(self):
         server_data, server = self.client.create_server(
             ServerSettings(
                 name="Blocking CS: GO server",
@@ -171,7 +171,32 @@ class TestBlockingClient(unittest.TestCase):
 
         self.assertIsNone(server.delete())
 
-    def test_server_mumble(self):
+    def test_blocking_server_valheim(self):
+        data, server = self.client.create_server(
+            ServerSettings(
+                name="Blocking valheim server",
+                location="sydney"
+            ).valheim(
+                password=token_urlsafe(8),
+                world_name="Poggers",
+                plus=False,
+                admins=[
+                    "[U:1:116962485]",
+                    76561198017567105,
+                    "STEAM_0:1:186064092",
+                    "76561198214871321"
+                ]
+            )
+        )
+
+        self.assertIsInstance(data, ServerModel)
+        self.assertIsInstance(server, ServerBlocking)
+
+        self.assertIsInstance(server.get(), ServerModel)
+
+        self.assertIsNone(server.delete())
+
+    def test_blocking_server_mumble(self):
         data, server = self.client.create_server(
             ServerSettings(
                 name="Blocking Mumble server",
@@ -189,7 +214,7 @@ class TestBlockingClient(unittest.TestCase):
 
         self.assertIsNone(server.delete())
 
-    def test_server_tf2(self):
+    def test_blocking_server_tf2(self):
         data, server = self.client.create_server(
             ServerSettings(
                 name="Blocking TF2 server",
@@ -207,7 +232,7 @@ class TestBlockingClient(unittest.TestCase):
 
         self.assertIsNone(server.delete())
 
-    def test_server_teamspeak(self):
+    def test_blocking_server_teamspeak(self):
         data, server = self.client.create_server(
             ServerSettings(
                 name="Blocking TF2 server",
