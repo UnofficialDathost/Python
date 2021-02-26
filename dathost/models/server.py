@@ -1,5 +1,5 @@
-import typing
 from datetime import datetime
+from typing import Generator
 
 
 class PortsModel:
@@ -152,6 +152,7 @@ class ServerModel:
     server_id : str
     name : str
     user_data : str
+    match_id : str
     game : str
     location : str
     players_online : int
@@ -192,6 +193,7 @@ class ServerModel:
         self.server_id = data["id"]
         self.name = data["name"]
         self.user_data = data["user_data"]
+        self.match_id = data["match_id"]
         self.game = data["game"]
         self.location = data["location"]
         self.players_online = data["players_online"]
@@ -238,8 +240,8 @@ class ServerModel:
 
         self.__scheduled_commands = data["scheduled_commands"]
 
-    def scheduled_commands(self) \
-            -> typing.Generator[ScheduledCommandsModel, None, None]:
+    def scheduled_commands(self
+                           ) -> Generator[ScheduledCommandsModel, None, None]:
         """Lists scheduled commands.
 
         Yields
