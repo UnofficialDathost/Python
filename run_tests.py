@@ -8,8 +8,8 @@ from dathost.tests.test_awaiting import TestAwaitingClient
 
 cli = argparse.ArgumentParser()
 
-cli.add_argument("--email", type=str, default="wpearce6@gmail.com")
-cli.add_argument("--password", type=str, default="hCG6mdpFGXKxQLnUh55ztrXMnweBZyD99Eh")
+cli.add_argument("--email", type=str, default="")
+cli.add_argument("--password", type=str, default="")
 
 args = vars(cli.parse_args())
 
