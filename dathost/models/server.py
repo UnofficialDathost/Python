@@ -36,6 +36,26 @@ class ScheduledCommandsModel:
         self.repeat = data["repeat"]
 
 
+class ValheimModel:
+    """Holds details on valheim server
+
+    Attributes
+    ----------
+    admins : List[Int]
+    plus : bool
+    slots : int
+    password : str
+    world_name : str
+    """
+
+    def __init__(self, data: dict) -> None:
+        self.admins = data["admins_steamid64"]
+        self.plus = data["enable_valheimplus"]
+        self.slots = data["slots"]
+        self.password = data["password"]
+        self.world_name = data["world_name"]
+
+
 class TeamspeakModel:
     """Holds details on teamspeak server
 
@@ -72,24 +92,6 @@ class TeamFortressModel:
         self.gotv = data["enable_gotv"]
         self.sourcemod = data["enable_sourcemod"]
         self.insecure = data["insecure"]
-
-
-class MumbleModel:
-    """Holds details on mumble server
-
-    Attributes
-    ----------
-    slot : int
-    password : str
-    superuser_password : str
-    motd : str
-    """
-
-    def __init__(self, data: dict) -> None:
-        self.slots = data["slots"]
-        self.password = data["password"]
-        self.superuser_password = data["superuser_password"]
-        self.motd = data["welcome_text"]
 
 
 class CsgoModel:
@@ -182,7 +184,7 @@ class ServerModel:
     duplicate_source_server : str
     teamspeak : TeamspeakModel
     teamfortress : TeamFortressModel
-    mumble : MumbleModel
+    valheim : ValheimModel
     csgo : CsgoModel
     max_disk_usage_gb : int
     reboot_on_crash : bool
@@ -231,12 +233,12 @@ class ServerModel:
         self.teamfortress = TeamFortressModel(
             data["teamfortress2_settings"]
         ) if data["teamfortress2_settings"] else None
-        self.mumble = MumbleModel(
-            data["mumble_settings"]
-        ) if data["mumble_settings"] else None
         self.csgo = CsgoModel(
             data["csgo_settings"]
         ) if data["csgo_settings"] else None
+        self.valheim = ValheimModel(
+            data["valheim_settings"]
+        ) if data["valheim_settings"] else None
 
         self.__scheduled_commands = data["scheduled_commands"]
 

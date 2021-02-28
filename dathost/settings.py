@@ -85,7 +85,9 @@ class ServerSettings:
         if custom_domain:
             self.payload["custom_domain"] = custom_domain
         if scheduled_commands:
-            self.payload["scheduled_commands"] = scheduled_commands
+            self.payload["scheduled_commands"] = str(
+                scheduled_commands
+            ).replace("'", '"')
         if user_data:
             self.payload["user_data"] = user_data
         if manual_sort_order is not None:
@@ -175,7 +177,9 @@ class ServerSettings:
         self.payload["game"] = "csgo"
 
         if autoload_configs:
-            self.payload["csgo_settings.autoload_configs"] = autoload_configs
+            self.payload[
+                "csgo_settings.autoload_configs"
+            ] = str(autoload_configs).replace("'", '"')
         if disable_bots:
             self.payload["csgo_settings.disable_bots"] = disable_bots
         if csay_plugin:
@@ -206,17 +210,22 @@ class ServerSettings:
 
             self.payload["csgo_settings.slots"] = slots
         if admins:
-            self.payload["csgo_settings.sourcemod_admins"] = []
-            admins_append = self.payload[
-                "csgo_settings.sourcemod_admins"
-            ].append
+            admins_formatted = []
+            admins_formatted_append = admins_formatted.append
 
             for steam_id in admins:
-                admins_append(
+                admins_formatted_append(
                     SteamID(steam_id).as_steam2_zero
                 )
+
+            self.payload[
+                "csgo_settings.sourcemod_admins"
+            ] = str(admins_formatted)
+
         if plugins:
-            self.payload["csgo_settings.sourcemod_plugins"] = plugins
+            self.payload["csgo_settings.sourcemod_plugins"] = str(
+                plugins
+            ).replace("'", '"')
         if game_token:
             self.payload[
                 "csgo_settings.steam_game_server_login_token"
@@ -235,55 +244,6 @@ class ServerSettings:
             ] = workshop_start_map_id
         if maps_source:
             self.payload["csgo_settings.maps_source"] = maps_source
-
-        return self
-
-    def mumble(self, slots: int = None, superuser_password: str = None,
-               password: str = None, motd: str = None) -> ServerSettings:
-        """Used for configuring a Mumble server.
-
-        Parameters
-        ----------
-        slots : int
-        superuser_password : str
-        password : str, optional
-            by default None
-        motd : str, optional
-            by default None
-
-        Raises
-        ------
-        MultipleGames
-            Raised when you attempt to create one server
-            with multiple games.
-        InvalidSlotSize
-            Raised when slot size is below 7 or above 700.
-
-        Returns
-        -------
-        ServerSettings
-        """
-
-        if self.__game:
-            raise MultipleGames()
-
-        self.__game = True
-
-        self.payload["game"] = "mumble"
-
-        if slots is not None:
-            if slots < 7 or slots > 700:
-                raise InvalidSlotSize()
-
-            self.payload["mumble_settings.slots"] = slots
-        if superuser_password:
-            self.payload[
-                "mumble_settings.superuser_password"
-            ] = superuser_password
-        if password:
-            self.payload["mumble_settings.password"] = password
-        if motd:
-            self.payload["mumble_settings.welcome_text"] = motd
 
         return self
 
@@ -346,16 +306,17 @@ class ServerSettings:
         if password:
             self.payload["teamfortress2_settings.password"] = password
         if admins:
-            self.payload["teamfortress2_settings.sourcemod_admins"] = []
-
-            admins_append = self.payload[
-                "teamfortress2_settings.sourcemod_admins"
-            ].append
+            admins_formatted = []
+            admins_formatted_append = admins_formatted.append
 
             for steam_id in admins:
-                admins_append(
+                admins_formatted_append(
                     SteamID(steam_id).as_steam2_zero
                 )
+
+            self.payload[
+                "teamfortress2_settings.sourcemod_admins"
+            ] = str(admins_formatted).replace("'", '"')
 
         return self
 
@@ -395,16 +356,17 @@ class ServerSettings:
         if plus is not None:
             self.payload["valheim_settings.enable_valheimplus"] = plus
         if admins:
-            self.payload["valheim_settings.admins_steamid64"] = []
-
-            admins_append = self.payload[
-                "valheim_settings.admins_steamid64"
-            ].append
+            admins_formatted = []
+            admins_formatted_append = admins_formatted.append
 
             for steam_id in admins:
-                admins_append(
-                    SteamID(steam_id).as_64
+                admins_formatted_append(
+                    str(SteamID(steam_id).as_64)
                 )
+
+            self.payload[
+                "valheim_settings.admins_steamid64"
+            ] = str(admins_formatted).replace("'", '"')
 
         return self
 

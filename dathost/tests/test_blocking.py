@@ -2,12 +2,18 @@ import unittest
 
 from secrets import token_urlsafe
 
+from .shared_vars import TEST_IMAGE_DIRETORY
+
 from ..models.account import AccountModel
 from ..models.server import ServerModel
 from ..models.file import FileModel
 from ..models.backup import BackupModel
-from ..models.metrics import MetricsModel, MapsModel, PlayerModel, \
+from ..models.metrics import (
+    MetricsModel,
+    MapsModel,
+    PlayerModel,
     PlayersOnlineGraphModel
+)
 from ..models.match import MatchModel, TeamModel, MatchPlayerModel
 
 from ..server.blocking.backup import BlockingBackup
@@ -21,14 +27,15 @@ from ..settings import ServerSettings, MatchSettings
 
 from .. import Blocking
 
-from .shared_vars import EMAIL, PASSWORD, TEST_IMAGE_DIRETORY
-
 
 class TestBlockingClient(unittest.TestCase):
+    email: str
+    password: str
+
     def setUp(self):
         self.client = Blocking(
-            email=EMAIL,
-            password=PASSWORD,
+            email=self.email,
+            password=self.password,
             timeout=360
         )
 
@@ -45,7 +52,7 @@ class TestBlockingClient(unittest.TestCase):
             self.assertTrue(type(domain) == str)
 
     def test_blocking_context(self):
-        context = Blocking(EMAIL, PASSWORD)
+        context = Blocking(self.email, self.password)
 
         with context as client:
             client.account()
@@ -186,24 +193,6 @@ class TestBlockingClient(unittest.TestCase):
                     "STEAM_0:1:186064092",
                     "76561198214871321"
                 ]
-            )
-        )
-
-        self.assertIsInstance(data, ServerModel)
-        self.assertIsInstance(server, ServerBlocking)
-
-        self.assertIsInstance(server.get(), ServerModel)
-
-        self.assertIsNone(server.delete())
-
-    def test_blocking_server_mumble(self):
-        data, server = self.client.create_server(
-            ServerSettings(
-                name="Blocking Mumble server",
-                location="sydney"
-            ).mumble(
-                slots=7,
-                superuser_password=token_urlsafe()
             )
         )
 

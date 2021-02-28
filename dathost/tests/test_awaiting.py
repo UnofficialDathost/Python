@@ -2,12 +2,18 @@ import asynctest
 
 from secrets import token_urlsafe
 
+from .shared_vars import TEST_IMAGE_DIRETORY
+
 from ..models.account import AccountModel
 from ..models.server import ServerModel
 from ..models.file import FileModel
 from ..models.backup import BackupModel
-from ..models.metrics import MetricsModel, MapsModel, PlayerModel, \
+from ..models.metrics import (
+    MetricsModel,
+    MapsModel,
+    PlayerModel,
     PlayersOnlineGraphModel
+)
 from ..models.match import MatchModel, TeamModel, MatchPlayerModel
 
 from ..server.awaiting.backup import AwaitingBackup
@@ -21,16 +27,17 @@ from .. import Awaiting
 
 from ..settings import ServerSettings, MatchSettings
 
-from .shared_vars import EMAIL, PASSWORD, TEST_IMAGE_DIRETORY
-
 
 class TestAwaitingClient(asynctest.TestCase):
     use_default_loop = True
 
+    email: str
+    password: str
+
     async def setUp(self):
         self.client = Awaiting(
-            email=EMAIL,
-            password=PASSWORD,
+            email=self.email,
+            password=self.password,
             timeout=360
         )
 
@@ -47,7 +54,7 @@ class TestAwaitingClient(asynctest.TestCase):
             self.assertTrue(type(domain) == str)
 
     async def test_awaiting_context(self):
-        context = Awaiting(EMAIL, PASSWORD)
+        context = Awaiting(self.email, self.password)
 
         async with context as client:
             await client.account()
@@ -193,24 +200,6 @@ class TestAwaitingClient(asynctest.TestCase):
                     "STEAM_0:1:186064092",
                     "76561198214871321"
                 ]
-            )
-        )
-
-        self.assertIsInstance(data, ServerModel)
-        self.assertIsInstance(server, ServerAwaiting)
-
-        self.assertIsInstance(await server.get(), ServerModel)
-
-        self.assertIsNone(await server.delete())
-
-    async def test_awaiting_server_mumble(self):
-        data, server = await self.client.create_server(
-            ServerSettings(
-                name="Blocking Mumble server",
-                location="sydney"
-            ).mumble(
-                slots=7,
-                superuser_password=token_urlsafe()
             )
         )
 

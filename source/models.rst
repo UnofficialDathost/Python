@@ -66,8 +66,5 @@ Server
 .. autoclass:: dathost.models.server.TeamFortressModel()
     :members:
 
-.. autoclass:: dathost.models.server.MumbleModel()
-    :members:
-
-.. autoclass:: dathost.models.server.CsgoModel()
+.. autoclass:: dathost.models.server.ValheimModel()
     :members:
