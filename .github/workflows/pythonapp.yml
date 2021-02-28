@@ -26,5 +26,5 @@ jobs:
       - name: Run unit tests
         env:
           EMAIL: ${{ secrets.EMAIL }}
-          PASSWORD: ${{ secrets.EMAIL }}
+          PASSWORD: ${{ secrets.PASSWORD }}
         run: python run_tests.py --email $EMAIL --pw $PASSWORD
