@@ -8,7 +8,6 @@ from .map_source import MAP_GROUP
 
 from .exceptions import (
     InvalidSlotSize,
-    MultipleGames,
     InvalidTickrate,
     InvalidSteamID,
     InvalidStorageSize
@@ -25,8 +24,6 @@ VALID_TICKRATES = [
 
 
 class ServerSettings:
-    __game = False
-
     def __init__(self, name: str = None, location: str = None,
                  custom_domain: str = None,
                  autostop: bool = None, autostop_minutes: int = None,
@@ -109,7 +106,7 @@ class ServerSettings:
              admins: List[Any] = None, plugins: List[Any] = None,
              steam_key: str = None,
              workshop_id: int = None, maps_source: str = None
-             ) -> ServerSettings:
+             ) -> None:
         """Used for configuring a CS: GO server.
 
         Parameters
@@ -163,16 +160,7 @@ class ServerSettings:
             Raised when slot size is below 5 or above 64.
         InvalidTickrate
             Raised when tickrate is invalid.
-
-        Returns
-        -------
-        ServerSettings
         """
-
-        if self.__game:
-            raise MultipleGames()
-
-        self.__game = True
 
         self.payload["game"] = "csgo"
 
@@ -245,12 +233,10 @@ class ServerSettings:
         if maps_source:
             self.payload["csgo_settings.maps_source"] = maps_source
 
-        return self
-
     def tf2(self, slots: int = None, rcon_password: str = None,
             gotv: bool = False, sourcemod: bool = False,
             insecure: bool = False, password: str = None,
-            admins: list = None) -> ServerSettings:
+            admins: list = None) -> None:
         """Used for configuring a TF2 server.
 
         Parameters
@@ -275,16 +261,7 @@ class ServerSettings:
             with multiple games.
         InvalidSlotSize
             Raised when slot size is below 5 or above 32.
-
-        Returns
-        -------
-        ServerSettings
         """
-
-        if self.__game:
-            raise MultipleGames()
-
-        self.__game = True
 
         self.payload["game"] = "teamfortress2"
 
@@ -318,11 +295,9 @@ class ServerSettings:
                 "teamfortress2_settings.sourcemod_admins"
             ] = str(admins_formatted).replace("'", '"')
 
-        return self
-
     def valheim(self, password: str = None, world_name: str = None,
                 plus: bool = None, admins: List[Any] = None
-                ) -> ServerSettings:
+                ) -> None:
         """Used to configure valheim server.
 
         Parameters
@@ -335,18 +310,7 @@ class ServerSettings:
             by default None
         admins : List[Any], optional
             List of SteamIDs in any format, by default None
-
-        Returns
-        -------
-        ServerSettings
-
-        Raises
-        ------
-        MultipleGames
         """
-
-        if self.__game:
-            raise MultipleGames()
 
         self.payload["game"] = "valheim"
         if password:
@@ -368,9 +332,7 @@ class ServerSettings:
                 "valheim_settings.admins_steamid64"
             ] = str(admins_formatted).replace("'", '"')
 
-        return self
-
-    def teamspeak(self, slots: int) -> ServerSettings:
+    def teamspeak(self, slots: int) -> None:
         """Used for configuring a teamspeak server.
 
         Parameters
@@ -384,24 +346,13 @@ class ServerSettings:
             with multiple games.
         InvalidSlotSize
             Raised when slot size is below 5 or above 500.
-
-        Returns
-        -------
-        ServerSettings
         """
-
-        if self.__game:
-            raise MultipleGames()
-
-        self.__game = True
 
         if slots < 5 or slots > 500:
             raise InvalidSlotSize()
 
         self.payload["game"] = "teamspeak3"
         self.payload["teamspeak3_settings.slots"] = slots
-
-        return self
 
 
 class MatchSettings:

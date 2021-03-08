@@ -14,15 +14,6 @@ class InvalidSlotSize(DathostException):
         super().__init__(msg, *args, **kwargs)
 
 
-class MultipleGames(DathostException):
-    """Raised when you attempt to create one server
-       with multiple games.
-    """
-
-    def __init__(self, msg="Multiple games called", *args, **kwargs) -> None:
-        super().__init__(msg, *args, **kwargs)
-
-
 class InvalidTickrate(DathostException):
     """Raised when tickrate is invalid.
     """
