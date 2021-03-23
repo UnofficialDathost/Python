@@ -18,4 +18,3 @@ This is a unofficial asynchronous & synchronous wrapper for Dathost’s API.
 
 ### Thanks to
 - [Encode for creating HTTPX](https://www.python-httpx.org/)
-- [bcahue for his steam ID converting gist](https://github.com/bcahue)
