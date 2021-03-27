@@ -24,12 +24,21 @@ class MatchPlayerModel:
     kills : int
     deaths : int
     assists : int
+    kdr : float
     """
+
     def __init__(self, data: dict) -> None:
         self.steamid = data["steam_id"]
         self.kills = data["kills"]
         self.deaths = data["deaths"]
         self.assists = data["assists"]
+
+    @property
+    def kdr(self) -> float:
+        return (
+            round(self.kills / self.deaths, 2)
+            if self.kills > 0 and self.deaths > 0 else 0.00
+        )
 
 
 class MatchModel:

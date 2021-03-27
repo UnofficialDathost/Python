@@ -35,7 +35,8 @@ class ServerSettings:
                  reboot_on_crash: bool = None,
                  max_disk_usage_gb: int = None,
                  manual_sort_order: int = None,
-                 core_dump: bool = None) -> None:
+                 core_dump: bool = None,
+                 prefer_dedicated: bool = None) -> None:
         """Used to store settings on a server.
 
         Parameters
@@ -63,6 +64,8 @@ class ServerSettings:
         manual_sort_order : int, optional
             by default None
         core_dump : bool, optional
+            by default None
+        prefer_dedicated : bool, optional
             by default None
         """
 
@@ -97,6 +100,8 @@ class ServerSettings:
                 raise InvalidStorageSize()
 
             self.payload["max_disk_usage_gb"] = max_disk_usage_gb
+        if prefer_dedicated is not None:
+            self.payload["prefer_dedicated"] = prefer_dedicated
 
     def csgo(self, slots: int = None, tickrate: int = None,
              game_token: str = None, rcon_password: str = None,

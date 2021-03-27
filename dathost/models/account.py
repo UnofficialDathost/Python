@@ -12,6 +12,9 @@ class AccountModel:
     roles : str
     trial : bool
     accepted_terms_of_service_version : int
+    subscription_pay_with_credits : bool
+    affiliate : bool
+    first_month_discount_percentage : float
     """
 
     def __init__(self, data: dict) -> None:
@@ -25,4 +28,11 @@ class AccountModel:
         self.trial = data["trial"]
         self.accepted_terms_of_service_version = (
             data["accepted_terms_of_service_version"]
+        )
+        self.subscription_pay_with_credits = (
+            data["subscription_pay_with_credits"]
+        )
+        self.affiliate = data["affiliate"]
+        self.first_month_discount_percentage = (
+            data["first_month_discount_percentage"]
         )

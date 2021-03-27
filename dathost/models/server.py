@@ -171,6 +171,8 @@ class ServerModel:
     month_credits : float
     month_reset_at : datetime
     max_cost_per_month : float
+    subscription_cycle_months : int
+    subscription_renewal_failed_attempts : int
     mysql : bool
     autostop : bool
     autostop_minutes : int
@@ -189,6 +191,7 @@ class ServerModel:
     max_disk_usage_gb : int
     reboot_on_crash : bool
     core_dump : bool
+    prefer_dedicated : bool
     """
 
     def __init__(self, data: dict) -> None:
@@ -215,6 +218,10 @@ class ServerModel:
         self.month_credits = data["month_credits"]
         self.month_reset_at = datetime.fromtimestamp(data["month_reset_at"])
         self.max_cost_per_month = data["max_cost_per_month"]
+        self.subscription_cycle_months = data["subscription_cycle_months"]
+        self.subscription_renewal_failed_attempts = (
+            data["subscription_renewal_failed_attempts"]
+        )
         self.mysql = data["enable_mysql"]
         self.autostop = data["autostop"]
         self.autostop_minutes = data["autostop_minutes"]
@@ -226,6 +233,7 @@ class ServerModel:
         self.custom_domain = data["custom_domain"]
         self.added_voice_server = data["added_voice_server"]
         self.duplicate_source_server = data["duplicate_source_server"]
+        self.prefer_dedicated = data["prefer_dedicated"]
 
         self.teamspeak = TeamspeakModel(
             data["teamspeak3_settings"]
