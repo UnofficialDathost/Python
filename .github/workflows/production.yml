@@ -36,5 +36,7 @@ jobs:
           PYPI_USER: ${{ secrets.PYPI_USER }}
           PYPI_PASS: ${{ secrets.PYPI_PASS }}
         run: |
+          python -m pip install --upgrade build
+          python -m pip install --user --upgrade twine
           python -m build
-          python3 -m twine upload --username $PYPI_USER --password $PYPI_PASS --repository pypi dist/*
+          python -m twine upload --username $PYPI_USER --password $PYPI_PASS --repository pypi dist/*
