@@ -1,6 +1,9 @@
-name: Dathost liniting & tests
+name: Production Workflow
 
-on: [push]
+on:
+  push:
+    branches:
+    - master
 
 jobs:
   build:
@@ -28,3 +31,10 @@ jobs:
           EMAIL: ${{ secrets.EMAIL }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: python run_tests.py --email $EMAIL --pw $PASSWORD
+      - name: Pack to pypi
+        env:
+          PYPI_USER: ${{ secrets.PYPI_USER }}
+          PYPI_PASS: ${{ secrets.PYPI_PASS }}
+        run: |
+          python -m build
+          python3 -m twine upload --username $PYPI_USER --password $PYPI_PASS --repository pypi dist/*
