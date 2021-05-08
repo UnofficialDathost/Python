@@ -1,5 +1,4 @@
-import typing
-
+from typing import AsyncGenerator, Tuple
 from ..base import ServerBase
 
 from ...models.server import ServerModel
@@ -22,7 +21,7 @@ from ...routes import SERVER, MATCHES
 
 class ServerAwaiting(ServerBase):
     async def create_match(self, match_settings: MatchSettings,
-                           ) -> typing.Tuple[MatchModel, AwaitingMatch]:
+                           ) -> Tuple[MatchModel, AwaitingMatch]:
         """Creates a match.
 
         Parameters
@@ -38,19 +37,19 @@ class ServerAwaiting(ServerBase):
             Used to interact with a match.
         """
 
-        data = await self.context._post(
+        data = await self._context._post(
             MATCHES.create,
             data={"game_server_id": self.server_id, **match_settings.payload},
             read_json=True
         )
 
-        return MatchModel(data), AwaitingMatch(self.context, data["id"])
+        return MatchModel(data), AwaitingMatch(self._context, data["id"])
 
     async def delete(self) -> None:
         """Used to delete a sever.
         """
 
-        await self.context._delete(
+        await self._context._delete(
             SERVER.delete.format(self.server_id),
         )
 
@@ -64,7 +63,7 @@ class ServerAwaiting(ServerBase):
         """
 
         return ServerModel(
-            await self.context._get(SERVER.get.format(self.server_id))
+            await self._context._get(SERVER.get.format(self.server_id))
         )
 
     async def update(self, settings: ServerSettings) -> None:
@@ -76,7 +75,7 @@ class ServerAwaiting(ServerBase):
             Used to configure server.
         """
 
-        await self.context._put(
+        await self._context._put(
             SERVER.update.format(self.server_id),
             data={
                 **settings.payload,
@@ -93,7 +92,7 @@ class ServerAwaiting(ServerBase):
             Console command.
         """
 
-        await self.context._post(
+        await self._context._post(
             url=SERVER.console.format(self.server_id),
             data={
                 "line": line,
@@ -122,7 +121,7 @@ class ServerAwaiting(ServerBase):
         if lines < 1 or lines > 100000:
             raise InvalidConsoleLine()
 
-        data = await self.context._get(
+        data = await self._context._get(
             url=SERVER.console.format(self.server_id),
             params={
                 "max_lines": lines,
@@ -135,12 +134,12 @@ class ServerAwaiting(ServerBase):
         """Used to sync files from server to cache.
         """
 
-        await self.context._post(
+        await self._context._post(
             url=SERVER.sync.format(self.server_id)
         )
 
     async def duplicate(self, sync: bool = False,
-                        ) -> typing.Tuple[ServerModel, ServerBase]:
+                        ) -> Tuple[ServerModel, ServerBase]:
         """Used to duplicate a server.
 
         Parameters
@@ -159,18 +158,18 @@ class ServerAwaiting(ServerBase):
         if sync:
             await self.sync()
 
-        data = await self.context._post(
+        data = await self._context._post(
             url=SERVER.duplicate.format(self.server_id),
             read_json=True,
         )
 
-        return ServerModel(data), ServerAwaiting(self.context, data["id"])
+        return ServerModel(data), ServerAwaiting(self._context, data["id"])
 
     async def ftp_reset(self) -> None:
         """Resets the FRP password.
         """
 
-        await self.context._post(
+        await self._context._post(
             url=SERVER.ftp.format(self.server_id)
         )
 
@@ -178,7 +177,7 @@ class ServerAwaiting(ServerBase):
         """Used to stop the server.
         """
 
-        await self.context._post(
+        await self._context._post(
             url=SERVER.stop.format(self.server_id),
         )
 
@@ -191,7 +190,7 @@ class ServerAwaiting(ServerBase):
             By default True
         """
 
-        await self.context._post(
+        await self._context._post(
             url=SERVER.start.format(self.server_id),
             data={"allow_host_reassignment": allow_host_reassignment}
         )
@@ -200,13 +199,13 @@ class ServerAwaiting(ServerBase):
         """Used to restart the server.
         """
 
-        await self.context._post(
+        await self._context._post(
             url=SERVER.reset.format(self.server_id),
         )
 
     async def files(self, hide_default: bool = False, path: str = None,
                     file_sizes: bool = False
-                    ) -> typing.AsyncGenerator[FileModel, None]:
+                    ) -> AsyncGenerator[FileModel, None]:
         """Used to list files.
 
         Parameters
@@ -224,7 +223,7 @@ class ServerAwaiting(ServerBase):
             Holds details on a file.
         """
 
-        data = await self.context._get(
+        data = await self._context._get(
             SERVER.files.format(self.server_id),
             params={
                 "hide_default_files": hide_default,
@@ -250,13 +249,13 @@ class ServerAwaiting(ServerBase):
         """
 
         return AwaitingFile(
-            self.context,
+            self._context,
             self.server_id,
             pathway
         )
 
     async def backups(self
-                      ) -> typing.AsyncGenerator[BackupModel, AwaitingBackup]:
+                      ) -> AsyncGenerator[BackupModel, AwaitingBackup]:
         """Used to list backups a server has.
 
         Yields
@@ -267,7 +266,7 @@ class ServerAwaiting(ServerBase):
             Used for interacting with a backup.
         """
 
-        data = await self.context._get(
+        data = await self._context._get(
             SERVER.backups.format(self.server_id),
         )
 
@@ -288,7 +287,7 @@ class ServerAwaiting(ServerBase):
         """
 
         return AwaitingBackup(
-            self.context,
+            self._context,
             self.server_id,
             backup_name
         )
@@ -302,7 +301,7 @@ class ServerAwaiting(ServerBase):
             Holds details on server metrics.
         """
 
-        data = await self.context._get(
+        data = await self._context._get(
             SERVER.metrics.format(self.server_id)
         )
 

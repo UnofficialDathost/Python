@@ -1,5 +1,4 @@
-import typing
-
+from typing import AsyncGenerator
 from .base import BaseHttp
 
 
@@ -44,7 +43,7 @@ class AwaitingHttp(BaseHttp):
         )
 
     async def _stream(self, url, *args, **kwargs
-                      ) -> typing.AsyncGenerator[bytes, None]:
+                      ) -> AsyncGenerator[bytes, None]:
         """Wrapped HTTPX stream GET.
 
         Yields

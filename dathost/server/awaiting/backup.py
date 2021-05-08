@@ -8,6 +8,6 @@ class AwaitingBackup(BackupBase):
         """Used to restore a backup.
         """
 
-        await self.context._post(
+        await self._context._post(
             url=SERVER.backup_restore.format(self.server_id, self.backup_name),
         )

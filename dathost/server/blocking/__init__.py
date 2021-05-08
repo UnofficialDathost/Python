@@ -1,5 +1,4 @@
-import typing
-
+from typing import Generator, Tuple
 from ..base import ServerBase
 
 from ...models.server import ServerModel
@@ -22,7 +21,7 @@ from ...routes import SERVER, MATCHES
 
 class ServerBlocking(ServerBase):
     def create_match(self, match_settings: MatchSettings,
-                     ) -> typing.Tuple[MatchModel, BlockingMatch]:
+                     ) -> Tuple[MatchModel, BlockingMatch]:
         """Creates a match.
 
         Parameters
@@ -38,19 +37,19 @@ class ServerBlocking(ServerBase):
             Used to interact with a match.
         """
 
-        data = self.context._post(
+        data = self._context._post(
             MATCHES.create,
             data={"game_server_id": self.server_id, **match_settings.payload},
             read_json=True
         )
 
-        return MatchModel(data), BlockingMatch(self.context, data["id"])
+        return MatchModel(data), BlockingMatch(self._context, data["id"])
 
     def delete(self) -> None:
         """Used to delete a sever.
         """
 
-        self.context._delete(
+        self._context._delete(
             SERVER.delete.format(self.server_id),
         )
 
@@ -64,7 +63,7 @@ class ServerBlocking(ServerBase):
         """
 
         return ServerModel(
-            self.context._get(SERVER.get.format(self.server_id))
+            self._context._get(SERVER.get.format(self.server_id))
         )
 
     def update(self, settings: ServerSettings) -> None:
@@ -76,7 +75,7 @@ class ServerBlocking(ServerBase):
             Used to configure server.
         """
 
-        self.context._put(
+        self._context._put(
             SERVER.update.format(self.server_id),
             data={
                 **settings.payload,
@@ -93,7 +92,7 @@ class ServerBlocking(ServerBase):
             Console command.
         """
 
-        self.context._post(
+        self._context._post(
             url=SERVER.console.format(self.server_id),
             data={
                 "line": line,
@@ -121,7 +120,7 @@ class ServerBlocking(ServerBase):
         if lines < 1 or lines > 100000:
             raise InvalidConsoleLine()
 
-        data = self.context._get(
+        data = self._context._get(
             url=SERVER.console.format(self.server_id),
             params={
                 "max_lines": lines,
@@ -134,12 +133,12 @@ class ServerBlocking(ServerBase):
         """Used to sync files from server to cache.
         """
 
-        self.context._post(
+        self._context._post(
             url=SERVER.sync.format(self.server_id)
         )
 
     def duplicate(self, sync: bool = False,
-                  ) -> typing.Tuple[ServerModel, ServerBase]:
+                  ) -> Tuple[ServerModel, ServerBase]:
         """Used to duplicate a server.
 
         Parameters
@@ -158,18 +157,18 @@ class ServerBlocking(ServerBase):
         if sync:
             self.sync()
 
-        data = self.context._post(
+        data = self._context._post(
             url=SERVER.duplicate.format(self.server_id),
             read_json=True,
         )
 
-        return ServerModel(data), ServerBlocking(self.context, data["id"])
+        return ServerModel(data), ServerBlocking(self._context, data["id"])
 
     def ftp_reset(self) -> None:
         """Resets the FRP password.
         """
 
-        self.context._post(
+        self._context._post(
             url=SERVER.ftp.format(self.server_id)
         )
 
@@ -177,7 +176,7 @@ class ServerBlocking(ServerBase):
         """Used to stop the server.
         """
 
-        self.context._post(
+        self._context._post(
             url=SERVER.stop.format(self.server_id),
         )
 
@@ -190,7 +189,7 @@ class ServerBlocking(ServerBase):
             By default True
         """
 
-        self.context._post(
+        self._context._post(
             url=SERVER.start.format(self.server_id),
             data={"allow_host_reassignment": allow_host_reassignment}
         )
@@ -199,13 +198,13 @@ class ServerBlocking(ServerBase):
         """Used to restart the server.
         """
 
-        self.context._post(
+        self._context._post(
             url=SERVER.reset.format(self.server_id),
         )
 
     def files(self, hide_default: bool = False, path: str = None,
               file_sizes: bool = False
-              ) -> typing.Generator[FileModel, None, None]:
+              ) -> Generator[FileModel, None, None]:
         """Used to list files.
 
         Parameters
@@ -223,7 +222,7 @@ class ServerBlocking(ServerBase):
             Holds details on a file.
         """
 
-        data = self.context._get(
+        data = self._context._get(
             SERVER.files.format(self.server_id),
             params={
                 "hide_default_files": hide_default,
@@ -249,13 +248,13 @@ class ServerBlocking(ServerBase):
         """
 
         return BlockingFile(
-            self.context,
+            self._context,
             self.server_id,
             pathway
         )
 
     def backups(self
-                ) -> typing.Generator[BackupModel, BlockingBackup, None]:
+                ) -> Generator[BackupModel, BlockingBackup, None]:
         """Used to list backups a server has.
 
         Yields
@@ -266,7 +265,7 @@ class ServerBlocking(ServerBase):
             Used for interacting with a backup.
         """
 
-        data = self.context._get(
+        data = self._context._get(
             SERVER.backups.format(self.server_id),
         )
 
@@ -287,7 +286,7 @@ class ServerBlocking(ServerBase):
         """
 
         return BlockingBackup(
-            self.context,
+            self._context,
             self.server_id,
             backup_name
         )
@@ -301,7 +300,7 @@ class ServerBlocking(ServerBase):
             Holds details on server metrics.
         """
 
-        data = self.context._get(
+        data = self._context._get(
             SERVER.metrics.format(self.server_id)
         )
 

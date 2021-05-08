@@ -1,4 +1,4 @@
-import typing
+from typing import Generator
 
 
 class MapsModel:
@@ -49,7 +49,7 @@ class MetricsModel:
     def __init__(self, data: dict) -> None:
         self.__data = data
 
-    def maps(self) -> typing.Generator[MapsModel, None, None]:
+    def maps(self) -> Generator[MapsModel, None, None]:
         """Used to list all maps what have been played.
 
         Yields
@@ -61,7 +61,7 @@ class MetricsModel:
         for data in self.__data["maps_played"]:
             yield MapsModel(data)
 
-    def players_online(self) -> typing.Generator[PlayerModel, None, None]:
+    def players_online(self) -> Generator[PlayerModel, None, None]:
         """Used to list all players online.
 
         Yields
@@ -73,8 +73,8 @@ class MetricsModel:
         for data in self.__data["players_online"]:
             yield PlayerModel(data)
 
-    def players_online_graph(self) -> \
-            typing.Generator[PlayersOnlineGraphModel, None, None]:
+    def players_online_graph(self) -> Generator[
+            PlayersOnlineGraphModel, None, None]:
         """Used to list all players online graph.
 
         Yields
@@ -86,7 +86,7 @@ class MetricsModel:
         for data in self.__data["players_online_graph"]:
             yield PlayersOnlineGraphModel(data)
 
-    def all_time_players(self) -> typing.Generator[PlayerModel, None, None]:
+    def all_time_players(self) -> Generator[PlayerModel, None, None]:
         """Used to list all time players.
 
         Yields

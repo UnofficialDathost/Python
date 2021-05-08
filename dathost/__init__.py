@@ -1,4 +1,5 @@
-import typing
+from __future__ import annotations
+from typing import AsyncGenerator, Generator, Tuple
 
 from .base import Base
 from .routes import ACCOUNT, CUSTOM_DOMAINS, SERVER
@@ -19,7 +20,7 @@ from .models.server import ServerModel
 from httpx import AsyncClient, Client
 
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 __url__ = "https://dathost.readthedocs.io/en/latest/"
 __description__ = "Asynchronous / Synchronous dathost API wrapper."
 __author__ = "WardPearce"
@@ -28,33 +29,24 @@ __license__ = "GPL v3"
 
 
 class Awaiting(Base, AwaitingHttp):
-    __client_closed = False
-
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.__create_client()
-
-    async def __aenter__(self) -> None:
-        if self.__client_closed:
-            self.__create_client()
-
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
-        await self.close()
-
-    def __create_client(self) -> None:
         self._client = AsyncClient(
             auth=self._basic_auth,
             timeout=self._timeout
         )
 
+    async def __aenter__(self) -> Awaiting:
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+        await self.close()
+
     async def close(self) -> None:
         """Closes sessions
         """
 
-        self.__client_closed = True
         await self._client.aclose()
 
     def match(self, match_id: str) -> AwaitingMatch:
@@ -76,7 +68,7 @@ class Awaiting(Base, AwaitingHttp):
         )
 
     async def create_server(self, settings: ServerSettings
-                            ) -> typing.Tuple[ServerModel, ServerAwaiting]:
+                            ) -> Tuple[ServerModel, ServerAwaiting]:
         """Creates a new server.
 
         Parameters
@@ -116,7 +108,7 @@ class Awaiting(Base, AwaitingHttp):
 
         return ServerAwaiting(self, server_id)
 
-    async def servers(self) -> typing.AsyncGenerator[
+    async def servers(self) -> AsyncGenerator[
             ServerModel, ServerAwaiting]:
         """Used to list servers.
 
@@ -142,7 +134,7 @@ class Awaiting(Base, AwaitingHttp):
             await self._get(ACCOUNT.details)
         )
 
-    async def domains(self) -> typing.AsyncGenerator[str, None]:
+    async def domains(self) -> AsyncGenerator[str, None]:
         """Used to list domains.
 
         Returns
@@ -162,12 +154,12 @@ class Blocking(Base, BlockingHttp):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        self.__create_client()
+        self._client = Client(
+            auth=self._basic_auth,
+            timeout=self._timeout
+        )
 
-    def __enter__(self) -> None:
-        if self.__client_closed:
-            self.__create_client()
-
+    def __enter__(self) -> Blocking:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -177,14 +169,7 @@ class Blocking(Base, BlockingHttp):
         """Closes sessions
         """
 
-        self.__client_closed = True
         self._client.close()
-
-    def __create_client(self) -> None:
-        self._client = Client(
-            auth=self._basic_auth,
-            timeout=self._timeout
-        )
 
     def match(self, match_id: str) -> BlockingMatch:
         """Used to interact with a match.
@@ -205,7 +190,7 @@ class Blocking(Base, BlockingHttp):
         )
 
     def create_server(self, settings: ServerSettings
-                      ) -> typing.Tuple[ServerModel, ServerBlocking]:
+                      ) -> Tuple[ServerModel, ServerBlocking]:
         """Creates a new server.
 
         Parameters
@@ -245,7 +230,7 @@ class Blocking(Base, BlockingHttp):
 
         return ServerBlocking(self, server_id)
 
-    def servers(self) -> typing.Generator[ServerModel, ServerBlocking, None]:
+    def servers(self) -> Generator[ServerModel, ServerBlocking, None]:
         """Used to list servers.
 
         Yields
@@ -270,7 +255,7 @@ class Blocking(Base, BlockingHttp):
             self._get(ACCOUNT.details)
         )
 
-    def domains(self) -> typing.Generator[str, None, None]:
+    def domains(self) -> Generator[str, None, None]:
         """Used to list domains.
 
         Returns

@@ -54,13 +54,11 @@ class TestAwaitingClient(asynctest.TestCase):
             self.assertTrue(type(domain) == str)
 
     async def test_awaiting_context(self):
-        context = Awaiting(self.email, self.password)
-
-        async with context as client:
+        async with Awaiting(self.email, self.password) as client:
             await client.account()
 
-        async with context as client:
-            async for domain in client.domains():
+        async with Awaiting(self.email, self.password) as client:
+            async for _ in client.domains():
                 pass
 
     async def test_awaiting_list_servers(self):
