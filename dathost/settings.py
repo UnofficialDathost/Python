@@ -478,7 +478,7 @@ class MatchSettings:
         """
 
         self.payload["enable_playwin"] = True
-        if webhook:
+        if webhook is not None:
             self.payload["playwin_result_webhook_url"] = webhook
 
         return self
@@ -504,7 +504,7 @@ class MatchSettings:
         self.payload["match_end_webhook_url"] = match_end
         self.payload["round_end_webhook_url"] = round_end
 
-        if authorization:
+        if authorization is not None:
             self.payload["webhook_authorization_header"] = authorization
 
         return self
