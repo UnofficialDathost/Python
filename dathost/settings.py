@@ -21,7 +21,7 @@ VALID_TICKRATES = [
 ]
 
 
-def _format_admins(admins, format_32: bool = True) -> List[str]:
+def _format_admins(admins, format_32: bool = True) -> str:
     return str([
         SteamID(steam_id).as_steam2
         if format_32 else str(SteamID(steam_id).as_64)
