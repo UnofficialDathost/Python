@@ -8,6 +8,6 @@ class BlockingBackup(BackupBase):
         """Used to restore a backup.
         """
 
-        self.context._post(
+        self._context._post(
             url=SERVER.backup_restore.format(self.server_id, self.backup_name),
         )

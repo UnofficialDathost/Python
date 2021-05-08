@@ -10,7 +10,7 @@ class BlockingFile(FileBase):
         """Deletes file.
         """
 
-        self.context._delete(
+        self._context._delete(
             SERVER.file_interact.format(self.server_id, self.file_path)
         )
 
@@ -26,7 +26,7 @@ class BlockingFile(FileBase):
         When called the file_path changes to the given destination.
         """
 
-        self.context._put(
+        self._context._put(
             SERVER.file_interact.format(self.server_id, self.file_path),
             data={
                 "destination": destination,
@@ -43,7 +43,7 @@ class BlockingFile(FileBase):
         destination : str
         """
 
-        self.context._post(
+        self._context._post(
             url=SERVER.file_unzip.format(self.server_id, self.file_path),
             data={
                 "destination": destination,
@@ -71,7 +71,7 @@ class BlockingFile(FileBase):
             Data to upload.
         """
 
-        self.context._post(
+        self._context._post(
             url=SERVER._upload.format(self.server_id, self.file_path),
             files={
                 "file": data,
@@ -114,7 +114,7 @@ class BlockingFile(FileBase):
         Its reccomened to use download_iterate for large files.
         """
 
-        return self.context._get(
+        return self._context._get(
             SERVER.file_interact.format(self.server_id, self.file_path),
             read_bytes=True,
             read_json=False

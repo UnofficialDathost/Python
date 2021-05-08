@@ -71,9 +71,9 @@ class ServerSettings:
 
         self.payload = {}
 
-        if name:
+        if name is not None:
             self.payload["name"] = name
-        if location:
+        if location is not None:
             self.payload["location"] = location
         if autostop is not None:
             self.payload["autostop"] = autostop
@@ -85,13 +85,13 @@ class ServerSettings:
             self.payload["reboot_on_crash"] = reboot_on_crash
         if core_dump is not None:
             self.payload["enable_core_dump"] = core_dump
-        if custom_domain:
+        if custom_domain is not None:
             self.payload["custom_domain"] = custom_domain
-        if scheduled_commands:
+        if scheduled_commands is not None:
             self.payload["scheduled_commands"] = str(
                 scheduled_commands
             ).replace("'", '"')
-        if user_data:
+        if user_data is not None:
             self.payload["user_data"] = user_data
         if manual_sort_order is not None:
             self.payload["manual_sort_order"] = manual_sort_order
@@ -181,40 +181,40 @@ class ServerSettings:
 
         self.payload["game"] = "csgo"
 
-        if autoload_configs:
+        if autoload_configs is not None:
             self.payload[
                 "csgo_settings.autoload_configs"
             ] = str(autoload_configs).replace("'", '"')
-        if disable_bots:
+        if disable_bots is not None:
             self.payload["csgo_settings.disable_bots"] = disable_bots
-        if csay_plugin:
+        if csay_plugin is not None:
             self.payload[
                 "csgo_settings.enable_csay_plugin"
             ] = csay_plugin
-        if gotv:
+        if gotv is not None:
             self.payload["csgo_settings.enable_gotv"] = gotv
-        if sourcemod:
+        if sourcemod is not None:
             self.payload["csgo_settings.enable_sourcemod"] = sourcemod
-        if game_mode:
+        if game_mode is not None:
             self.payload["csgo_settings.game_mode"] = game_mode
         if insecure is not None:
             self.payload["csgo_settings.insecure"] = insecure
-        if map_group:
+        if map_group is not None:
             self.payload["csgo_settings.mapgroup"] = map_group
-        if start_map:
+        if start_map is not None:
             self.payload["csgo_settings.mapgroup_start_map"] = start_map
-        if password:
+        if password is not None:
             self.payload["csgo_settings.password"] = password
         if pure is not None:
             self.payload["csgo_settings.pure_server"] = pure
-        if rcon_password:
+        if rcon_password is not None:
             self.payload["csgo_settings.rcon"] = rcon_password
-        if slots:
+        if slots is not None:
             if slots < 5 or slots > 64:
                 raise InvalidSlotSize()
 
             self.payload["csgo_settings.slots"] = slots
-        if admins:
+        if admins is not None:
             admins_formatted = []
             admins_formatted_append = admins_formatted.append
 
@@ -227,11 +227,11 @@ class ServerSettings:
                 "csgo_settings.sourcemod_admins"
             ] = str(admins_formatted)
 
-        if plugins:
+        if plugins is not None:
             self.payload["csgo_settings.sourcemod_plugins"] = str(
                 plugins
             ).replace("'", '"')
-        if game_token:
+        if game_token is not None:
             self.payload[
                 "csgo_settings.steam_game_server_login_token"
             ] = game_token
@@ -239,15 +239,15 @@ class ServerSettings:
             if tickrate not in VALID_TICKRATES:
                 raise InvalidTickrate()
             self.payload["csgo_settings.tickrate"] = tickrate
-        if steam_key:
+        if steam_key is not None:
             self.payload["csgo_settings.workshop_authkey"] = steam_key
-        if workshop_id:
+        if workshop_id is not None:
             self.payload["csgo_settings.workshop_id"] = workshop_id
-        if workshop_start_map_id:
+        if workshop_start_map_id is not None:
             self.payload[
                 "csgo_settings.workshop_start_map_id"
             ] = workshop_start_map_id
-        if maps_source:
+        if maps_source is not None:
             self.payload["csgo_settings.maps_source"] = maps_source
 
         return self
@@ -297,7 +297,7 @@ class ServerSettings:
                 raise InvalidSlotSize()
 
             self.payload["teamfortress2_settings.slots"] = slots
-        if rcon_password:
+        if rcon_password is not None:
             self.payload["teamfortress2_settings.rcon"] = rcon_password
         if gotv is not None:
             self.payload["teamfortress2_settings.enable_gotv"] = gotv
@@ -307,9 +307,9 @@ class ServerSettings:
             ] = sourcemod
         if insecure is not None:
             self.payload["teamfortress2_settings.insecure"] = insecure
-        if password:
+        if password is not None:
             self.payload["teamfortress2_settings.password"] = password
-        if admins:
+        if admins is not None:
             admins_formatted = []
             admins_formatted_append = admins_formatted.append
 
@@ -355,13 +355,13 @@ class ServerSettings:
         self.__game = True
 
         self.payload["game"] = "valheim"
-        if password:
+        if password is not None:
             self.payload["valheim_settings.password"] = password
-        if world_name:
+        if world_name is not None:
             self.payload["valheim_settings.world_name"] = world_name
         if plus is not None:
             self.payload["valheim_settings.enable_valheimplus"] = plus
-        if admins:
+        if admins is not None:
             admins_formatted = []
             admins_formatted_append = admins_formatted.append
 

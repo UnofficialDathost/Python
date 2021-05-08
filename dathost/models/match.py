@@ -1,4 +1,4 @@
-import typing
+from typing import Generator
 
 
 class TeamModel:
@@ -92,7 +92,7 @@ class MatchModel:
 
         self.__players = data["player_stats"]
 
-    def players(self) -> typing.Generator[MatchPlayerModel, None, None]:
+    def players(self) -> Generator[MatchPlayerModel, None, None]:
         """Used to list players.
 
         Yields

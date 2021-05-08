@@ -1,4 +1,4 @@
-import typing
+from typing import AsyncGenerator
 import aiofiles
 
 from ...routes import SERVER
@@ -11,7 +11,7 @@ class AwaitingFile(FileBase):
         """Deletes file.
         """
 
-        await self.context._delete(
+        await self._context._delete(
             SERVER.file_interact.format(self.server_id, self.file_path)
         )
 
@@ -27,7 +27,7 @@ class AwaitingFile(FileBase):
         When called the file_path changes to the given destination.
         """
 
-        await self.context._put(
+        await self._context._put(
             SERVER.file_interact.format(self.server_id, self.file_path),
             data={
                 "destination": destination,
@@ -44,7 +44,7 @@ class AwaitingFile(FileBase):
         destination : str
         """
 
-        await self.context._post(
+        await self._context._post(
             url=SERVER.file_unzip.format(self.server_id, self.file_path),
             data={
                 "destination": destination,
@@ -72,7 +72,7 @@ class AwaitingFile(FileBase):
             Data to upload.
         """
 
-        await self.context._post(
+        await self._context._post(
             url=SERVER._upload.format(self.server_id, self.file_path),
             files={
                 "file": data,
@@ -93,7 +93,7 @@ class AwaitingFile(FileBase):
                 await f.write(data)
 
     async def download_iterate(self
-                               ) -> typing.AsyncGenerator[bytes, None]:
+                               ) -> AsyncGenerator[bytes, None]:
         """Asynchronously downloads data into memory.
 
         Yields
@@ -102,7 +102,7 @@ class AwaitingFile(FileBase):
         """
 
         url = SERVER.file_interact.format(self.server_id, self.file_path)
-        async for data in self.context._stream(url):
+        async for data in self._context._stream(url):
             yield data
 
     async def dowload(self) -> bytes:
@@ -117,7 +117,7 @@ class AwaitingFile(FileBase):
         Its reccomened to use download_iterate for large files.
         """
 
-        return await self.context._get(
+        return await self._context._get(
             SERVER.file_interact.format(self.server_id, self.file_path),
             read_bytes=True,
             read_json=False

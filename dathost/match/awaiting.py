@@ -15,7 +15,7 @@ class AwaitingMatch(MatchBase):
             Holds match details.
         """
 
-        data = await self.context._get(
+        data = await self._context._get(
             MATCHES.details.format(self.match_id)
         )
 

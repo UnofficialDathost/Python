@@ -15,7 +15,7 @@ class BlockingMatch(MatchBase):
             Holds match details.
         """
 
-        data = self.context._get(
+        data = self._context._get(
             MATCHES.details.format(self.match_id)
         )
 
