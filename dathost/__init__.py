@@ -47,7 +47,6 @@ class Awaiting(Base, AwaitingHttp):
         """Closes sessions
         """
 
-        self.__client_closed = True
         await self._client.aclose()
 
     def match(self, match_id: str) -> AwaitingMatch:
@@ -170,7 +169,6 @@ class Blocking(Base, BlockingHttp):
         """Closes sessions
         """
 
-        self.__client_closed = True
         self._client.close()
 
     def match(self, match_id: str) -> BlockingMatch:
