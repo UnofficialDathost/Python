@@ -3,9 +3,6 @@ from typing import Any, List
 
 from steam.steamid import SteamID
 
-from .gamemodes import COMPETITIVE
-from .map_source import MAP_GROUP
-
 from .exceptions import (
     InvalidSlotSize,
     MultipleGames,
@@ -22,6 +19,14 @@ VALID_TICKRATES = [
     102.4,
     128
 ]
+
+
+def _format_admins(admins, format_32: bool = True) -> str:
+    return str([
+        SteamID(steam_id).as_steam2
+        if format_32 else str(SteamID(steam_id).as_64)
+        for steam_id in admins
+    ]).replace("'", '"')
 
 
 class ServerSettings:
@@ -105,11 +110,11 @@ class ServerSettings:
 
     def csgo(self, slots: int = None, tickrate: int = None,
              game_token: str = None, rcon_password: str = None,
-             game_mode: str = COMPETITIVE, autoload_configs: List[str] = None,
+             game_mode: str = None, autoload_configs: List[str] = None,
              disable_bots: bool = False, workshop_start_map_id: int = None,
              csay_plugin: bool = False, gotv: bool = False,
              sourcemod: bool = False, insecure: bool = False,
-             map_group: str = MAP_GROUP, start_map: str = None,
+             map_group: str = None, start_map: str = None,
              password: str = None, pure: bool = True,
              admins: List[Any] = None, plugins: List[Any] = None,
              steam_key: str = None,
@@ -123,7 +128,7 @@ class ServerSettings:
         game_token : str
         tickrate : int
         game_mode : str, optional
-            by default COMPETITIVE
+            by default None
         autoload_configs : List[str], optional
             by default None
         disable_bots : bool, optional
@@ -137,7 +142,7 @@ class ServerSettings:
         insecure : bool, optional
             by default False
         map_group : str, optional
-            by default MAP_GROUP
+            by default None
         start_map : str, optional
             by default None
         password : str, optional
@@ -215,17 +220,9 @@ class ServerSettings:
 
             self.payload["csgo_settings.slots"] = slots
         if admins is not None:
-            admins_formatted = []
-            admins_formatted_append = admins_formatted.append
-
-            for steam_id in admins:
-                admins_formatted_append(
-                    SteamID(steam_id).as_steam2_zero
-                )
-
             self.payload[
                 "csgo_settings.sourcemod_admins"
-            ] = str(admins_formatted)
+            ] = _format_admins(admins)
 
         if plugins is not None:
             self.payload["csgo_settings.sourcemod_plugins"] = str(
@@ -310,17 +307,9 @@ class ServerSettings:
         if password is not None:
             self.payload["teamfortress2_settings.password"] = password
         if admins is not None:
-            admins_formatted = []
-            admins_formatted_append = admins_formatted.append
-
-            for steam_id in admins:
-                admins_formatted_append(
-                    SteamID(steam_id).as_steam2_zero
-                )
-
             self.payload[
                 "teamfortress2_settings.sourcemod_admins"
-            ] = str(admins_formatted).replace("'", '"')
+            ] = _format_admins(admins)
 
         return self
 
@@ -362,17 +351,10 @@ class ServerSettings:
         if plus is not None:
             self.payload["valheim_settings.enable_valheimplus"] = plus
         if admins is not None:
-            admins_formatted = []
-            admins_formatted_append = admins_formatted.append
-
-            for steam_id in admins:
-                admins_formatted_append(
-                    str(SteamID(steam_id).as_64)
-                )
 
             self.payload[
                 "valheim_settings.admins_steamid64"
-            ] = str(admins_formatted).replace("'", '"')
+            ] = _format_admins(admins, format_32=False)
 
         return self
 
