@@ -24,7 +24,7 @@ VALID_TICKRATES = [
 def _format_admins(admins, format_32: bool = True) -> List[str]:
     return str([
         SteamID(steam_id).as_steam2
-        if format_32 else SteamID(steam_id).as_64
+        if format_32 else str(SteamID(steam_id).as_64)
         for steam_id in admins
     ]).replace("'", '"')
 
