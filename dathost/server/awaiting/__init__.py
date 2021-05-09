@@ -204,7 +204,8 @@ class ServerAwaiting(ServerBase):
         )
 
     async def files(self, hide_default: bool = False, path: str = None,
-                    file_sizes: bool = False
+                    file_sizes: bool = False,
+                    deleted_files: bool = False
                     ) -> AsyncGenerator[FileModel, None]:
         """Used to list files.
 
@@ -216,6 +217,8 @@ class ServerAwaiting(ServerBase):
             Path to use as root, by default None
         file_sizes : bool, optional
             by default False
+        deleted_files : bool, optional
+            Include deleted files in list, by default False
 
         Yields
         ------
@@ -229,6 +232,7 @@ class ServerAwaiting(ServerBase):
                 "hide_default_files": hide_default,
                 "path": path,
                 "with_filesizes": file_sizes,
+                "include_deleted_files": deleted_files
             },
         )
 
