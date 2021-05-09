@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class AccountModel:
     """Holds infomation around a account.
 
@@ -15,6 +18,7 @@ class AccountModel:
     subscription_pay_with_credits : bool
     affiliate : bool
     first_month_discount_percentage : float
+    confirmed_at : datetime
     """
 
     def __init__(self, data: dict) -> None:
@@ -36,3 +40,4 @@ class AccountModel:
         self.first_month_discount_percentage = (
             data["first_month_discount_percentage"]
         )
+        self.confirmed_at = datetime.fromtimestamp(data["confirmed_at"])
