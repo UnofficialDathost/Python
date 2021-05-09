@@ -195,7 +195,7 @@ class ServerBlocking(ServerBase):
         )
 
     def reset(self) -> None:
-        """Used to restart the server.
+        """Used to reset the server.
         """
 
         self._context._post(

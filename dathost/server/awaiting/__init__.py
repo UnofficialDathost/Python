@@ -196,7 +196,7 @@ class ServerAwaiting(ServerBase):
         )
 
     async def reset(self) -> None:
-        """Used to restart the server.
+        """Used to reset the server.
         """
 
         await self._context._post(
