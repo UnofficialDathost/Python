@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Any, List
 
+import json
+
 from steam.steamid import SteamID
 
 from .exceptions import (
@@ -22,11 +24,11 @@ VALID_TICKRATES = [
 
 
 def _format_admins(admins, format_32: bool = True) -> str:
-    return str([
+    return json.dumps([
         SteamID(steam_id).as_steam2
         if format_32 else str(SteamID(steam_id).as_64)
         for steam_id in admins
-    ]).replace("'", '"')
+    ])
 
 
 class ServerSettings:
@@ -93,9 +95,7 @@ class ServerSettings:
         if custom_domain is not None:
             self.payload["custom_domain"] = custom_domain
         if scheduled_commands is not None:
-            self.payload["scheduled_commands"] = str(
-                scheduled_commands
-            ).replace("'", '"')
+            self.payload["scheduled_commands"] = json.dumps(scheduled_commands)
         if user_data is not None:
             self.payload["user_data"] = user_data
         if manual_sort_order is not None:
@@ -189,7 +189,7 @@ class ServerSettings:
         if autoload_configs is not None:
             self.payload[
                 "csgo_settings.autoload_configs"
-            ] = str(autoload_configs).replace("'", '"')
+            ] = json.dumps(autoload_configs)
         if disable_bots is not None:
             self.payload["csgo_settings.disable_bots"] = disable_bots
         if csay_plugin is not None:
@@ -225,9 +225,9 @@ class ServerSettings:
             ] = _format_admins(admins)
 
         if plugins is not None:
-            self.payload["csgo_settings.sourcemod_plugins"] = str(
-                plugins
-            ).replace("'", '"')
+            self.payload[
+                "csgo_settings.sourcemod_plugins"
+            ] = json.dumps(plugins)
         if game_token is not None:
             self.payload[
                 "csgo_settings.steam_game_server_login_token"
