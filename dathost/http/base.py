@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Union
 
 from httpx import Response
 from json import JSONDecodeError
@@ -13,8 +13,11 @@ from ..exceptions import (
 
 
 class BaseHttp:
-    def handle_resp(self, resp: Response, json: bool = True,
-                    read: bool = True) -> Any:
+    def handle_resp(self,
+                    resp: Response,
+                    json: bool = True,
+                    read: bool = True
+                    ) -> Union[bool, bytes, dict, None]:
         """Handles resp response.
 
         Parameters

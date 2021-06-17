@@ -1,4 +1,6 @@
-from typing import Generator, Tuple
+from __future__ import annotations
+from typing import Generator, Tuple, TYPE_CHECKING, cast
+
 from ..base import ServerBase
 
 from ...models.server import ServerModel
@@ -18,8 +20,13 @@ from ...exceptions import InvalidConsoleLine
 
 from ...routes import SERVER, MATCHES
 
+if TYPE_CHECKING:
+    from ... import Blocking
+
 
 class ServerBlocking(ServerBase):
+    _context: "Blocking"
+
     def create_match(self, match_settings: MatchSettings,
                      ) -> Tuple[MatchModel, BlockingMatch]:
         """Creates a match.
@@ -37,10 +44,16 @@ class ServerBlocking(ServerBase):
             Used to interact with a match.
         """
 
-        data = self._context._post(
-            MATCHES.create,
-            data={"game_server_id": self.server_id, **match_settings.payload},
-            read_json=True
+        data = cast(
+            dict,
+            self._context._post(
+                MATCHES.create,
+                data={
+                    "game_server_id": self.server_id,
+                    **match_settings.payload
+                },
+                read_json=True
+            )
         )
 
         return MatchModel(data), BlockingMatch(self._context, data["id"])
@@ -63,7 +76,7 @@ class ServerBlocking(ServerBase):
         """
 
         return ServerModel(
-            self._context._get(SERVER.get.format(self.server_id))
+            cast(dict, self._context._get(SERVER.get.format(self.server_id)))
         )
 
     def update(self, settings: ServerSettings) -> None:
@@ -120,11 +133,14 @@ class ServerBlocking(ServerBase):
         if lines < 1 or lines > 100000:
             raise InvalidConsoleLine()
 
-        data = self._context._get(
-            url=SERVER.console.format(self.server_id),
-            params={
-                "max_lines": lines,
-            },
+        data = cast(
+            dict,
+            self._context._get(
+                url=SERVER.console.format(self.server_id),
+                params={
+                    "max_lines": lines,
+                },
+            )
         )
 
         return data["lines"]
@@ -138,7 +154,7 @@ class ServerBlocking(ServerBase):
         )
 
     def duplicate(self, sync: bool = False,
-                  ) -> Tuple[ServerModel, ServerBase]:
+                  ) -> Tuple[ServerModel, ServerBlocking]:
         """Used to duplicate a server.
 
         Parameters
@@ -157,9 +173,12 @@ class ServerBlocking(ServerBase):
         if sync:
             self.sync()
 
-        data = self._context._post(
-            url=SERVER.duplicate.format(self.server_id),
-            read_json=True,
+        data = cast(
+            dict,
+            self._context._post(
+                url=SERVER.duplicate.format(self.server_id),
+                read_json=True,
+            )
         )
 
         return ServerModel(data), ServerBlocking(self._context, data["id"])
@@ -205,7 +224,7 @@ class ServerBlocking(ServerBase):
     def files(self, hide_default: bool = False, path: str = None,
               file_sizes: bool = False,
               deleted_files: bool = False
-              ) -> Generator[FileModel, None, None]:
+              ) -> Generator[Tuple[FileModel, BlockingFile], None, None]:
         """Used to list files.
 
         Parameters
@@ -223,16 +242,21 @@ class ServerBlocking(ServerBase):
         ------
         FileModel
             Holds details on a file.
+        BlockingFile
+            Used to interact with a file.
         """
 
-        data = self._context._get(
-            SERVER.files.format(self.server_id),
-            params={
-                "hide_default_files": hide_default,
-                "path": path,
-                "with_filesizes": file_sizes,
-                "include_deleted_files": deleted_files
-            },
+        data = cast(
+            dict,
+            self._context._get(
+                SERVER.files.format(self.server_id),
+                params={
+                    "hide_default_files": hide_default,
+                    "path": path,
+                    "with_filesizes": file_sizes,
+                    "include_deleted_files": deleted_files
+                },
+            )
         )
 
         for file_ in data:
@@ -258,7 +282,7 @@ class ServerBlocking(ServerBase):
         )
 
     def backups(self
-                ) -> Generator[BackupModel, BlockingBackup, None]:
+                ) -> Generator[Tuple[BackupModel, BlockingBackup], None, None]:
         """Used to list backups a server has.
 
         Yields
@@ -269,8 +293,11 @@ class ServerBlocking(ServerBase):
             Used for interacting with a backup.
         """
 
-        data = self._context._get(
-            SERVER.backups.format(self.server_id),
+        data = cast(
+            dict,
+            self._context._get(
+                SERVER.backups.format(self.server_id),
+            )
         )
 
         for backup in data:
@@ -304,8 +331,11 @@ class ServerBlocking(ServerBase):
             Holds details on server metrics.
         """
 
-        data = self._context._get(
-            SERVER.metrics.format(self.server_id)
+        data = cast(
+            dict,
+            self._context._get(
+                SERVER.metrics.format(self.server_id)
+            )
         )
 
         return MetricsModel(data)

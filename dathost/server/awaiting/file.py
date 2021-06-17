@@ -1,12 +1,16 @@
-from typing import AsyncGenerator
 import aiofiles
+from typing import AsyncGenerator, cast, TYPE_CHECKING
 
 from ...routes import SERVER
-
 from ..base import FileBase
+
+if TYPE_CHECKING:
+    from ... import Awaiting
 
 
 class AwaitingFile(FileBase):
+    _context: "Awaiting"
+
     async def delete(self) -> None:
         """Deletes file.
         """
@@ -117,8 +121,11 @@ class AwaitingFile(FileBase):
         Its reccomened to use download_iterate for large files.
         """
 
-        return await self._context._get(
-            SERVER.file_interact.format(self.server_id, self.file_path),
-            read_bytes=True,
-            read_json=False
+        return cast(
+            bytes,
+            await self._context._get(
+                SERVER.file_interact.format(self.server_id, self.file_path),
+                read_bytes=True,
+                read_json=False
+            )
         )
