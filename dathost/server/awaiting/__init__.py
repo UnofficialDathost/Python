@@ -1,4 +1,6 @@
+from __future__ import annotations
 from typing import AsyncGenerator, Tuple, TYPE_CHECKING, cast
+
 from ..base import ServerBase
 
 from ...models.server import ServerModel
@@ -156,7 +158,7 @@ class ServerAwaiting(ServerBase):
         )
 
     async def duplicate(self, sync: bool = False,
-                        ) -> Tuple[ServerModel, ServerBase]:
+                        ) -> Tuple[ServerModel, ServerAwaiting]:
         """Used to duplicate a server.
 
         Parameters

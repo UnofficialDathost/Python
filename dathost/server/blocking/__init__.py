@@ -1,4 +1,6 @@
+from __future__ import annotations
 from typing import Generator, Tuple, TYPE_CHECKING, cast
+
 from ..base import ServerBase
 
 from ...models.server import ServerModel
@@ -152,7 +154,7 @@ class ServerBlocking(ServerBase):
         )
 
     def duplicate(self, sync: bool = False,
-                  ) -> Tuple[ServerModel, ServerBase]:
+                  ) -> Tuple[ServerModel, ServerBlocking]:
         """Used to duplicate a server.
 
         Parameters
