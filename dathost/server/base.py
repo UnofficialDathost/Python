@@ -1,5 +1,12 @@
+from typing import TYPE_CHECKING, Union
+
+if TYPE_CHECKING:
+    from .. import Awaiting, Blocking
+
+
 class ServerBase:
-    def __init__(self, context: object, server_id: str) -> None:
+    def __init__(self, context: Union["Awaiting", "Blocking"],
+                 server_id: str) -> None:
         """Used to interact with a server.
 
         Parameters
@@ -15,7 +22,7 @@ class ServerBase:
 
 
 class FileBase:
-    def __init__(self, context: object,
+    def __init__(self, context: Union["Awaiting", "Blocking"],
                  server_id: str, file_path: str) -> None:
         self._context = context
         self.server_id = server_id
@@ -23,9 +30,8 @@ class FileBase:
 
 
 class BackupBase:
-    def __init__(self, context: object, server_id: str,
+    def __init__(self, context: Union["Awaiting", "Blocking"], server_id: str,
                  backup_name: str) -> None:
-
         self.backup_name = backup_name
         self._context = context
         self.server_id = server_id

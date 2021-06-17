@@ -1,9 +1,15 @@
-from ..base import BackupBase
+from typing import TYPE_CHECKING
 
+from ..base import BackupBase
 from ...routes import SERVER
+
+if TYPE_CHECKING:
+    from ... import Awaiting
 
 
 class AwaitingBackup(BackupBase):
+    _context: "Awaiting"
+
     async def restore(self) -> None:
         """Used to restore a backup.
         """

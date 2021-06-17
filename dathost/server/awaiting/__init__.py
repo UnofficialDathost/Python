@@ -1,4 +1,4 @@
-from typing import AsyncGenerator, Tuple
+from typing import AsyncGenerator, Tuple, TYPE_CHECKING, cast
 from ..base import ServerBase
 
 from ...models.server import ServerModel
@@ -18,8 +18,13 @@ from ...exceptions import InvalidConsoleLine
 
 from ...routes import SERVER, MATCHES
 
+if TYPE_CHECKING:
+    from ... import Awaiting
+
 
 class ServerAwaiting(ServerBase):
+    _context: "Awaiting"
+
     async def create_match(self, match_settings: MatchSettings,
                            ) -> Tuple[MatchModel, AwaitingMatch]:
         """Creates a match.
@@ -37,10 +42,16 @@ class ServerAwaiting(ServerBase):
             Used to interact with a match.
         """
 
-        data = await self._context._post(
-            MATCHES.create,
-            data={"game_server_id": self.server_id, **match_settings.payload},
-            read_json=True
+        data = cast(
+            dict,
+            await self._context._post(
+                MATCHES.create,
+                data={
+                    "game_server_id": self.server_id,
+                    **match_settings.payload
+                },
+                read_json=True
+            )
         )
 
         return MatchModel(data), AwaitingMatch(self._context, data["id"])
@@ -63,7 +74,10 @@ class ServerAwaiting(ServerBase):
         """
 
         return ServerModel(
-            await self._context._get(SERVER.get.format(self.server_id))
+            cast(
+                dict,
+                await self._context._get(SERVER.get.format(self.server_id))
+            )
         )
 
     async def update(self, settings: ServerSettings) -> None:
@@ -121,11 +135,14 @@ class ServerAwaiting(ServerBase):
         if lines < 1 or lines > 100000:
             raise InvalidConsoleLine()
 
-        data = await self._context._get(
-            url=SERVER.console.format(self.server_id),
-            params={
-                "max_lines": lines,
-            },
+        data = cast(
+            dict,
+            await self._context._get(
+                url=SERVER.console.format(self.server_id),
+                params={
+                    "max_lines": lines,
+                },
+            )
         )
 
         return data["lines"]
@@ -158,9 +175,12 @@ class ServerAwaiting(ServerBase):
         if sync:
             await self.sync()
 
-        data = await self._context._post(
-            url=SERVER.duplicate.format(self.server_id),
-            read_json=True,
+        data = cast(
+            dict,
+            await self._context._post(
+                url=SERVER.duplicate.format(self.server_id),
+                read_json=True,
+            )
         )
 
         return ServerModel(data), ServerAwaiting(self._context, data["id"])
@@ -206,7 +226,7 @@ class ServerAwaiting(ServerBase):
     async def files(self, hide_default: bool = False, path: str = None,
                     file_sizes: bool = False,
                     deleted_files: bool = False
-                    ) -> AsyncGenerator[FileModel, None]:
+                    ) -> AsyncGenerator[Tuple[FileModel, AwaitingFile], None]:
         """Used to list files.
 
         Parameters
@@ -224,16 +244,21 @@ class ServerAwaiting(ServerBase):
         ------
         FileModel
             Holds details on a file.
+        AwaitingFile
+            Used to interact with a file.
         """
 
-        data = await self._context._get(
-            SERVER.files.format(self.server_id),
-            params={
-                "hide_default_files": hide_default,
-                "path": path,
-                "with_filesizes": file_sizes,
-                "include_deleted_files": deleted_files
-            },
+        data = cast(
+            dict,
+            await self._context._get(
+                SERVER.files.format(self.server_id),
+                params={
+                    "hide_default_files": hide_default,
+                    "path": path,
+                    "with_filesizes": file_sizes,
+                    "include_deleted_files": deleted_files
+                },
+            )
         )
 
         for file_ in data:
@@ -259,7 +284,8 @@ class ServerAwaiting(ServerBase):
         )
 
     async def backups(self
-                      ) -> AsyncGenerator[BackupModel, AwaitingBackup]:
+                      ) -> AsyncGenerator[
+                          Tuple[BackupModel, AwaitingBackup], None]:
         """Used to list backups a server has.
 
         Yields
@@ -270,8 +296,11 @@ class ServerAwaiting(ServerBase):
             Used for interacting with a backup.
         """
 
-        data = await self._context._get(
-            SERVER.backups.format(self.server_id),
+        data = cast(
+            dict,
+            await self._context._get(
+                SERVER.backups.format(self.server_id),
+            )
         )
 
         for backup in data:
@@ -305,8 +334,11 @@ class ServerAwaiting(ServerBase):
             Holds details on server metrics.
         """
 
-        data = await self._context._get(
-            SERVER.metrics.format(self.server_id)
+        data = cast(
+            dict,
+            await self._context._get(
+                SERVER.metrics.format(self.server_id)
+            )
         )
 
         return MetricsModel(data)

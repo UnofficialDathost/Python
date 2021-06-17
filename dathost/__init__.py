@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import AsyncGenerator, Generator, Tuple
+from typing import AsyncGenerator, Generator, Tuple, cast
 
 from .base import Base
 from .routes import ACCOUNT, CUSTOM_DOMAINS, SERVER
@@ -20,7 +20,7 @@ from .models.server import ServerModel
 from httpx import AsyncClient, Client
 
 
-__version__ = "0.2.8"
+__version__ = "0.1.0"
 __url__ = "https://dathost.readthedocs.io/en/latest/"
 __description__ = "Asynchronous / Synchronous dathost API wrapper."
 __author__ = "WardPearce"
@@ -84,10 +84,13 @@ class Awaiting(Base, AwaitingHttp):
             Used to interact with the created server.
         """
 
-        data = await self._post(
-            url=SERVER.create,
-            read_json=True,
-            data=settings.payload,
+        data = cast(
+            dict,
+            await self._post(
+                url=SERVER.create,
+                read_json=True,
+                data=settings.payload,
+            )
         )
 
         return ServerModel(data), self.server(data["id"])
@@ -109,7 +112,7 @@ class Awaiting(Base, AwaitingHttp):
         return ServerAwaiting(self, server_id)
 
     async def servers(self) -> AsyncGenerator[
-            ServerModel, ServerAwaiting]:
+            Tuple[ServerModel, ServerAwaiting], None]:
         """Used to list servers.
 
         Yields
@@ -118,7 +121,7 @@ class Awaiting(Base, AwaitingHttp):
             Holds data on server.
         """
 
-        for server in await self._get(SERVER.list):
+        for server in cast(dict, await self._get(SERVER.list)):
             yield ServerModel(server), self.server(server["id"])
 
     async def account(self) -> AccountModel:
@@ -131,7 +134,7 @@ class Awaiting(Base, AwaitingHttp):
         """
 
         return AccountModel(
-            await self._get(ACCOUNT.details)
+            cast(dict, await self._get(ACCOUNT.details))
         )
 
     async def domains(self) -> AsyncGenerator[str, None]:
@@ -143,14 +146,11 @@ class Awaiting(Base, AwaitingHttp):
             List of domains.
         """
 
-        data = await self._get(CUSTOM_DOMAINS.details)
-        for domain in data:
+        for domain in cast(list, await self._get(CUSTOM_DOMAINS.details)):
             yield domain["name"]
 
 
 class Blocking(Base, BlockingHttp):
-    __client_closed = False
-
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
@@ -206,10 +206,13 @@ class Blocking(Base, BlockingHttp):
             Used to interact with the created server.
         """
 
-        data = self._post(
-            url=SERVER.create,
-            read_json=True,
-            data=settings.payload,
+        data = cast(
+            dict,
+            self._post(
+                url=SERVER.create,
+                read_json=True,
+                data=settings.payload,
+            )
         )
 
         return ServerModel(data), self.server(data["id"])
@@ -230,16 +233,19 @@ class Blocking(Base, BlockingHttp):
 
         return ServerBlocking(self, server_id)
 
-    def servers(self) -> Generator[ServerModel, ServerBlocking, None]:
+    def servers(self) -> Generator[
+            Tuple[ServerModel, ServerBlocking], None, None]:
         """Used to list servers.
 
         Yields
         -------
         ServerModel
             Holds data on server.
+        ServerBlocking
+            Used to interact with server.
         """
 
-        for server in self._get(SERVER.list):
+        for server in cast(dict, self._get(SERVER.list)):
             yield ServerModel(server), self.server(server["id"])
 
     def account(self) -> AccountModel:
@@ -252,7 +258,7 @@ class Blocking(Base, BlockingHttp):
         """
 
         return AccountModel(
-            self._get(ACCOUNT.details)
+            cast(dict, self._get(ACCOUNT.details))
         )
 
     def domains(self) -> Generator[str, None, None]:
@@ -264,6 +270,5 @@ class Blocking(Base, BlockingHttp):
             List of domains.
         """
 
-        data = self._get(CUSTOM_DOMAINS.details)
-        for domain in data:
+        for domain in cast(list, self._get(CUSTOM_DOMAINS.details)):
             yield domain["name"]

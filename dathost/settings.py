@@ -443,7 +443,7 @@ class MatchSettings:
 
         return steam_id.as_steam2
 
-    def __format_players(self, players: list) -> None:
+    def __format_players(self, players: list) -> str:
         return ",".join([self.__convert_id(steam_id) for steam_id in players])
 
     def playwin(self, webhook: str = None) -> MatchSettings:

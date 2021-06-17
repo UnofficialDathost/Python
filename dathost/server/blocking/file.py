@@ -1,11 +1,16 @@
+from typing import TYPE_CHECKING, cast
+
 from ...routes import SERVER
-
 from ..base import FileBase
-
 from ...exceptions import AwaitingOnly
+
+if TYPE_CHECKING:
+    from ... import Blocking
 
 
 class BlockingFile(FileBase):
+    _context: "Blocking"
+
     def delete(self) -> None:
         """Deletes file.
         """
@@ -114,8 +119,11 @@ class BlockingFile(FileBase):
         Its reccomened to use download_iterate for large files.
         """
 
-        return self._context._get(
-            SERVER.file_interact.format(self.server_id, self.file_path),
-            read_bytes=True,
-            read_json=False
+        return cast(
+            bytes,
+            self._context._get(
+                SERVER.file_interact.format(self.server_id, self.file_path),
+                read_bytes=True,
+                read_json=False
+            )
         )
