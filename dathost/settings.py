@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, List
+from typing import Any, List, Union
 
 import json
 
@@ -396,6 +396,11 @@ class MatchSettings:
     def __init__(self, connection_time: int = 300,
                  knife_round: bool = False,
                  wait_for_spectators: bool = True,
+                 enable_pause: bool = False,
+                 enable_ready: bool = False,
+                 enable_tech_pause: bool = False,
+                 ready_min_players: int = 1,
+                 wait_for_coaches: bool = True,
                  warmup_time: int = 15) -> None:
         """Used to create a match.
 
@@ -409,16 +414,31 @@ class MatchSettings:
             by default True
         warmup_time : int, optional
             by default 15
+        enable_pause : bool, optional
+            by default False
+        enable_ready : bool, optional
+            by default False
+        enable_tech_pause : bool, optional
+            by default False
+        ready_min_players : int, optional
+            by default 1
+        wait_for_coaches : bool, optional
+            by default True
         """
 
         self.payload = {
             "connection_time": connection_time,
             "enable_knife_round": knife_round,
             "wait_for_spectators": wait_for_spectators,
-            "warmup_time": warmup_time
+            "warmup_time": warmup_time,
+            "enable_pause": enable_pause,
+            "enable_ready": enable_ready,
+            "enable_tech_pause": enable_tech_pause,
+            "ready_min_players": ready_min_players,
+            "wait_for_coaches": wait_for_coaches
         }
 
-    def __convert_id(self, given_id: Any) -> str:
+    def __convert_id(self, given_id: Union[str, int]) -> str:
         """Converts any steamID format to 32.
 
         Parameters
@@ -509,7 +529,8 @@ class MatchSettings:
 
         return self
 
-    def team_1(self, players: list) -> MatchSettings:
+    def team_1(self, players: list, coach: Union[str, int] = None
+               ) -> MatchSettings:
         """Team 1 players
 
         Parameters
@@ -517,6 +538,8 @@ class MatchSettings:
         players : list
             List of spectator steam IDs,
             steamID 64, 32 & u are supported.
+        coach : Union[str, int]
+            Steam id of coach, by deafult None
 
         Returns
         -------
@@ -524,10 +547,13 @@ class MatchSettings:
         """
 
         self.payload["team1_steam_ids"] = self.__format_players(players)
+        if coach:
+            self.payload["team1_coach_steam_id"] = self.__convert_id(coach)
 
         return self
 
-    def team_2(self, players: list) -> MatchSettings:
+    def team_2(self, players: list, coach: Union[str, int] = None
+               ) -> MatchSettings:
         """Team 2 players
 
         Parameters
@@ -535,6 +561,8 @@ class MatchSettings:
         players : list
             List of spectator steam IDs,
             steamID 64, 32 & u are supported.
+        coach : Union[str, int]
+            Steam id of coach, by deafult None
 
         Returns
         -------
@@ -542,5 +570,7 @@ class MatchSettings:
         """
 
         self.payload["team2_steam_ids"] = self.__format_players(players)
+        if coach:
+            self.payload["team2_coach_steam_id"] = self.__convert_id(coach)
 
         return self

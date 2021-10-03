@@ -63,7 +63,14 @@ class MatchModel:
     playwin_result : dict
     warmup_time : int
     wait_for_spectators : bool
+    enable_pause : bool
+    enable_ready : bool
+    enable_tech_pause : bool
+    team_1_coach : str
+    team_2_coach : str
+    wait_for_coaches : bool
     """
+
     def __init__(self, data: dict) -> None:
         self.match_id = data["id"]
         self.server_id = data["game_server_id"]
@@ -80,6 +87,12 @@ class MatchModel:
         self.playwin_result = data["playwin_result"]
         self.warmup_time = data["warmup_time"]
         self.wait_for_spectators = data["wait_for_spectators"]
+        self.enable_pause = data["enable_pause"]
+        self.enable_ready = data["enable_ready"]
+        self.enable_tech_pause = data["enable_tech_pause"]
+        self.team_1_coach = data["team1_coach_steam_id"]
+        self.team_2_coach = data["team2_coach_steam_id"]
+        self.wait_for_coaches = data["wait_for_coaches"]
 
         self.team_1 = TeamModel(
             data["team1_steam_ids"],
