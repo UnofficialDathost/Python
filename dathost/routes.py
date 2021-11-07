@@ -87,10 +87,17 @@ class Matches(Route):
     details = "{}"
 
 
+class MatchSeries(Route):
+    _prefix = "match-series"
+    create = ""
+    details = "{}"
+
+
 ACCOUNT = Account()
 CUSTOM_DOMAINS = CustomDomains()
 SERVER = Server()
 MATCHES = Matches()
+MATCH_SERIES = MatchSeries()
 
-for route in [ACCOUNT, CUSTOM_DOMAINS, SERVER, MATCHES]:
+for route in [ACCOUNT, CUSTOM_DOMAINS, SERVER, MATCHES, MATCH_SERIES]:
     route.format()

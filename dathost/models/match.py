@@ -6,13 +6,20 @@ class TeamModel:
 
     Attributes
     ----------
-    score : int
+    score : Optional[int]
     players : list
+    flag: Optional[str]
+    start_ct: bool
+        by default False
+    matches_won : Optional[int]
     """
 
-    def __init__(self, players: list, score: int) -> None:
+    def __init__(self, players: list, score: int = None) -> None:
         self.score = score
         self.players = players
+        self.flag = None
+        self.start_ct = False
+        self.matches_won = None
 
 
 class MatchPlayerModel:
@@ -116,3 +123,75 @@ class MatchModel:
 
         for player in self.__players:
             yield MatchPlayerModel(player)
+
+
+class MatchSeriesMatchModel(MatchModel):
+    """Holds match details.
+
+    Attributes
+    ----------
+    match_id : str
+    server_id : str
+    connect_time : int
+    round_end_webhook : str
+    match_end_webhook : str
+    finished : bool
+    cancel_reason : str
+    rounds_played : int
+    spectators : list
+    team_1 : TeamModel
+    team_2 : TeamModel
+    knife_round : bool
+    playwin : bool
+    playwin_webhook : str
+    playwin_result : dict
+    warmup_time : int
+    wait_for_spectators : bool
+    enable_pause : bool
+    enable_ready : bool
+    enable_tech_pause : bool
+    team_1_coach : str
+    team_2_coach : str
+    wait_for_coaches : bool
+    message_prefix : str
+    wait_for_gotv_before_nextmap : bool
+    match_series_id : str
+    """
+
+    def __init__(self, data: dict) -> None:
+        super().__init__(data)
+
+        self.team_1.flag = data["team1_flag"]
+        self.team_2.flag = data["team2_flag"]
+        self.team_1.start_ct = data["team1_start_ct"]
+        self.message_prefix = data["message_prefix"]
+        self.wait_for_gotv_before_nextmap = (
+            data["wait_for_gotv_before_nextmap"]
+        )
+        self.match_series_id = data["match_series_id"]
+        self.team_1.matches_won = data["team1_stats"]["matches_won"]
+        self.team_2.matches_won = data["team2_stats"]["matches_won"]
+
+
+class MatchSeriesModel:
+    """Holds match details.
+
+    Attributes
+    ----------
+    finished : bool
+    series_id : str
+    match_series_end_webhook_url : str
+    """
+
+    def __init__(self, data: dict) -> None:
+        self.finished = data["finished"]
+        self.series_id = data["id"]
+        self.match_series_end_webhook_url = (
+            data["match_series_end_webhook_url"]
+        )
+
+        self.__matches = data["matches"]
+
+    def matches(self) -> Generator[MatchSeriesMatchModel, None, None]:
+        for match in self.__matches:
+            yield MatchSeriesMatchModel(match)

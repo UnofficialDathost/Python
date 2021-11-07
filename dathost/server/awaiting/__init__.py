@@ -7,18 +7,18 @@ from ...models.server import ServerModel
 from ...models.file import FileModel
 from ...models.backup import BackupModel
 from ...models.metrics import MetricsModel
-from ...models.match import MatchModel
+from ...models.match import MatchModel, MatchSeriesModel
 
-from ...match.awaiting import AwaitingMatch
+from ...match.awaiting import AwaitingMatch, AwaitingSeries
 
 from .backup import AwaitingBackup
 from .file import AwaitingFile
 
-from ...settings import ServerSettings, MatchSettings
+from ...settings import ServerSettings, MatchSettings, MatchSeriesSettings
 
 from ...exceptions import InvalidConsoleLine
 
-from ...routes import SERVER, MATCHES
+from ...routes import SERVER, MATCHES, MATCH_SERIES
 
 if TYPE_CHECKING:
     from ... import Awaiting
@@ -57,6 +57,40 @@ class ServerAwaiting(ServerBase):
         )
 
         return MatchModel(data), AwaitingMatch(self._context, data["id"])
+
+    async def create_series(self, match_settings: MatchSeriesSettings,
+                            ) -> Tuple[MatchSeriesModel, AwaitingSeries]:
+        """Creates a match.
+
+        Parameters
+        ----------
+        match_settings : MatchSeriesSettings
+            Holds details on the match series.
+
+        Returns
+        -------
+        MatchModel
+            Holds match details.
+        AwaitingSeries
+            Used to interact with a series.
+        """
+
+        data = cast(
+            dict,
+            await self._context._post(
+                MATCH_SERIES.create,
+                data={
+                    "game_server_id": self.server_id,
+                    **match_settings.payload
+                },
+                read_json=True
+            )
+        )
+
+        return (
+            MatchSeriesModel(data),
+            AwaitingSeries(self._context, data["id"])
+        )
 
     async def delete(self) -> None:
         """Used to delete a sever.

@@ -7,18 +7,18 @@ from ...models.server import ServerModel
 from ...models.file import FileModel
 from ...models.backup import BackupModel
 from ...models.metrics import MetricsModel
-from ...models.match import MatchModel
+from ...models.match import MatchModel, MatchSeriesModel
 
-from ...match.blocking import BlockingMatch
+from ...match.blocking import BlockingMatch, BlockingSeries
 
 from .backup import BlockingBackup
 from .file import BlockingFile
 
-from ...settings import ServerSettings, MatchSettings
+from ...settings import ServerSettings, MatchSettings, MatchSeriesSettings
 
 from ...exceptions import InvalidConsoleLine
 
-from ...routes import SERVER, MATCHES
+from ...routes import SERVER, MATCHES, MATCH_SERIES
 
 if TYPE_CHECKING:
     from ... import Blocking
@@ -57,6 +57,40 @@ class ServerBlocking(ServerBase):
         )
 
         return MatchModel(data), BlockingMatch(self._context, data["id"])
+
+    def create_series(self, match_settings: MatchSeriesSettings,
+                      ) -> Tuple[MatchSeriesModel, BlockingSeries]:
+        """Creates a match.
+
+        Parameters
+        ----------
+        match_settings : MatchSeriesSettings
+            Holds details on the match series.
+
+        Returns
+        -------
+        MatchModel
+            Holds match details.
+        BlockingSeries
+            Used to interact with a series.
+        """
+
+        data = cast(
+            dict,
+            self._context._post(
+                MATCH_SERIES.create,
+                data={
+                    "game_server_id": self.server_id,
+                    **match_settings.payload
+                },
+                read_json=True
+            )
+        )
+
+        return (
+            MatchSeriesModel(data),
+            BlockingSeries(self._context, data["id"])
+        )
 
     def delete(self) -> None:
         """Used to delete a sever.

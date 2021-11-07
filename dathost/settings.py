@@ -574,3 +574,56 @@ class MatchSettings:
             self.payload["team2_coach_steam_id"] = self.__convert_id(coach)
 
         return self
+
+
+class MatchMapSettings:
+    def __init__(self, map: str = "de_dust2", start_ct: int = 1) -> None:
+        """Used to add maps
+
+        Parameters
+        ----------
+        map : str, optional
+            by default "de_dust2"
+        start_ct : int, optional
+            by default 1
+        """
+
+        self.map = map
+        self.start_ct = f"team{start_ct}"
+
+
+class MatchSeriesSettings:
+    def __init__(self, match: MatchSettings,
+                 message_prefix: str = None,
+                 wait_for_gotv_before_nextmap: bool = None,
+                 team_1_flag: str = None,
+                 team_2_flag: str = None,
+                 match_series_end_webhook_url: str = None) -> None:
+        self.payload = match.payload
+
+        if message_prefix is not None:
+            self.payload["message_prefix"] = message_prefix
+        if wait_for_gotv_before_nextmap is not None:
+            self.payload["wait_for_gotv_before_nextmap"] = (
+                wait_for_gotv_before_nextmap
+            )
+        if team_1_flag is not None:
+            self.payload["team1_flag"] = team_1_flag
+        if team_2_flag is not None:
+            self.payload["team2_flag"] = team_1_flag
+        if match_series_end_webhook_url is not None:
+            self.payload["match_series_end_webhook_url"] = (
+                match_series_end_webhook_url
+            )
+
+    def maps(self, maps: List[MatchMapSettings]
+             ) -> MatchSeriesSettings:
+
+        maps_len = len(maps)
+        for index in range(0, maps_len - 1):
+            self.payload[f"map{index}_start_ct"] = maps[index].start_ct
+            self.payload[f"map{index}"] = maps[index].map
+
+        self.payload["number_of_maps"] = maps_len
+
+        return self

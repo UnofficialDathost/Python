@@ -14,16 +14,18 @@ from ..models.metrics import (
     PlayerModel,
     PlayersOnlineGraphModel
 )
-from ..models.match import MatchModel, TeamModel, MatchPlayerModel
+from ..models.match import (
+    MatchModel, TeamModel, MatchPlayerModel, MatchSeriesModel
+)
 
 from ..server.blocking.backup import BlockingBackup
 from ..server.blocking.file import BlockingFile
 
-from ..match.blocking import BlockingMatch
+from ..match.blocking import BlockingMatch, BlockingSeries
 
 from ..server.blocking import ServerBlocking
 
-from ..settings import ServerSettings, MatchSettings
+from ..settings import ServerSettings, MatchSettings, MatchSeriesSettings
 
 from .. import Blocking
 
@@ -173,6 +175,31 @@ class TestBlockingClient(unittest.TestCase):
 
         for player in match_data.players():
             self.assertIsInstance(player, MatchPlayerModel)
+
+        series_data, series = server.create_series(
+            MatchSeriesSettings(
+                MatchSettings(
+                ).team_1(
+                    [
+                        "[U:1:116962485]",
+                        76561198017567105,
+                        "STEAM_0:1:186064092"
+                    ]
+                ).team_2(
+                    [
+                        "[U:1:320762620]",
+                        "STEAM_1:1:83437164",
+                        76561198214871324
+                    ]
+                ),
+                message_prefix="Greg"
+            )
+        )
+
+        self.assertIsInstance(series_data, MatchSeriesModel)
+        self.assertIsInstance(series, BlockingSeries)
+
+        self.assertIsInstance(series.get(), MatchSeriesModel)
 
         self.assertIsNone(server.delete())
 
