@@ -27,7 +27,9 @@ from ..server.awaiting import ServerAwaiting
 
 from .. import Awaiting
 
-from ..settings import ServerSettings, MatchSettings, MatchSeriesSettings
+from ..settings import (
+    MatchMapSettings, ServerSettings, MatchSettings, MatchSeriesSettings
+)
 
 
 class TestAwaitingClient(asynctest.TestCase):
@@ -199,12 +201,23 @@ class TestAwaitingClient(asynctest.TestCase):
                         76561198214871324
                     ]
                 ),
-                message_prefix="Greg"
-            )
+                message_prefix="Greg",
+            ).maps([
+                MatchMapSettings(),
+                MatchMapSettings(),
+                MatchMapSettings()
+            ])
         )
 
         self.assertIsInstance(series_data, MatchSeriesModel)
         self.assertIsInstance(series, AwaitingSeries)
+
+        for match in series_data.matches():
+            self.assertIsInstance(match.team_1, TeamModel)
+            self.assertIsInstance(match.team_2, TeamModel)
+
+            for player in match.players():
+                self.assertIsInstance(player, MatchPlayerModel)
 
         self.assertIsInstance(await series.get(), MatchSeriesModel)
 

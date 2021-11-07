@@ -25,7 +25,9 @@ from ..match.blocking import BlockingMatch, BlockingSeries
 
 from ..server.blocking import ServerBlocking
 
-from ..settings import ServerSettings, MatchSettings, MatchSeriesSettings
+from ..settings import (
+    MatchMapSettings, ServerSettings, MatchSettings, MatchSeriesSettings
+)
 
 from .. import Blocking
 
@@ -193,11 +195,22 @@ class TestBlockingClient(unittest.TestCase):
                     ]
                 ),
                 message_prefix="Greg"
-            )
+            ).maps([
+                MatchMapSettings(),
+                MatchMapSettings(),
+                MatchMapSettings()
+            ])
         )
 
         self.assertIsInstance(series_data, MatchSeriesModel)
         self.assertIsInstance(series, BlockingSeries)
+
+        for match in series_data.matches():
+            self.assertIsInstance(match.team_1, TeamModel)
+            self.assertIsInstance(match.team_2, TeamModel)
+
+            for player in match.players():
+                self.assertIsInstance(player, MatchPlayerModel)
 
         self.assertIsInstance(series.get(), MatchSeriesModel)
 
