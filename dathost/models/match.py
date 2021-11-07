@@ -11,7 +11,6 @@ class TeamModel:
     flag: Optional[str]
     start_ct: bool
         by default False
-    matches_won : Optional[int]
     """
 
     def __init__(self, players: list, score: int = None) -> None:
@@ -19,6 +18,7 @@ class TeamModel:
         self.players = players
         self.flag = None
         self.start_ct = False
+
 
 class MatchPlayerModel:
     """Holds match player details.
