@@ -19,8 +19,6 @@ class TeamModel:
         self.players = players
         self.flag = None
         self.start_ct = False
-        self.matches_won = None
-
 
 class MatchPlayerModel:
     """Holds match player details.
@@ -169,8 +167,6 @@ class MatchSeriesMatchModel(MatchModel):
             data["wait_for_gotv_before_nextmap"]
         )
         self.match_series_id = data["match_series_id"]
-        self.team_1.matches_won = data["team1_stats"]["matches_won"]
-        self.team_2.matches_won = data["team2_stats"]["matches_won"]
 
 
 class MatchSeriesModel:
@@ -181,6 +177,8 @@ class MatchSeriesModel:
     finished : bool
     series_id : str
     match_series_end_webhook_url : str
+    team_1_matches_won : int
+    team_2_matches_won : int
     """
 
     def __init__(self, data: dict) -> None:
@@ -189,6 +187,8 @@ class MatchSeriesModel:
         self.match_series_end_webhook_url = (
             data["match_series_end_webhook_url"]
         )
+        self.team_1_matches_won = data["team1_stats"]["matches_won"]
+        self.team_2_matches_won = data["team2_stats"]["matches_won"]
 
         self.__matches = data["matches"]
 
